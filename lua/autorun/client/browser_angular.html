@@ -1,0 +1,130 @@
+<!--Sorry for using HTML-->
+
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
+		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
+		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
+		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
+		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/lua.js"></script>
+
+<style>
+	:root {
+		--main-color: rgb(31, 31, 31);
+		--text-color: white
+	}
+
+	.petition {
+		color: var(--text-color);
+		background-color: var(--main-color);
+		border-radius: 25px;
+		padding: 15px;
+		width: 100%;
+		box-sizing: border-box;
+		margin-top: 1mm;
+		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	}
+
+	#like_button {
+		color: var(--text-color);
+		background-color: black;
+	}
+
+	#vote_menu {
+		float: right;
+	}
+</style>
+<script>
+	// Sorry for using javascript.
+	// Sorry for using angular.
+
+	function UpdateDigest(scope, timeout) {
+		if (!scope) return;
+		if (scope.DigestUpdate) return;
+
+		scope.DigestUpdate = setTimeout(function () {
+			scope.DigestUpdate = 0;
+			scope.$digest();
+
+		}, timeout);
+	}
+
+	var gScope = null;
+
+	angular.module("petitionBrowser", [])
+		.controller('petitionBrowserController', function ($scope) {
+			gScope = $scope;
+
+			var petitionList = this;
+			$scope.Petitions = [];
+
+			$scope.petitionClicked = function (petition) {
+				console.log("clicked", petition.index)
+			}
+
+			$scope.likeClicked = function (petition) {
+				console.log("like clicked", petition.index)
+			}
+			$scope.dislikeClicked = function (petition) {
+				console.log("dislike clicked", petition.index)
+			}
+		});
+	// Manually bootstrap angularjs because otherwise it will complain about document.location.origin
+	angular.element(document).ready(function () {
+		angular.bootstrap(document.body, ['petitionBrowser']);
+	});
+
+	function addPetition(index, name, author, likes, dislikes) {
+		gScope.Petitions.push({ index: index, name: name, author: author, likes: likes, dislikes: dislikes });
+		UpdateDigest(gScope, 50);
+	};
+	function updatePetition(index, name, author, likes, dislikes) {
+		var petitions = gScope.Petitions;
+		var petitions_length = petitions.length;
+		for (var i = 0; i < petitions_length; i++) {
+			if (petitions[i].index == index) {
+				petitions[i].name = name;
+				petitions[i].author = author;
+				petitions[i].likes = likes;
+				petitions[i].dislikes = dislikes;
+				UpdateDigest(gScope, 50);
+				return true;
+			}
+		}
+		return false;
+	};
+	function addOrUpdatePetition(index, name, author, likes, dislikes) {
+		if (!updatePetition(index, name, author, likes, dislikes)) {
+			addPetition(index, name, author, likes, dislikes);
+		}
+	};
+
+	function clearPetitions() {
+		gScope.Petitions = [];
+		UpdateDigest(gScope, 50);
+	};
+</script>
+
+<body>
+	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
+		<div class="petition" ng-repeat="petition in Petitions">
+			<a ng-click='petitionClicked(petition)'>{{petition.name}}</a>
+
+			<a style="float: right;">Author: {{petition.author}}</a>
+			<br>
+			<br>
+			<div id="vote_menu">
+				<button ng-click="likeClicked(petition)" id="like_button"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
+				<button ng-click="dislikeClicked(petition)" id="like_button"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+			</div>
+			<br>
+		</div>
+	</div>
+</body>
+
+</html>
