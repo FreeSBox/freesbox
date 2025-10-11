@@ -45,9 +45,6 @@ local browser_html =
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
-		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
-		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
-		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
 </head>
 <body>
 	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
@@ -225,16 +222,6 @@ local editor_html =
 <script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
 
 <script type="text/javascript" src="https://spec.commonmark.org/js/commonmark.js"></script>
-
-<script type="text/javascript"
-	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
-<script type="text/javascript"
-	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
-<script type="text/javascript"
-	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
-<script type="text/javascript"
-	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/lua.js"></script>
-
 <style>
 	:root {
 		--main-color: rgb(31, 31, 31);
@@ -592,16 +579,6 @@ local viewer_html =
 <script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
 
 <script type="text/javascript" src="https://spec.commonmark.org/js/commonmark.js"></script>
-
-<script type="text/javascript"
-	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
-<script type="text/javascript"
-	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
-<script type="text/javascript"
-	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
-<script type="text/javascript"
-	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/lua.js"></script>
-
 <style>
 	:root {
 		--main-color: rgb(31, 31, 31);
