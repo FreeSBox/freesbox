@@ -95,7 +95,7 @@
 		color: var(--text-darker-color)
 	}
 
-	#create_button {
+	#createButton {
 		background-color:green;
 		border-radius: 5px;
 		float: right;
@@ -195,6 +195,9 @@
 
 		}, timeout);
 	}
+
+	// https://stackoverflow.com/a/10262019
+	const isWhitespaceString = str => !str.replace(/\s/g, '').length
 
 	var gScope = null;
 
@@ -310,7 +313,7 @@
 	{
 		name = ($("#nameInput").val());
 
-		if (name.length == 0)
+		if (isWhitespaceString(name))
 		{
 			gScope.Notifications.push({text: "Name must not be empty"})
 			UpdateDigest(gScope, 50);
@@ -318,13 +321,14 @@
 		}
 		
 		var description_text = $("#descriptionInput").val();
-		if (description_text.length == 0)
+		if (isWhitespaceString(description_text))
 		{
 			gScope.Notifications.push({text: "Description must not be empty"})
 			UpdateDigest(gScope, 50);
 			return;
 		}
 
+		$('#createButton').attr('disabled','disabled');
 		gmod.CreatePetition(name, description_text);
 	}
 
@@ -345,7 +349,7 @@ If enter doesn't work, you have to copy some new lines from another text editor.
 			<div id="preview"></div>
 		</pane>
 
-		<input id="create_button" type="submit" value="Create" onclick="submit_petition()">
+		<input id="createButton" type="submit" value="Create" onclick="submit_petition()">
 	</tabs>
 
 	<div id="notification_list" ng-controller="petitionCreatorController as notificationList">

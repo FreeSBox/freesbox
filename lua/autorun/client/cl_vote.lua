@@ -3,6 +3,10 @@
 ---@type table<integer, petition>
 local petitions_cache = {}
 
+--- index, true or nil
+---@type table<integer, boolean?>
+local petitions_available = {}
+
 --#region vgui2
 
 -- Maybe use an existing font.
@@ -20,7 +24,6 @@ local function createWindow(name, size_x, size_y, is_popup, class)
 	menu:Center()
 	if is_popup then menu:MakePopup() end
 	function menu:Paint(w,h)
-		--draw.RoundedBox(4, 2, 3, w - 2, h -2, Color(180,177,177,150))
 		draw.RoundedBox(4, 0, 0, w - 2, h - 2, Color(26, 26, 26))
 		draw.DrawText(name, "vote_menu_title", size_x/2, 5, Color(219, 219, 219), TEXT_ALIGN_CENTER)
 	end
@@ -28,211 +31,7 @@ local function createWindow(name, size_x, size_y, is_popup, class)
 	return menu
 end
 
-
----@param petition petition
-local function createVotePanel(petition)
-	local frame = vgui.Create("DPanel")
-
-	frame:SetSize(96, 20)
-	frame.Paint = function (self, w, h)
-		draw.RoundedBox(4, 0,0, w,h, Color(20, 20, 20, 255))
-	end
-
-	local function paint_button(self, w,h)
-		draw.DrawText(self.m_customText, "DermaDefault", w/2+8, h/2-7, color_white, TEXT_ALIGN_CENTER)
-	end
-
-
-	local petition_like = frame:Add("DButton")
-	petition_like:SetIcon("icon16/thumb_up.png")
-	petition_like:SetSize(frame:GetWide()/2, 16)
-	petition_like:Dock(LEFT)
-	petition_like:SetText("")
-	petition_like.Paint = paint_button
-	petition_like.m_customText = tostring(petition.num_likes)
-	petition_like.DoClick = function ()
-		petition.num_likes = petition.num_likes + 1
-		voteOnPetition(petition, false)
-	end
-
-	local petition_dislike = frame:Add("DButton")
-	petition_dislike:SetIcon("icon16/thumb_down.png")
-	petition_dislike:SetSize(frame:GetWide()/2, 16)
-	petition_dislike:Dock(RIGHT)
-	petition_dislike:SetText("")
-	petition_dislike.Paint = paint_button
-	petition_dislike.m_customText = tostring(petition.num_dislikes)
-	petition_dislike.DoClick = function ()
-		petition.num_dislikes = petition.num_dislikes + 1
-		voteOnPetition(petition, true)
-	end
-	return frame
-end
-
----@param window DFrame
----@return DScrollPanel
-local function createBrowsingPanel(window)
-	local button_rounding = 16
-	local button_height = 60
-	local button_color = Color(41, 41, 41, 255)
-
-	local scroll_area = window:Add("DScrollPanel")
-
-	scroll_area:Dock(FILL)
-	scroll_area:InvalidateParent(true)
-
---#region Remove visual scroll bar
-	--local sbar = scroll_area:GetVBar()
-	--function sbar:Paint(w, h)end
-	--function sbar.btnUp:Paint(w, h) end
-	--function sbar.btnDown:Paint(w, h) end
-	--function sbar.btnGrip:Paint(w, h) end
---#endregion
-
-	for index, petition in pairs(petitions_cache) do
-		local petition_button = scroll_area:Add("DButton")
-		petition_button:SetText("")
-		petition_button:SetSize(scroll_area:GetWide(), button_height)
-		petition_button.Paint = function(self, w, h)
-			draw.RoundedBox( button_rounding, 0, 0, w, h, button_color )
-		end
-		petition_button:DockMargin(0,5,0,0)
-		petition_button:Dock(TOP)
-
-
-		local petition_name = petition_button:Add("DLabel")
-		petition_name:SetText(petition.name)
-		petition_name:SetSize(petition_button:GetWide()-button_rounding*2, 18)
-		petition_name:SetPos(button_rounding/2, button_rounding/2)
-		petition_name:SetFont("vote_menu_title")
-
-		local vote_panel = createVotePanel(petition)
-		vote_panel:SetParent(petition_button)
-		local vote_width, vote_height = vote_panel:GetSize()
-		vote_panel:SetPos(petition_button:GetWide()-vote_width-button_rounding/2, button_height-vote_height-button_rounding/2)
-
-		local author_name = petition_button:Add("DLabel")
-		author_name:SetText("Author: " .. petition.author_name)
-		author_name:SizeToContents()
-		local author_width, author_height = author_name:GetSize()
-		author_name:SetPos(petition_button:GetWide()-author_width-button_rounding/2, author_height-button_rounding/2)
-	end
-
-	local new_button = window:Add("DButton")
-	new_button:SetPos(5,5)
-	new_button:SetSize(20, 20)
-	new_button:SetIcon("icon16/add.png")
-	new_button:SetText("")
-	new_button.Paint = nil
---	new_button.DoClick = function()
---		local description_text =
---[[This is our long description
---In this long description we talk about what this petition is about,
---how it solves an issue and something else, it's not that long to be honest.
---]]
---		local description_compressed = util.Compress(description_text)
---		local description_compressed_len = #description_compressed
---		net.Start("create_petition")
---			net.WriteString("Petition name")
---			net.WriteUInt(description_compressed_len, 19)
---			net.WriteData(description_compressed, description_compressed_len)
---		net.SendToServer()
---		print("Sent new petition to server")
---	end
-	new_button.DoClick = function()
-		window:Close()
-	end
-
-	return scroll_area
-end
-
-local function createNewPetitionPanel(window)
-	
-end
-
 --#endregion vgui2
-
--- Global so it's not reset by script reloads
----@type DFrame
-PetitionWindow = PetitionWindow or nil
-PetitionWindowOpen = PetitionWindowOpen or false
-
-concommand.Add("vote", function()
-	if PetitionWindowOpen then return end
-	PetitionWindowOpen = true
-
-	local window_width = 800
-	local window_hight = 600
-	PetitionWindow = createWindow("Voting", window_width, window_hight, false)
-	createBrowsingPanel(PetitionWindow)
-
-	gui.EnableScreenClicker(true)
-	PetitionWindow.OnClose = function (self)
-		gui.EnableScreenClicker(false)
-		PetitionWindowOpen = false
-	end
-end)
-
---#region Networking
-net.Receive("receive_patition_list", function(len, ply)
-	local array = net.ReadTable()
-	for index, value in ipairs(array) do
-		if petitions_cache[value.id] == nil then
-			petitions_cache[value.id] = {
-				index = value.id,
-				name = value.name,
-				description = nil,
-				num_likes = nil,
-				num_dislikes = nil,
-				author_name = nil,
-				loaded = false
-			}
-		end
-	end
-
-	for key, value in pairs(petitions_cache) do
-		if not value.loaded then
-			net.Start("request_petition")
-				net.WriteUInt(value.index, PETITION_ID_BITS)
-			net.SendToServer()
-		end
-	end
-end)
-
-net.Receive("receive_petition", function(len, ply)
-	local petition_id = net.ReadUInt(PETITION_ID_BITS)
-	local name = net.ReadString()
-	local num_agreed = net.ReadUInt(16)
-	local num_disagreed = net.ReadUInt(16)
-
-	local description_length = net.ReadUInt(19)
-	local description_compressed = net.ReadData(description_length)
-	local description_text = util.Decompress(description_compressed)
-	if description_text == nil then description_text = "" end
-
-	local author_name = net.ReadString()
-	local author_id = net.ReadString() -- SteamID64, not used, but feel free to use this.
-
-	petitions_cache[petition_id] = {
-		index = petition_id,
-		name = name,
-		description = description_text,
-		num_likes = num_agreed,
-		num_dislikes = num_disagreed,
-		author_name = author_name,
-		loaded = true
-	}
-
-	print("Petition recieved", name)
-end)
-
-net.Receive("vote_on", function (len, ply)
-	local petition_id = net.ReadUInt(PETITION_ID_BITS)
-	local dislike = net.ReadBool()
-
-	petitions_cache[petition_id].num_likes = 0
-end)
---#endregion Networking
 
 --#region HTML Window
 
@@ -241,19 +40,17 @@ local browser_html =
 <!--Sorry for using HTML-->
 
 <!DOCTYPE html>
-<html>
+<html lang="ru-RU">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
-<!--
 		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
 		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
 		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
 		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/lua.js"></script>
-	-->
 
 <style>
 	:root {
@@ -275,6 +72,10 @@ local browser_html =
 	#like_button {
 		color: var(--text-color);
 		background-color: black;
+	}
+	#like_button:disabled {
+		color: var(--text-color);
+		background-color:rgb(62, 62, 62);
 	}
 
 	#vote_menu {
@@ -306,14 +107,14 @@ local browser_html =
 			$scope.Petitions = [];
 
 			$scope.petitionClicked = function (petition) {
-				console.log("clicked", petition.index)
+				gmod.OpenPetition(petition.index)
 			}
 
-			$scope.likePressed = function (petition) {
-				console.log("like clicked", petition.index)
+			$scope.likeClicked = function (petition) {
+				gmod.VoteOnPetition(petition.index, false)
 			}
-			$scope.dislikePressed = function (petition) {
-				console.log("dislike clicked", petition.index)
+			$scope.dislikeClicked = function (petition) {
+				gmod.VoteOnPetition(petition.index, true)
 			}
 		});
 	// Manually bootstrap angularjs because otherwise it will complain about document.location.origin
@@ -321,17 +122,40 @@ local browser_html =
 		angular.bootstrap(document.body, ['petitionBrowser']);
 	});
 
-	function addPetition(index, name, author, likes, dislikes) {
-		gScope.Petitions.push({ index: index, name: name, author: author, likes: likes, dislikes: dislikes });
+	function addPetition(index, name, author, likes, dislikes, creation_time, expire_time) {
+		var expired = expire_time*1000 <= Date.now()
+		gScope.Petitions.push({ index: index, name: name, author: author, likes: likes, dislikes: dislikes, creation_time: creation_time, expire_time: expire_time, expired: expired });
 		UpdateDigest(gScope, 50);
 	};
-	function updatePetition(index, name, author, likes, dislikes) {
+	function updatePetition(index, name, author, likes, dislikes, creation_time, expire_time) {
 		var petitions = gScope.Petitions;
 		var petitions_length = petitions.length;
+		var expired = expire_time*1000 <= Date.now()
 		for (var i = 0; i < petitions_length; i++) {
 			if (petitions[i].index == index) {
 				petitions[i].name = name;
 				petitions[i].author = author;
+				petitions[i].likes = likes;
+				petitions[i].dislikes = dislikes;
+				petitions[i].creation_time = creation_time;
+				petitions[i].expire_time = expire_time;
+				petitions[i].expired = expired;
+				UpdateDigest(gScope, 50);
+				return true;
+			}
+		}
+		return false;
+	};
+	function addOrUpdatePetition(index, name, description, author, likes, dislikes, creation_time, expire_time) {
+		if (!updatePetition(index, name, author, likes, dislikes, creation_time, expire_time)) {
+			addPetition(index, name, author, likes, dislikes, creation_time, expire_time);
+		}
+	};
+	function updatePetitionVotes(index, likes, dislikes) {
+		var petitions = gScope.Petitions;
+		var petitions_length = petitions.length;
+		for (var i = 0; i < petitions_length; i++) {
+			if (petitions[i].index == index) {
 				petitions[i].likes = likes;
 				petitions[i].dislikes = dislikes;
 				UpdateDigest(gScope, 50);
@@ -339,11 +163,6 @@ local browser_html =
 			}
 		}
 		return false;
-	};
-	function addOrUpdatePetition(index, name, author, likes, dislikes) {
-		if (!updatePetition(index, name, author, likes, dislikes)) {
-			addPetition(index, name, author, likes, dislikes);
-		}
 	};
 
 	function clearPetitions() {
@@ -354,15 +173,18 @@ local browser_html =
 
 <body>
 	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
-		<div class="petition" ng-repeat="petition in Petitions">
+		<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
 			<a ng-click='petitionClicked(petition)'>{{petition.name}}</a>
 
-			<a style="float: right;">Author: {{petition.author}}</a>
+			<span style="float: right;">Author: {{petition.author}}</span>
 			<br>
 			<br>
+			<span>Added on: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+			<br>
+			<span>Expires on: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
 			<div id="vote_menu">
-				<button ng-click="likeClicked(petition)" id="like_button"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
-				<button ng-click="dislikeClicked(petition)" id="like_button"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+				<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" id="like_button"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
+				<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" id="like_button"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
 			</div>
 			<br>
 		</div>
@@ -471,7 +293,7 @@ local editor_html =
 		color: var(--text-darker-color)
 	}
 
-	#create_button {
+	#createButton {
 		background-color:green;
 		border-radius: 5px;
 		float: right;
@@ -571,6 +393,9 @@ local editor_html =
 
 		}, timeout);
 	}
+
+	// https://stackoverflow.com/a/10262019
+	const isWhitespaceString = str => !str.replace(/\s/g, '').length
 
 	var gScope = null;
 
@@ -686,7 +511,7 @@ local editor_html =
 	{
 		name = ($("#nameInput").val());
 
-		if (name.length == 0)
+		if (isWhitespaceString(name))
 		{
 			gScope.Notifications.push({text: "Name must not be empty"})
 			UpdateDigest(gScope, 50);
@@ -694,13 +519,14 @@ local editor_html =
 		}
 		
 		var description_text = $("#descriptionInput").val();
-		if (description_text.length == 0)
+		if (isWhitespaceString(description_text))
 		{
 			gScope.Notifications.push({text: "Description must not be empty"})
 			UpdateDigest(gScope, 50);
 			return;
 		}
 
+		$('#createButton').attr('disabled','disabled');
 		gmod.CreatePetition(name, description_text);
 	}
 
@@ -721,7 +547,7 @@ If enter doesn't work, you have to copy some new lines from another text editor.
 			<div id="preview"></div>
 		</pane>
 
-		<input id="create_button" type="submit" value="Create" onclick="submit_petition()">
+		<input id="createButton" type="submit" value="Create" onclick="submit_petition()">
 	</tabs>
 
 	<div id="notification_list" ng-controller="petitionCreatorController as notificationList">
@@ -735,47 +561,178 @@ If enter doesn't work, you have to copy some new lines from another text editor.
 </html>
 ]]
 
-local function addPetitionToHTML(html, petition)
-	html:QueueJavascript(
-		"addOrUpdatePetition("
-		.. tostring(petition.index)
-		.. ", '"
-		.. string.JavascriptSafe(petition.name)
-		.. "', '"
-		.. string.JavascriptSafe(petition.author_name)
-		.. "', "
-		.. tostring(petition.num_agreed)
-		.. ", "
-		.. tostring(petition.num_disagreed)
-		.. ")"
-	)
-end
+local viewer_html =
+[[
+<!--Sorry for using HTML-->
 
-local function createPetition(name, description)
-	local description_compressed = util.Compress(description)
-	local description_compressed_len = #description_compressed
-	net.Start("create_petition")
-		net.WriteString(name)
-		net.WriteUInt(description_compressed_len, 19)
-		net.WriteData(description_compressed, description_compressed_len)
-	net.SendToServer()
-	print("Sent new petition to server")
-end
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
----@param petition petition
----@param dislike boolean
-local function voteOnPetition(petition, dislike)
-	net.Start("vote_on")
-		net.WriteInt(petition.index, PETITION_ID_BITS)
-		net.WriteBool(dislike)
-	net.SendToServer()
-end
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
+
+<script type="text/javascript" src="https://spec.commonmark.org/js/commonmark.js"></script>
+
+<script type="text/javascript"
+	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
+<script type="text/javascript"
+	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
+<script type="text/javascript"
+	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
+<script type="text/javascript"
+	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/lua.js"></script>
+
+<style>
+	:root {
+		--main-color: rgb(31, 31, 31);
+		--text-color: white;
+		--text-darker-color: gray;
+		--light-color: rgb(50, 50, 50);
+	}
+
+	html {
+		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		background-color: rgb(21, 21, 21);
+		tab-size: 4;
+	}
+
+	label {
+		color: var(--text-color);
+	}
+
+	span {
+		color: var(--text-color);
+	}
+
+	#preview {
+		width: 100%;
+		max-width: fit-content;
+		margin: 0;
+		color: var(--text-color);
+		box-sizing:border-box;
+		word-wrap: break-word;
+	}
+
+	#like_button {
+		color: var(--text-color);
+		background-color: black;
+	}
+	#like_button:disabled {
+		color: var(--text-color);
+		background-color:rgb(62, 62, 62);
+	}
+
+	#vote_menu {
+		float: right;
+	}
+</style>
+<script>
+	function UpdateDigest(scope, timeout) {
+		if (!scope) return;
+		if (scope.DigestUpdate) return;
+
+		scope.DigestUpdate = setTimeout(function () {
+			scope.DigestUpdate = 0;
+			scope.$digest();
+
+		}, timeout);
+	}
 
 
-local function closeWindow()
-	ChromeWindow:Remove();
-	ChromeWindow=nil
-end
+	var gScope = null;
+
+	angular.module("petitionViewer", [])
+		.controller('petitionViewerController', function ($scope) {
+			gScope = $scope;
+
+			$scope.Petition = {};
+
+			$scope.likeClicked = function () {
+				gmod.VoteOnPetition(gScope.Petition.index, false)
+			}
+			$scope.dislikeClicked = function () {
+				gmod.VoteOnPetition(gScope.Petition.index, true)
+			}
+		});
+	// Manually bootstrap angularjs because otherwise it will complain about document.location.origin
+	angular.element(document).ready(function () {
+		angular.bootstrap(document.body, ['petitionViewer']);
+	});
+
+	var commonmark = window.commonmark;
+	var writer = new commonmark.HtmlRenderer({ sourcepos: true, safe: true });
+	var reader = new commonmark.Parser();
+
+	var render = function(parsed) {
+		if (parsed === undefined) {
+			return;
+		}
+		var result = writer.render(parsed);
+		var preview = $("#preview");
+		preview.get(0).innerHTML = result;
+
+		$('a').click(function(e) {
+			// This is not for safety, but so we don't open empty links.
+			if (e.currentTarget.href.startsWith("http"))
+			{
+				e.preventDefault();
+				gmod.OpenURL(e.currentTarget.href)
+			}
+		});
+	};
+
+	function addOrUpdatePetition(index, name, description, author, likes, dislikes, creation_time, expire_time) {
+		var parsed = reader.parse(description);
+		render(parsed);
+
+		var expired = expire_time*1000 <= Date.now()
+
+		gScope.Petition.index = index
+		gScope.Petition.name = name;
+		gScope.Petition.author = author;
+		gScope.Petition.likes = likes;
+		gScope.Petition.dislikes = dislikes;
+		gScope.Petition.creation_time = creation_time;
+		gScope.Petition.expire_time = expire_time;
+		gScope.Petition.expired = expired;
+		UpdateDigest(gScope, 50);
+	};
+
+	function updatePetitionVotes(index, likes, dislikes)
+	{
+		gScope.Petition.likes = likes;
+		gScope.Petition.dislikes = dislikes;
+		UpdateDigest(gScope, 50);
+	}
+
+</script>
+
+<body ng-controller="petitionViewerController as petitionViewer">
+	<label>{{Petition.name}}</label>
+
+	<span style="float: right;">Author: {{Petition.author}}</span>
+	<br>
+	<br>
+
+	<span>Added on: {{Petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+	<br>
+	<span>Expires on: {{Petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
+
+	<div id="vote_menu">
+		<button ng-disabled="Petition.expired" ng-click="likeClicked()" id="like_button"><i class="fa fa-thumbs-up"></i> {{Petition.likes}}</button>
+		<button ng-disabled="Petition.expired" ng-click="dislikeClicked()" id="like_button"><i class="fa fa-thumbs-down"></i> {{Petition.dislikes}}</button>
+	</div>
+
+	<hr>
+
+	<div id="preview"></div>
+</body>
+
+</html>
+]]
 
 local eWindowMode = {
 	Closed = 0,
@@ -784,68 +741,280 @@ local eWindowMode = {
 	View = 3,
 }
 
-ChromeWindow = ChromeWindow or nil
-ChromeWindowState = ChromeWindowState or eWindowMode.Closed
+---@param window Panel
+---@return DHTML?
+local function getHTMLFromWindow(window)
+	for _, v in ipairs( window:GetChildren() ) do
+		if  v:GetClassName() == "HtmlPanel" then
+			return v
+		end
+	end
+	return nil
+end
+
+local function updatePetitionVotesHTML(html, petition)
+	html:QueueJavascript(
+		string.format(
+			"updatePetitionVotes(%u, %u, %u)",
+			petition.index,
+			petition.num_likes,
+			petition.num_dislikes
+		)
+	)
+end
+
+---@param html DHTML
+---@param petition petition
+local function addPetitionToHTML(html, petition)
+	html:QueueJavascript(string.format(
+			"addOrUpdatePetition(%u, '%s', '%s', '%s', %u, %u, %u, %u)",
+			petition.index,
+			string.JavascriptSafe(petition.name),
+			string.JavascriptSafe(petition.description),
+			string.JavascriptSafe(petition.author_name),
+			petition.num_likes,
+			petition.num_dislikes,
+			petition.creation_time,
+			petition.expire_time
+		)
+	)
+end
+
+local function createPetition(name, description)
+	SendPetition({
+		name=name,
+		description=description
+	})
+	print("Sent new petition to server")
+end
+
+---@param petition_id integer
+---@param dislike boolean
+local function voteOnPetition(petition_id, dislike)
+	net.Start("petition_vote_on")
+		net.WriteInt(petition_id, PETITION_ID_BITS)
+		net.WriteBool(dislike)
+	net.SendToServer()
+end
+
+
+local function closeWindow()
+	VoteWindow:Remove();
+	VoteWindow=nil
+end
+
+VoteWindow = VoteWindow or nil
+VoteWindowState = VoteWindowState or eWindowMode.Closed
+
+---@return DButton?
+local function getCornerButton()
+	if VoteWindowState == eWindowMode.Closed or VoteWindow == nil then 
+		return nil
+	end
+
+	for _, value in pairs(VoteWindow:GetChildren()) do
+		if value:GetName() == "corner_button" then return value end
+	end
+
+	return nil
+end
+
+---Sets the icon for the curner button.
+---
+---**Must be called after VoteWindowState has been set.**
+local function setAppropriateCurnerIcon()
+	local button = getCornerButton()
+	if button == nil then return end
+
+	if VoteWindowState == eWindowMode.Browse then
+		button:SetIcon("icon16/add.png")
+	else
+		button:SetIcon("icon16/arrow_undo.png")
+	end
+end
 
 local function loadPetitionBrowserPage(html)
 	html:SetHTML(browser_html)
-	html.OnFinishLoadingDocument = function(self, url) 
+	html.OnFinishLoadingDocument = function(self, url)
+		if VoteWindowState ~= eWindowMode.Browse then return end
+
 		for index, petition in pairs(petitions_cache) do
-			if petition.loaded then
-				addPetitionToHTML(html, petition)
-			end
+			print("Added", petition.name)
+			addPetitionToHTML(html, petition)
 		end
 	end
-	ChromeWindowState = eWindowMode.Browse
+	VoteWindowState = eWindowMode.Browse
+
+	setAppropriateCurnerIcon()
+
+	if #petitions_available == 0 then
+		net.Start("petition_list_request")
+		net.SendToServer()
+	end
+
 end
 
 local function loadPetitionEditorPage(html)
 	html:SetHTML(editor_html)
-	ChromeWindowState = eWindowMode.Edit
+	VoteWindowState = eWindowMode.Edit
+
+	setAppropriateCurnerIcon()
 end
 
+local function loadPetitionViewPage(html, petition_id)
+	html:SetHTML(viewer_html)
+	html.OnFinishLoadingDocument = function(self, url)
+		if VoteWindowState ~= eWindowMode.View then return end
 
-concommand.Add("chrome", function()
-	if ChromeWindowState ~= eWindowMode.Closed then return end
-	ChromeWindowState = eWindowMode.Browse
+		addPetitionToHTML(html, petitions_cache[petition_id])
+	end
+	VoteWindowState = eWindowMode.View
+	setAppropriateCurnerIcon()
+end
 
-	ChromeWindow = createWindow("Voting", 800, 600, false)
+local function openPetition(petition_id)
+	if VoteWindow == nil then return end
+	if VoteWindowState ~= eWindowMode.Browse then return end
 
-	local html = ChromeWindow:Add("DHTML")
+	local html = getHTMLFromWindow(VoteWindow)
+	loadPetitionViewPage(html, petition_id)
+end
+
+concommand.Add("vote", function()
+	if VoteWindowState ~= eWindowMode.Closed then return end
+	VoteWindowState = eWindowMode.Browse
+
+	VoteWindow = createWindow("Voting", 800, 600, false)
+
+	local html = VoteWindow:Add("DHTML")
 	html:Dock(FILL)
 	--html:SetAllowLua(false) -- Not needed, we can register the functions we need with AddFunction
-	html:SetHTML(browser_html)
 	--html:OpenURL("https://dvcs.w3.org/hg/d4e/raw-file/tip/key-event-test.html")
 	html.OnDocumentReady = function (self, url)
 		html:AddFunction("gmod", "CloseWindow", closeWindow)
 		html:AddFunction("gmod", "CreatePetition", createPetition)
+		html:AddFunction("gmod", "VoteOnPetition", voteOnPetition)
+		html:AddFunction("gmod", "OpenPetition", openPetition)
 		html:AddFunction("gmod", "OpenURL", gui.OpenURL)
 	end
 
 	loadPetitionBrowserPage(html)
 
-	ChromeWindow.OnClose = function (self)
+	VoteWindow.OnClose = function (self)
 		gui.EnableScreenClicker(false)
-		ChromeWindowState = eWindowMode.Closed
+		VoteWindowState = eWindowMode.Closed
 	end
 
-	local new_button = ChromeWindow:Add("DButton")
+	local new_button = VoteWindow:Add("DButton")
 	new_button:SetPos(5,5)
 	new_button:SetSize(20, 20)
 	new_button:SetIcon("icon16/add.png")
 	new_button:SetText("")
+	new_button:SetName("corner_button")
 	new_button.Paint = nil
 	new_button.DoClick = function()
-		if ChromeWindowState == eWindowMode.Browse then
+		if VoteWindowState == eWindowMode.Browse then
 			loadPetitionEditorPage(html)
-			new_button:SetIcon("icon16/arrow_undo.png")
 		else
 			loadPetitionBrowserPage(html)
-			new_button:SetIcon("icon16/add.png")
 		end
 	end
-
-	
 end)
 
 --#endregion HTML Window
+
+--#region Networking
+
+net.Receive("petition_transmit", function(len, ply)
+	---@type petition
+	---@diagnostic disable-next-line: missing-fields
+	local petition = {}
+	assert(net.ReadBool(), "Server sent us a petition without an ID. What the fuck am I supposed to do with it?")
+
+	petition.index = net.ReadUInt(PETITION_ID_BITS)
+	petition.name = net.ReadString()
+	if net.ReadBool() then -- include_votes
+		petition.num_likes    = net.ReadUInt(PETITION_VOTE_BITS)
+		petition.num_dislikes = net.ReadUInt(PETITION_VOTE_BITS)
+	end
+	if net.ReadBool() then -- include_author_info
+		petition.author_name    = net.ReadString()
+		petition.author_steamid = net.ReadString()
+	end
+	if net.ReadBool() then -- include_time_info
+		petition.creation_time = net.ReadUInt(32)
+		petition.expire_time = net.ReadUInt(32)
+	end
+
+	local description_length = net.ReadUInt(19)
+	local description_compressed = net.ReadData(description_length)
+	---@diagnostic disable-next-line: assign-type-mismatch
+	petition.description = util.Decompress(description_compressed)
+
+	petitions_cache[petition.index] = petition
+	petitions_available[petition.index] = true
+
+	if VoteWindowState == eWindowMode.Browse and VoteWindow ~= nil then
+		local html = getHTMLFromWindow(VoteWindow)
+		---@diagnostic disable-next-line: param-type-mismatch
+		addPetitionToHTML(html, petition)
+	end
+
+	print("Recieved: " .. petition.index)
+end)
+
+net.Receive("petition_list_responce", function(len, ply)
+	local num_petitions = net.ReadUInt(PETITION_ID_BITS)
+	for i = 1, num_petitions do
+		petitions_available[net.ReadUInt(PETITION_ID_BITS)] = true
+	end
+
+	local request = {}
+	local i = 1
+	for key, value in pairs(petitions_available) do
+		request[i] = key
+		i = i + 1
+	end
+
+	PrintTable(request)
+
+	net.Start("petition_request")
+		net.WriteUInt(math.Clamp(#request, 0, PETITION_MAX_PETITIONS_PER_REQUEST), 8)
+		for index, value in ipairs(request) do
+			if index > PETITION_MAX_PETITIONS_PER_REQUEST then break end
+			net.WriteUInt(value, PETITION_ID_BITS)
+		end
+	net.SendToServer()
+end)
+
+
+net.Receive("petition_votes_responce", function(len, ply)
+	local petition_id = net.ReadUInt(PETITION_ID_BITS)
+	local num_likes = net.ReadUInt(PETITION_VOTE_BITS)
+	local num_dislikes = net.ReadUInt(PETITION_VOTE_BITS)
+
+	assert(petitions_cache[petition_id], "Received votes for petition that wasn't cached")
+	petitions_cache[petition_id].num_likes = num_likes
+	petitions_cache[petition_id].num_dislikes = num_dislikes
+
+	if (VoteWindowState == eWindowMode.Browse or VoteWindowState == eWindowMode.View) and VoteWindow ~= nil then
+		local html = getHTMLFromWindow(VoteWindow)
+		updatePetitionVotesHTML(html, petitions_cache[petition_id])
+	end
+end)
+
+net.Receive("petition_accepted", function(len, ply)
+	local petition_id = net.ReadUInt(PETITION_ID_BITS)
+
+	if VoteWindowState == eWindowMode.Edit and VoteWindow ~= nil then
+		local html = getHTMLFromWindow(VoteWindow)
+		loadPetitionBrowserPage(html)
+	end
+
+	net.Start("petition_request")
+	net.WriteUInt(1, 8)
+	net.WriteUInt(petition_id, PETITION_ID_BITS)
+	net.SendToServer()
+end)
+
+--#endregion Networking

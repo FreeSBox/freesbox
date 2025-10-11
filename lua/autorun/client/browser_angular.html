@@ -1,7 +1,7 @@
 <!--Sorry for using HTML-->
 
 <!DOCTYPE html>
-<html>
+<html lang="ru-RU">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
@@ -34,6 +34,10 @@
 		color: var(--text-color);
 		background-color: black;
 	}
+	#like_button:disabled {
+		color: var(--text-color);
+		background-color:rgb(62, 62, 62);
+	}
 
 	#vote_menu {
 		float: right;
@@ -64,14 +68,14 @@
 			$scope.Petitions = [];
 
 			$scope.petitionClicked = function (petition) {
-				console.log("clicked", petition.index)
+				gmod.OpenPetition(petition.index)
 			}
 
 			$scope.likeClicked = function (petition) {
-				console.log("like clicked", petition.index)
+				gmod.VoteOnPetition(petition.index, false)
 			}
 			$scope.dislikeClicked = function (petition) {
-				console.log("dislike clicked", petition.index)
+				gmod.VoteOnPetition(petition.index, true)
 			}
 		});
 	// Manually bootstrap angularjs because otherwise it will complain about document.location.origin
@@ -79,17 +83,40 @@
 		angular.bootstrap(document.body, ['petitionBrowser']);
 	});
 
-	function addPetition(index, name, author, likes, dislikes) {
-		gScope.Petitions.push({ index: index, name: name, author: author, likes: likes, dislikes: dislikes });
+	function addPetition(index, name, author, likes, dislikes, creation_time, expire_time) {
+		var expired = expire_time*1000 <= Date.now()
+		gScope.Petitions.push({ index: index, name: name, author: author, likes: likes, dislikes: dislikes, creation_time: creation_time, expire_time: expire_time, expired: expired });
 		UpdateDigest(gScope, 50);
 	};
-	function updatePetition(index, name, author, likes, dislikes) {
+	function updatePetition(index, name, author, likes, dislikes, creation_time, expire_time) {
 		var petitions = gScope.Petitions;
 		var petitions_length = petitions.length;
+		var expired = expire_time*1000 <= Date.now()
 		for (var i = 0; i < petitions_length; i++) {
 			if (petitions[i].index == index) {
 				petitions[i].name = name;
 				petitions[i].author = author;
+				petitions[i].likes = likes;
+				petitions[i].dislikes = dislikes;
+				petitions[i].creation_time = creation_time;
+				petitions[i].expire_time = expire_time;
+				petitions[i].expired = expired;
+				UpdateDigest(gScope, 50);
+				return true;
+			}
+		}
+		return false;
+	};
+	function addOrUpdatePetition(index, name, description, author, likes, dislikes, creation_time, expire_time) {
+		if (!updatePetition(index, name, author, likes, dislikes, creation_time, expire_time)) {
+			addPetition(index, name, author, likes, dislikes, creation_time, expire_time);
+		}
+	};
+	function updatePetitionVotes(index, likes, dislikes) {
+		var petitions = gScope.Petitions;
+		var petitions_length = petitions.length;
+		for (var i = 0; i < petitions_length; i++) {
+			if (petitions[i].index == index) {
 				petitions[i].likes = likes;
 				petitions[i].dislikes = dislikes;
 				UpdateDigest(gScope, 50);
@@ -97,11 +124,6 @@
 			}
 		}
 		return false;
-	};
-	function addOrUpdatePetition(index, name, author, likes, dislikes) {
-		if (!updatePetition(index, name, author, likes, dislikes)) {
-			addPetition(index, name, author, likes, dislikes);
-		}
 	};
 
 	function clearPetitions() {
@@ -112,15 +134,18 @@
 
 <body>
 	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
-		<div class="petition" ng-repeat="petition in Petitions">
+		<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
 			<a ng-click='petitionClicked(petition)'>{{petition.name}}</a>
 
-			<a style="float: right;">Author: {{petition.author}}</a>
+			<span style="float: right;">Author: {{petition.author}}</span>
 			<br>
 			<br>
+			<span>Added on: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+			<br>
+			<span>Expires on: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
 			<div id="vote_menu">
-				<button ng-click="likeClicked(petition)" id="like_button"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
-				<button ng-click="dislikeClicked(petition)" id="like_button"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+				<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" id="like_button"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
+				<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" id="like_button"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
 			</div>
 			<br>
 		</div>
