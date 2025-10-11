@@ -1,18 +1,35 @@
 <!--Sorry for using HTML-->
-
 <!DOCTYPE html>
-<html lang="ru-RU">
+<html>
+<head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
-<script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
 		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
 		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
 		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
-		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/lua.js"></script>
-
+</head>
+<body>
+	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
+		<div infinite-scroll='loadMore()' infinite-scroll-distance='1'>
+			<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
+				<a ng-click='petitionClicked(petition)'>{{petition.name}}</a>
+				<span style="float: right;">Author: {{petition.author}}</span>
+				<br>
+				<br>
+				<span>Added on: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+				<br>
+				<span>Expires on: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
+				<div id="vote_menu">
+					<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" id="like_button"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
+					<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" id="like_button"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+				</div>
+				<br>
+			</div>
+		</div>
+	</div>
+</body>
 <style>
 	:root {
 		--main-color: rgb(31, 31, 31);
@@ -44,8 +61,23 @@
 	}
 </style>
 <script>
+	/* ng-infinite-scroll - v1.0.0 - 2013-02-23 */
+	var mod;mod=angular.module("infinite-scroll",[]),mod.directive("infiniteScroll",["$rootScope","$window","$timeout",function(i,n,e){return{link:function(t,l,o){var r,c,f,a;return n=angular.element(n),f=0,null!=o.infiniteScrollDistance&&t.$watch(o.infiniteScrollDistance,function(i){return f=parseInt(i,10)}),a=!0,r=!1,null!=o.infiniteScrollDisabled&&t.$watch(o.infiniteScrollDisabled,function(i){return a=!i,a&&r?(r=!1,c()):void 0}),c=function(){var e,c,u,d;return d=n.height()+n.scrollTop(),e=l.offset().top+l.height(),c=e-d,u=n.height()*f>=c,u&&a?i.$$phase?t.$eval(o.infiniteScroll):t.$apply(o.infiniteScroll):u?r=!0:void 0},n.on("scroll",c),t.$on("$destroy",function(){return n.off("scroll",c)}),e(function(){return o.infiniteScrollImmediateCheck?t.$eval(o.infiniteScrollImmediateCheck)?c():void 0:c()},0)}}}]);
+</script>
+<script>
 	// Sorry for using javascript.
 	// Sorry for using angular.
+
+	// https://stackoverflow.com/a/75988895
+	const debounce = (callback, wait) => {
+		let timeoutId = null;
+		return (...args) => {
+			window.clearTimeout(timeoutId);
+			timeoutId = window.setTimeout(() => {
+			callback(...args);
+			}, wait);
+		};
+	}
 
 	function UpdateDigest(scope, timeout) {
 		if (!scope) return;
@@ -60,12 +92,17 @@
 
 	var gScope = null;
 
-	angular.module("petitionBrowser", [])
+	angular.module("petitionBrowser", ["infinite-scroll"])
 		.controller('petitionBrowserController', function ($scope) {
 			gScope = $scope;
 
 			var petitionList = this;
 			$scope.Petitions = [];
+
+
+			$scope.loadMore = debounce(() => {
+				gmod.RequestMorePetitions()
+			}, 300);
 
 			$scope.petitionClicked = function (petition) {
 				gmod.OpenPetition(petition.index)
@@ -131,25 +168,5 @@
 		UpdateDigest(gScope, 50);
 	};
 </script>
-
-<body>
-	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
-		<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
-			<a ng-click='petitionClicked(petition)'>{{petition.name}}</a>
-
-			<span style="float: right;">Author: {{petition.author}}</span>
-			<br>
-			<br>
-			<span>Added on: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
-			<br>
-			<span>Expires on: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
-			<div id="vote_menu">
-				<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" id="like_button"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
-				<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" id="like_button"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
-			</div>
-			<br>
-		</div>
-	</div>
-</body>
 
 </html>

@@ -38,20 +38,37 @@ end
 local browser_html =
 [[
 <!--Sorry for using HTML-->
-
 <!DOCTYPE html>
-<html lang="ru-RU">
+<html>
+<head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
-<script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
 		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
 		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
 		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
-		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/lua.js"></script>
-
+</head>
+<body>
+	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
+		<div infinite-scroll='loadMore()' infinite-scroll-distance='1'>
+			<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
+				<a ng-click='petitionClicked(petition)'>{{petition.name}}</a>
+				<span style="float: right;">Author: {{petition.author}}</span>
+				<br>
+				<br>
+				<span>Added on: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+				<br>
+				<span>Expires on: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
+				<div id="vote_menu">
+					<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" id="like_button"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
+					<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" id="like_button"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+				</div>
+				<br>
+			</div>
+		</div>
+	</div>
+</body>
 <style>
 	:root {
 		--main-color: rgb(31, 31, 31);
@@ -83,8 +100,23 @@ local browser_html =
 	}
 </style>
 <script>
+	/* ng-infinite-scroll - v1.0.0 - 2013-02-23 */
+	var mod;mod=angular.module("infinite-scroll",[]),mod.directive("infiniteScroll",["$rootScope","$window","$timeout",function(i,n,e){return{link:function(t,l,o){var r,c,f,a;return n=angular.element(n),f=0,null!=o.infiniteScrollDistance&&t.$watch(o.infiniteScrollDistance,function(i){return f=parseInt(i,10)}),a=!0,r=!1,null!=o.infiniteScrollDisabled&&t.$watch(o.infiniteScrollDisabled,function(i){return a=!i,a&&r?(r=!1,c()):void 0}),c=function(){var e,c,u,d;return d=n.height()+n.scrollTop(),e=l.offset().top+l.height(),c=e-d,u=n.height()*f>=c,u&&a?i.$$phase?t.$eval(o.infiniteScroll):t.$apply(o.infiniteScroll):u?r=!0:void 0},n.on("scroll",c),t.$on("$destroy",function(){return n.off("scroll",c)}),e(function(){return o.infiniteScrollImmediateCheck?t.$eval(o.infiniteScrollImmediateCheck)?c():void 0:c()},0)}}}]);
+</script>
+<script>
 	// Sorry for using javascript.
 	// Sorry for using angular.
+
+	// https://stackoverflow.com/a/75988895
+	const debounce = (callback, wait) => {
+		let timeoutId = null;
+		return (...args) => {
+			window.clearTimeout(timeoutId);
+			timeoutId = window.setTimeout(() => {
+			callback(...args);
+			}, wait);
+		};
+	}
 
 	function UpdateDigest(scope, timeout) {
 		if (!scope) return;
@@ -99,12 +131,17 @@ local browser_html =
 
 	var gScope = null;
 
-	angular.module("petitionBrowser", [])
+	angular.module("petitionBrowser", ["infinite-scroll"])
 		.controller('petitionBrowserController', function ($scope) {
 			gScope = $scope;
 
 			var petitionList = this;
 			$scope.Petitions = [];
+
+
+			$scope.loadMore = debounce(() => {
+				gmod.RequestMorePetitions()
+			}, 300);
 
 			$scope.petitionClicked = function (petition) {
 				gmod.OpenPetition(petition.index)
@@ -170,26 +207,6 @@ local browser_html =
 		UpdateDigest(gScope, 50);
 	};
 </script>
-
-<body>
-	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
-		<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
-			<a ng-click='petitionClicked(petition)'>{{petition.name}}</a>
-
-			<span style="float: right;">Author: {{petition.author}}</span>
-			<br>
-			<br>
-			<span>Added on: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
-			<br>
-			<span>Expires on: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
-			<div id="vote_menu">
-				<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" id="like_button"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
-				<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" id="like_button"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
-			</div>
-			<br>
-		</div>
-	</div>
-</body>
 
 </html>
 ]]
@@ -797,6 +814,28 @@ local function voteOnPetition(petition_id, dislike)
 	net.SendToServer()
 end
 
+local function requestMorePetitions()
+	local request = {}
+	local i = 1
+	for index, _ in pairs(petitions_available) do
+		if petitions_cache[index] ~= nil then goto CONTITNUE end
+		if #request >= PETITION_MAX_PETITIONS_PER_REQUEST then break end
+
+		request[#request+1] = index
+		::CONTITNUE::
+		i = i + 1
+	end
+
+	if #request == 0 then return end
+
+	net.Start("petition_request")
+		net.WriteUInt(#request, 8)
+		for index, value in ipairs(request) do
+			net.WriteUInt(value, PETITION_ID_BITS)
+		end
+	net.SendToServer()
+end
+
 
 local function closeWindow()
 	VoteWindow:Remove();
@@ -839,7 +878,7 @@ local function loadPetitionBrowserPage(html)
 		if VoteWindowState ~= eWindowMode.Browse then return end
 
 		for index, petition in pairs(petitions_cache) do
-			print("Added", petition.name)
+			print("Added", petition.index, petition.name)
 			addPetitionToHTML(html, petition)
 		end
 	end
@@ -847,11 +886,8 @@ local function loadPetitionBrowserPage(html)
 
 	setAppropriateCurnerIcon()
 
-	if #petitions_available == 0 then
-		net.Start("petition_list_request")
-		net.SendToServer()
-	end
-
+	net.Start("petition_list_request")
+	net.SendToServer()
 end
 
 local function loadPetitionEditorPage(html)
@@ -895,6 +931,7 @@ concommand.Add("vote", function()
 		html:AddFunction("gmod", "CreatePetition", createPetition)
 		html:AddFunction("gmod", "VoteOnPetition", voteOnPetition)
 		html:AddFunction("gmod", "OpenPetition", openPetition)
+		html:AddFunction("gmod", "RequestMorePetitions", requestMorePetitions)
 		html:AddFunction("gmod", "OpenURL", gui.OpenURL)
 	end
 
@@ -969,22 +1006,7 @@ net.Receive("petition_list_responce", function(len, ply)
 		petitions_available[net.ReadUInt(PETITION_ID_BITS)] = true
 	end
 
-	local request = {}
-	local i = 1
-	for key, value in pairs(petitions_available) do
-		request[i] = key
-		i = i + 1
-	end
-
-	PrintTable(request)
-
-	net.Start("petition_request")
-		net.WriteUInt(math.Clamp(#request, 0, PETITION_MAX_PETITIONS_PER_REQUEST), 8)
-		for index, value in ipairs(request) do
-			if index > PETITION_MAX_PETITIONS_PER_REQUEST then break end
-			net.WriteUInt(value, PETITION_ID_BITS)
-		end
-	net.SendToServer()
+	requestMorePetitions()
 end)
 
 
