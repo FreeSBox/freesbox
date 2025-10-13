@@ -1,5 +1,5 @@
 local buttons =  {
-	{ Text="Ulx Menu", Func=function(menu) RunConsoleCommand("ulx", "menu") menu:Close() end },
+	{ Text="Petitions", Func=function(menu) RunConsoleCommand("vote") menu:Close() end },
 }
 
 local checkboxes = {
