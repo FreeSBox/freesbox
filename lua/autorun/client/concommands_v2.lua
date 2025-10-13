@@ -1,5 +1,5 @@
 local cl_disable_render_on_focus_loss = CreateClientConVar("cl_disable_render_on_focus_loss", "0", true, false, "Prevents game rendering when it isn't focused")
-hook.Add("PreRender", "disable_render", function(cmd)
+hook.Add("PreRender", "disable_render", function()
 	if cl_disable_render_on_focus_loss:GetBool() and not system.HasFocus() then
 		return true
 	end

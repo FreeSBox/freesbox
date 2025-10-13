@@ -82,14 +82,24 @@ local function getVotesFromIndex(petition_id)
 end
 
 ---@param petition_id integer
+---@param ply Player?
 ---@return petition? -- nil if the petiotion doesn't exist.
-local function getPetitionFromIndex(petition_id)
+local function getPetitionFromIndex(petition_id, ply)
 	local results = sql.QueryTyped("SELECT * FROM petitions WHERE id = ?", petition_id)
 	assert(results ~= false, "The SQL Query is broken in 'getPetitionFromIndex'")
 	if #results ~= 1 then return nil end
 	local result = results[1]
 
 	local num_likes, num_dislikes = getVotesFromIndex(petition_id)
+
+	local vote_status = eVoteStatus.NOT_VOTED
+	if ply then
+		local results = sql.QueryTyped("SELECT vote_status FROM votes WHERE petition_id = ? AND author_steamid = ?", petition_id, ply:OwnerSteamID64())
+		assert(results ~= false, "The SQL Query is broken in 'getPetitionFromIndex'")
+		if #results == 1 then
+			vote_status = results[1].vote_status
+		end
+	end
 
 	return {
 		index = petition_id,
@@ -100,7 +110,8 @@ local function getPetitionFromIndex(petition_id)
 		author_name = result.author_name,
 		author_steamid = result.author_steamid,
 		creation_time = result.creation_time,
-		expire_time = result.expire_time
+		expire_time = result.expire_time,
+		our_vote_status = vote_status
 	}
 end
 
@@ -666,6 +677,7 @@ net.Receive("petition_transmit", function(len, ply)
 	if net.ReadBool() then -- include_votes
 		net.ReadUInt(PETITION_VOTE_BITS) -- num_likes
 		net.ReadUInt(PETITION_VOTE_BITS) -- num_dislikes
+		net.ReadUInt(2) -- vote_status
 	end
 
 	if net.ReadBool() then -- include_author_info
@@ -736,7 +748,7 @@ net.Receive("petition_request", function(len, ply)
 
 	for i = 1, num_petitions do
 		local petition_id = net.ReadUInt(PETITION_ID_BITS)
-		local petition = getPetitionFromIndex(petition_id)
+		local petition = getPetitionFromIndex(petition_id, ply)
 		if petition == nil then
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Invalid petition '".. petition_id .. "' requested.")
 			goto CONTINUE
@@ -764,10 +776,18 @@ end)
 local function sendVoteResponce(petition_id, ply)
 	local num_likes, num_dislikes = getVotesFromIndex(petition_id)
 
+	local results = sql.QueryTyped("SELECT vote_status FROM votes WHERE petition_id = ? AND author_steamid = ?", petition_id, ply:OwnerSteamID64())
+	assert(results ~= false, "The SQL Query is broken in 'sendVoteResponce'")
+	local vote_status = eVoteStatus.NOT_VOTED
+	if #results == 1 then
+		vote_status = results[1].vote_status
+	end
+
 	net.Start("petition_votes_responce")
 		net.WriteUInt(petition_id, PETITION_ID_BITS)
 		net.WriteUInt(num_likes, PETITION_VOTE_BITS)
 		net.WriteUInt(num_dislikes, PETITION_VOTE_BITS)
+		net.WriteUInt(vote_status, 2)
 	net.Send(ply)
 end
 

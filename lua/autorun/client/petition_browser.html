@@ -14,7 +14,7 @@
 	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
 		<div infinite-scroll='loadMore()' infinite-scroll-distance='1'>
 			<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
-				<a ng-click='petitionClicked(petition)'>{{petition.name}}</a>
+				<a id="petitionName" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
 				<span style="float: right;">Author: {{petition.author}}</span>
 				<br>
 				<br>
@@ -22,8 +22,8 @@
 				<br>
 				<span>Expires on: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
 				<div id="vote_menu">
-					<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" id="like_button"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
-					<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" id="like_button"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+					<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" id="like_button" ng-class="{btn_active: petition.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
+					<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" id="like_button" ng-class="{btn_active: petition.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
 				</div>
 				<br>
 			</div>
@@ -33,6 +33,7 @@
 <style>
 	:root {
 		--main-color: rgb(31, 31, 31);
+		--text-darker-color: gray;
 		--text-color: white
 	}
 
@@ -48,12 +49,20 @@
 	}
 
 	#like_button {
-		color: var(--text-color);
 		background-color: black;
 	}
 	#like_button:disabled {
-		color: var(--text-color);
 		background-color:rgb(62, 62, 62);
+	}
+	#like_button:not(.btn_active) {
+		color: darkgrey;
+	}
+	.btn_active {
+		color: var(--text-color);
+	}
+
+	#petitionName {
+		cursor: pointer;
 	}
 
 	#vote_menu {
@@ -90,6 +99,12 @@
 		}, timeout);
 	}
 
+	const eVoteStatus = Object.freeze({
+		NOT_VOTED: 0,
+		LIKE: 1,
+		DISLIKE: 2
+	});
+
 	var gScope = null;
 
 	angular.module("petitionBrowser", ["infinite-scroll"])
@@ -120,12 +135,12 @@
 		angular.bootstrap(document.body, ['petitionBrowser']);
 	});
 
-	function addPetition(index, name, author, likes, dislikes, creation_time, expire_time) {
+	function addPetition(index, name, author, likes, dislikes, our_vote_status, creation_time, expire_time) {
 		var expired = expire_time*1000 <= Date.now()
-		gScope.Petitions.push({ index: index, name: name, author: author, likes: likes, dislikes: dislikes, creation_time: creation_time, expire_time: expire_time, expired: expired });
+		gScope.Petitions.push({ index: index, name: name, author: author, likes: likes, dislikes: dislikes, our_vote_status: our_vote_status, creation_time: creation_time, expire_time: expire_time, expired: expired });
 		UpdateDigest(gScope, 50);
 	};
-	function updatePetition(index, name, author, likes, dislikes, creation_time, expire_time) {
+	function updatePetition(index, name, author, likes, dislikes, our_vote_status, creation_time, expire_time) {
 		var petitions = gScope.Petitions;
 		var petitions_length = petitions.length;
 		var expired = expire_time*1000 <= Date.now()
@@ -135,6 +150,7 @@
 				petitions[i].author = author;
 				petitions[i].likes = likes;
 				petitions[i].dislikes = dislikes;
+				petitions[i].our_vote_status = our_vote_status;
 				petitions[i].creation_time = creation_time;
 				petitions[i].expire_time = expire_time;
 				petitions[i].expired = expired;
@@ -144,18 +160,19 @@
 		}
 		return false;
 	};
-	function addOrUpdatePetition(index, name, description, author, likes, dislikes, creation_time, expire_time) {
-		if (!updatePetition(index, name, author, likes, dislikes, creation_time, expire_time)) {
-			addPetition(index, name, author, likes, dislikes, creation_time, expire_time);
+	function addOrUpdatePetition(index, name, description, author, likes, dislikes, our_vote_status, creation_time, expire_time) {
+		if (!updatePetition(index, name, author, likes, dislikes, our_vote_status, creation_time, expire_time)) {
+			addPetition(index, name, author, likes, dislikes, our_vote_status, creation_time, expire_time);
 		}
 	};
-	function updatePetitionVotes(index, likes, dislikes) {
+	function updatePetitionVotes(index, likes, dislikes, our_vote_status) {
 		var petitions = gScope.Petitions;
 		var petitions_length = petitions.length;
 		for (var i = 0; i < petitions_length; i++) {
 			if (petitions[i].index == index) {
 				petitions[i].likes = likes;
 				petitions[i].dislikes = dislikes;
+				petitions[i].our_vote_status = our_vote_status;
 				UpdateDigest(gScope, 50);
 				return true;
 			}

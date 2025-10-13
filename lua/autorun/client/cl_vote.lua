@@ -45,12 +45,15 @@ local browser_html =
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
+		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
+		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
+		<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
 </head>
 <body>
 	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
 		<div infinite-scroll='loadMore()' infinite-scroll-distance='1'>
 			<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
-				<a ng-click='petitionClicked(petition)'>{{petition.name}}</a>
+				<a id="petitionName" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
 				<span style="float: right;">Author: {{petition.author}}</span>
 				<br>
 				<br>
@@ -58,8 +61,8 @@ local browser_html =
 				<br>
 				<span>Expires on: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
 				<div id="vote_menu">
-					<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" id="like_button"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
-					<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" id="like_button"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+					<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" id="like_button" ng-class="{btn_active: petition.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
+					<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" id="like_button" ng-class="{btn_active: petition.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
 				</div>
 				<br>
 			</div>
@@ -69,6 +72,7 @@ local browser_html =
 <style>
 	:root {
 		--main-color: rgb(31, 31, 31);
+		--text-darker-color: gray;
 		--text-color: white
 	}
 
@@ -84,12 +88,20 @@ local browser_html =
 	}
 
 	#like_button {
-		color: var(--text-color);
 		background-color: black;
 	}
 	#like_button:disabled {
-		color: var(--text-color);
 		background-color:rgb(62, 62, 62);
+	}
+	#like_button:not(.btn_active) {
+		color: darkgrey;
+	}
+	.btn_active {
+		color: var(--text-color);
+	}
+
+	#petitionName {
+		cursor: pointer;
 	}
 
 	#vote_menu {
@@ -126,6 +138,12 @@ local browser_html =
 		}, timeout);
 	}
 
+	const eVoteStatus = Object.freeze({
+		NOT_VOTED: 0,
+		LIKE: 1,
+		DISLIKE: 2
+	});
+
 	var gScope = null;
 
 	angular.module("petitionBrowser", ["infinite-scroll"])
@@ -156,12 +174,12 @@ local browser_html =
 		angular.bootstrap(document.body, ['petitionBrowser']);
 	});
 
-	function addPetition(index, name, author, likes, dislikes, creation_time, expire_time) {
+	function addPetition(index, name, author, likes, dislikes, our_vote_status, creation_time, expire_time) {
 		var expired = expire_time*1000 <= Date.now()
-		gScope.Petitions.push({ index: index, name: name, author: author, likes: likes, dislikes: dislikes, creation_time: creation_time, expire_time: expire_time, expired: expired });
+		gScope.Petitions.push({ index: index, name: name, author: author, likes: likes, dislikes: dislikes, our_vote_status: our_vote_status, creation_time: creation_time, expire_time: expire_time, expired: expired });
 		UpdateDigest(gScope, 50);
 	};
-	function updatePetition(index, name, author, likes, dislikes, creation_time, expire_time) {
+	function updatePetition(index, name, author, likes, dislikes, our_vote_status, creation_time, expire_time) {
 		var petitions = gScope.Petitions;
 		var petitions_length = petitions.length;
 		var expired = expire_time*1000 <= Date.now()
@@ -171,6 +189,7 @@ local browser_html =
 				petitions[i].author = author;
 				petitions[i].likes = likes;
 				petitions[i].dislikes = dislikes;
+				petitions[i].our_vote_status = our_vote_status;
 				petitions[i].creation_time = creation_time;
 				petitions[i].expire_time = expire_time;
 				petitions[i].expired = expired;
@@ -180,18 +199,19 @@ local browser_html =
 		}
 		return false;
 	};
-	function addOrUpdatePetition(index, name, description, author, likes, dislikes, creation_time, expire_time) {
-		if (!updatePetition(index, name, author, likes, dislikes, creation_time, expire_time)) {
-			addPetition(index, name, author, likes, dislikes, creation_time, expire_time);
+	function addOrUpdatePetition(index, name, description, author, likes, dislikes, our_vote_status, creation_time, expire_time) {
+		if (!updatePetition(index, name, author, likes, dislikes, our_vote_status, creation_time, expire_time)) {
+			addPetition(index, name, author, likes, dislikes, our_vote_status, creation_time, expire_time);
 		}
 	};
-	function updatePetitionVotes(index, likes, dislikes) {
+	function updatePetitionVotes(index, likes, dislikes, our_vote_status) {
 		var petitions = gScope.Petitions;
 		var petitions_length = petitions.length;
 		for (var i = 0; i < petitions_length; i++) {
 			if (petitions[i].index == index) {
 				petitions[i].likes = likes;
 				petitions[i].dislikes = dislikes;
+				petitions[i].our_vote_status = our_vote_status;
 				UpdateDigest(gScope, 50);
 				return true;
 			}
@@ -214,14 +234,22 @@ local editor_html =
 
 <!DOCTYPE html>
 <html>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
 
 <script type="text/javascript" src="https://spec.commonmark.org/js/commonmark.js"></script>
+
+<script type="text/javascript"
+	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
+<script type="text/javascript"
+	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
+<script type="text/javascript"
+	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
+<script type="text/javascript"
+	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/lua.js"></script>
+
 <style>
 	:root {
 		--main-color: rgb(31, 31, 31);
@@ -303,6 +331,11 @@ local editor_html =
 		float: right;
 		width: 8em;
 		height: 2em;
+		cursor: pointer;
+	}
+
+	#createButton:disabled {
+		cursor: not-allowed;
 	}
 
 	/*Tabs*/
@@ -579,6 +612,16 @@ local viewer_html =
 <script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
 
 <script type="text/javascript" src="https://spec.commonmark.org/js/commonmark.js"></script>
+
+<script type="text/javascript"
+	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
+<script type="text/javascript"
+	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
+<script type="text/javascript"
+	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
+<script type="text/javascript"
+	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/lua.js"></script>
+
 <style>
 	:root {
 		--main-color: rgb(31, 31, 31);
@@ -611,12 +654,16 @@ local viewer_html =
 	}
 
 	#like_button {
-		color: var(--text-color);
 		background-color: black;
 	}
 	#like_button:disabled {
-		color: var(--text-color);
 		background-color:rgb(62, 62, 62);
+	}
+	#like_button:not(.btn_active) {
+		color: darkgrey;
+	}
+	.btn_active {
+		color: var(--text-color);
 	}
 
 	#vote_menu {
@@ -635,6 +682,11 @@ local viewer_html =
 		}, timeout);
 	}
 
+	const eVoteStatus = Object.freeze({
+		NOT_VOTED: 0,
+		LIKE: 1,
+		DISLIKE: 2
+	});
 
 	var gScope = null;
 
@@ -678,7 +730,7 @@ local viewer_html =
 		});
 	};
 
-	function addOrUpdatePetition(index, name, description, author, likes, dislikes, creation_time, expire_time) {
+	function addOrUpdatePetition(index, name, description, author, likes, dislikes, our_vote_status, creation_time, expire_time) {
 		var parsed = reader.parse(description);
 		render(parsed);
 
@@ -689,16 +741,18 @@ local viewer_html =
 		gScope.Petition.author = author;
 		gScope.Petition.likes = likes;
 		gScope.Petition.dislikes = dislikes;
+		gScope.Petition.our_vote_status = our_vote_status;
 		gScope.Petition.creation_time = creation_time;
 		gScope.Petition.expire_time = expire_time;
 		gScope.Petition.expired = expired;
 		UpdateDigest(gScope, 50);
 	};
 
-	function updatePetitionVotes(index, likes, dislikes)
+	function updatePetitionVotes(index, likes, dislikes, our_vote_status)
 	{
 		gScope.Petition.likes = likes;
 		gScope.Petition.dislikes = dislikes;
+		gScope.Petition.our_vote_status = our_vote_status;
 		UpdateDigest(gScope, 50);
 	}
 
@@ -716,8 +770,8 @@ local viewer_html =
 	<span>Expires on: {{Petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
 
 	<div id="vote_menu">
-		<button ng-disabled="Petition.expired" ng-click="likeClicked()" id="like_button"><i class="fa fa-thumbs-up"></i> {{Petition.likes}}</button>
-		<button ng-disabled="Petition.expired" ng-click="dislikeClicked()" id="like_button"><i class="fa fa-thumbs-down"></i> {{Petition.dislikes}}</button>
+		<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" id="like_button" ng-class="{btn_active: petition.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
+		<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" id="like_button" ng-class="{btn_active: petition.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
 	</div>
 
 	<hr>
@@ -749,10 +803,11 @@ end
 local function updatePetitionVotesHTML(html, petition)
 	html:QueueJavascript(
 		string.format(
-			"updatePetitionVotes(%u, %u, %u)",
+			"updatePetitionVotes(%u, %u, %u, %u)",
 			petition.index,
 			petition.num_likes,
-			petition.num_dislikes
+			petition.num_dislikes,
+			petition.our_vote_status
 		)
 	)
 end
@@ -761,13 +816,14 @@ end
 ---@param petition petition
 local function addPetitionToHTML(html, petition)
 	html:QueueJavascript(string.format(
-			"addOrUpdatePetition(%u, '%s', '%s', '%s', %u, %u, %u, %u)",
+			"addOrUpdatePetition(%u, '%s', '%s', '%s', %u, %u, %u, %u, %u)",
 			petition.index,
 			string.JavascriptSafe(petition.name),
 			string.JavascriptSafe(petition.description),
 			string.JavascriptSafe(petition.author_name),
 			petition.num_likes,
 			petition.num_dislikes,
+			petition.our_vote_status,
 			petition.creation_time,
 			petition.expire_time
 		)
@@ -948,8 +1004,9 @@ net.Receive("petition_transmit", function(len, ply)
 	petition.index = net.ReadUInt(PETITION_ID_BITS)
 	petition.name = net.ReadString()
 	if net.ReadBool() then -- include_votes
-		petition.num_likes    = net.ReadUInt(PETITION_VOTE_BITS)
-		petition.num_dislikes = net.ReadUInt(PETITION_VOTE_BITS)
+		petition.num_likes       = net.ReadUInt(PETITION_VOTE_BITS)
+		petition.num_dislikes    = net.ReadUInt(PETITION_VOTE_BITS)
+		petition.our_vote_status = net.ReadUInt(2)
 	end
 	if net.ReadBool() then -- include_author_info
 		petition.author_name    = net.ReadString()
@@ -991,10 +1048,12 @@ net.Receive("petition_votes_responce", function(len, ply)
 	local petition_id = net.ReadUInt(PETITION_ID_BITS)
 	local num_likes = net.ReadUInt(PETITION_VOTE_BITS)
 	local num_dislikes = net.ReadUInt(PETITION_VOTE_BITS)
+	local our_vote_status = net.ReadUInt(2)
 
 	assert(petitions_cache[petition_id], "Received votes for petition that wasn't cached")
 	petitions_cache[petition_id].num_likes = num_likes
 	petitions_cache[petition_id].num_dislikes = num_dislikes
+	petitions_cache[petition_id].our_vote_status = our_vote_status
 
 	if (VoteWindowState == eWindowMode.Browse or VoteWindowState == eWindowMode.View) and VoteWindow ~= nil then
 		local html = getHTMLFromWindow(VoteWindow)

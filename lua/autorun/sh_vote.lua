@@ -21,6 +21,7 @@ MAX_PETITIONS_PER_DAY = 2
 ---@field author_steamid string? Author's steamid64.
 ---@field creation_time number?
 ---@field expire_time number? When can we no longer vote on the petition.
+---@field our_vote_status number? Client side eVoteStatus.
 
 ---@param petition petition
 ---@param target_player Player? Only available on the server side.
@@ -45,6 +46,7 @@ function SendPetition(petition, target_player)
 		if include_votes then
 			net.WriteUInt(petition.num_likes, PETITION_VOTE_BITS)
 			net.WriteUInt(petition.num_dislikes, PETITION_VOTE_BITS)
+			net.WriteUInt(petition.our_vote_status, 2)
 		end
 		net.WriteBool(include_author_info)
 		if include_author_info then
@@ -56,7 +58,6 @@ function SendPetition(petition, target_player)
 			net.WriteUInt(petition.creation_time, 32)
 			net.WriteUInt(petition.expire_time, 32)
 		end
-		
 		net.WriteUInt(description_compressed_len, 19)
 		net.WriteData(description_compressed, description_compressed_len)
 
