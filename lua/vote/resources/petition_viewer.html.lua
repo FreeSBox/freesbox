@@ -1,0 +1,173 @@
+return [[
+<!--Sorry for using HTML-->
+
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
+
+<script type="text/javascript" src="https://spec.commonmark.org/js/commonmark.js"></script>
+
+<style>
+	:root {
+		--main-color: rgb(31, 31, 31);
+		--text-color: white;
+		--text-darker-color: gray;
+		--light-color: rgb(50, 50, 50);
+	}
+
+	html {
+		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		background-color: rgb(21, 21, 21);
+		tab-size: 4;
+	}
+
+	label {
+		color: var(--text-color);
+	}
+
+	span {
+		color: var(--text-color);
+	}
+
+	#preview {
+		width: 100%;
+		max-width: fit-content;
+		margin: 0;
+		color: var(--text-color);
+		box-sizing:border-box;
+		word-wrap: break-word;
+	}
+
+	#like_button {
+		background-color: black;
+	}
+	#like_button:disabled {
+		background-color:rgb(62, 62, 62);
+	}
+	#like_button:not(.btn_active) {
+		color: darkgrey;
+	}
+	.btn_active {
+		color: var(--text-color);
+	}
+
+	#vote_menu {
+		float: right;
+	}
+</style>
+<script>
+	function UpdateDigest(scope, timeout) {
+		if (!scope) return;
+		if (scope.DigestUpdate) return;
+
+		scope.DigestUpdate = setTimeout(function () {
+			scope.DigestUpdate = 0;
+			scope.$digest();
+
+		}, timeout);
+	}
+
+	const eVoteStatus = Object.freeze({
+		NOT_VOTED: 0,
+		LIKE: 1,
+		DISLIKE: 2
+	});
+
+	var gScope = null;
+
+	angular.module("petitionViewer", [])
+		.controller('petitionViewerController', function ($scope) {
+			gScope = $scope;
+
+			$scope.Petition = {};
+
+			$scope.likeClicked = function () {
+				gmod.VoteOnPetition(gScope.Petition.index, false)
+			}
+			$scope.dislikeClicked = function () {
+				gmod.VoteOnPetition(gScope.Petition.index, true)
+			}
+		});
+	// Manually bootstrap angularjs because otherwise it will complain about document.location.origin
+	angular.element(document).ready(function () {
+		angular.bootstrap(document.body, ['petitionViewer']);
+	});
+
+	var commonmark = window.commonmark;
+	var writer = new commonmark.HtmlRenderer({ sourcepos: true, safe: true });
+	var reader = new commonmark.Parser();
+
+	var render = function(parsed) {
+		if (parsed === undefined) {
+			return;
+		}
+		var result = writer.render(parsed);
+		var preview = $("#preview");
+		preview.get(0).innerHTML = result;
+
+		$('a').click(function(e) {
+			// This is not for safety, but so we don't open empty links.
+			if (e.currentTarget.href.startsWith("http"))
+			{
+				e.preventDefault();
+				gmod.OpenURL(e.currentTarget.href)
+			}
+		});
+	};
+
+	function addOrUpdatePetition(index, name, description, author, likes, dislikes, our_vote_status, creation_time, expire_time) {
+		var parsed = reader.parse(description);
+		render(parsed);
+
+		var expired = expire_time*1000 <= Date.now()
+
+		gScope.Petition.index = index
+		gScope.Petition.name = name;
+		gScope.Petition.author = author;
+		gScope.Petition.likes = likes;
+		gScope.Petition.dislikes = dislikes;
+		gScope.Petition.our_vote_status = our_vote_status;
+		gScope.Petition.creation_time = creation_time;
+		gScope.Petition.expire_time = expire_time;
+		gScope.Petition.expired = expired;
+		UpdateDigest(gScope, 50);
+	};
+
+	function updatePetitionVotes(index, likes, dislikes, our_vote_status)
+	{
+		gScope.Petition.likes = likes;
+		gScope.Petition.dislikes = dislikes;
+		gScope.Petition.our_vote_status = our_vote_status;
+		UpdateDigest(gScope, 50);
+	}
+
+</script>
+
+<body ng-controller="petitionViewerController as petitionViewer">
+	<label>{{Petition.name}}</label>
+
+	<span style="float: right;">Author: {{Petition.author}}</span>
+	<br>
+	<br>
+
+	<span>Added on: {{Petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+	<br>
+	<span>Expires on: {{Petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
+
+	<div id="vote_menu">
+		<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" id="like_button" ng-class="{btn_active: petition.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
+		<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" id="like_button" ng-class="{btn_active: petition.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+	</div>
+
+	<hr>
+
+	<div id="preview"></div>
+</body>
+
+</html>
+]]

@@ -1,3 +1,7 @@
+AddCSLuaFile("vote/resources/petition_browser.html.lua")
+AddCSLuaFile("vote/resources/petition_editor.html.lua")
+AddCSLuaFile("vote/resources/petition_viewer.html.lua")
+
 local petition_no_limit = CreateConVar("petition_no_limit", "0", {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Remove the limit of petitions per day")
 
 --#region NetMsg declarations
