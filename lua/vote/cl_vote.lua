@@ -38,7 +38,7 @@ end
 ---@param name string
 ---@return string
 local function getResource(name)
-	return include("vote/resources/" .. name .. ".lua")
+	return include("resources/vote/" .. name .. ".lua")
 end
 
 
@@ -226,6 +226,7 @@ concommand.Add("vote", function()
 		html:AddFunction("gmod", "OpenPetition", openPetition)
 		html:AddFunction("gmod", "RequestMorePetitions", requestMorePetitions)
 		html:AddFunction("gmod", "OpenURL", gui.OpenURL)
+		html:AddFunction("language", "Update", FTranslate)
 	end
 
 	loadPetitionBrowserPage(html)

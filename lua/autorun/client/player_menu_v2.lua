@@ -1,10 +1,10 @@
 local buttons =  {
-	{ Text="Petitions", Func=function(menu) RunConsoleCommand("vote") menu:Close() end },
+	{ Text=FTranslate("vote.petitions"), Func=function(menu) RunConsoleCommand("vote") menu:Close() end },
 }
 
 local checkboxes = {
-	{Text="Disable render on lost focus?", ConVar="cl_disable_render_on_focus_loss" },
-	{Text="Enable auto jump?", ConVar="auto_jump" },
+	{Text=FTranslate("pi_menu.no_render_on_lost_focus"), ConVar="cl_disable_render_on_focus_loss" },
+	{Text=FTranslate("pi_menu.enable_auto_jump"), ConVar="auto_jump" },
 }
 
 local clr_hover = Color(60, 60, 60, 255)
@@ -59,7 +59,7 @@ end
 concommand.Add("menu", function()
 	local window_width = 600
 	local window_hight = 400
-	local window = create_window("Player Menu", window_width, window_hight, false)
+	local window = create_window(FTranslate("pi_menu.title"), window_width, window_hight, false)
 
 	for i=1, #buttons do
 		--button:DockMargin( 0, 7, 300, -4 )
