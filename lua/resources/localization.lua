@@ -17,6 +17,7 @@ return {
 		["pi_menu.title"] = "Player Menu",
 		["pi_menu.no_render_on_lost_focus"] = "Disable render on lost focus?",
 		["pi_menu.enable_auto_jump"] = "Enable auto jump?",
+		["rules"] = "Rules",
 	},
 	["ru"] =
 	{
@@ -35,5 +36,6 @@ return {
 		["pi_menu.title"] = "Меню игрока",
 		["pi_menu.no_render_on_lost_focus"] = "Не рисовать при потери фокуса?",
 		["pi_menu.enable_auto_jump"] = "Включить авто-прыжок?",
+		["rules"] = "Правила",
 	}
 }
