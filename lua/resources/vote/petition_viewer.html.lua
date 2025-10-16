@@ -1,17 +1,35 @@
 return [[
 <!--Sorry for using HTML-->
-
 <!DOCTYPE html>
 <html>
+<head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
-
 <script type="text/javascript" src="https://spec.commonmark.org/js/commonmark.js"></script>
+</head>
+<body ng-controller="petitionViewerController as petitionViewer">
+	<label>{{Petition.name}}</label>
 
+	<span style="float: right;">Author: {{Petition.author}}</span>
+	<br>
+	<br>
+
+	<span>Added on: {{Petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+	<br>
+	<span>Expires on: {{Petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
+
+	<div id="vote_menu">
+		<button ng-disabled="Petition.expired" ng-click="likeClicked()" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{Petition.likes}}</button>
+		<button ng-disabled="Petition.expired" ng-click="dislikeClicked()" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{Petition.dislikes}}</button>
+	</div>
+
+	<hr>
+
+	<div id="preview"></div>
+</body>
 <style>
 	:root {
 		--main-color: rgb(31, 31, 31);
@@ -147,27 +165,5 @@ return [[
 	}
 
 </script>
-
-<body ng-controller="petitionViewerController as petitionViewer">
-	<label>{{Petition.name}}</label>
-
-	<span style="float: right;">Author: {{Petition.author}}</span>
-	<br>
-	<br>
-
-	<span>Added on: {{Petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
-	<br>
-	<span>Expires on: {{Petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
-
-	<div id="vote_menu">
-		<button ng-disabled="Petition.expired" ng-click="likeClicked()" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{Petition.likes}}</button>
-		<button ng-disabled="Petition.expired" ng-click="dislikeClicked()" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{Petition.dislikes}}</button>
-	</div>
-
-	<hr>
-
-	<div id="preview"></div>
-</body>
-
 </html>
 ]]

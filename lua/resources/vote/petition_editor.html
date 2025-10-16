@@ -1,23 +1,41 @@
 <!--Sorry for using HTML-->
-
 <!DOCTYPE html>
 <html>
+<head>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
-
 <script type="text/javascript" src="https://spec.commonmark.org/js/commonmark.js"></script>
+	<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
+	<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
+	<script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
+</head>
+<body>
+	<label>Name: <input id="nameInput" type="text"></label>
 
-<script type="text/javascript"
-	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
-<script type="text/javascript"
-	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
-<script type="text/javascript"
-	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
-<script type="text/javascript"
-	src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/lua.js"></script>
+	<hr>
 
+	<tabs>
+		<pane title="Write">
+			<textarea id="descriptionInput" placeholder="Describe your petition here.
+Markdown is supported.
+If enter doesn't work, you have to copy some new lines from another text editor..."></textarea>
+		</pane>
+		<pane title="Preview">
+			<div id="preview"></div>
+		</pane>
+
+		<input id="createButton" type="submit" value="Create" onclick="submit_petition()">
+	</tabs>
+
+	<div id="notification_list" ng-controller="petitionCreatorController as notificationList">
+		<div class="notification" ng-repeat="notification in Notifications">
+			<span>{{notification.text}}</span>
+			<div class="notificationCloseButton" onclick="gScope.Notifications = []; UpdateDigest(gScope, 50)">X</div>
+		</div>
+	</div>
+</body>
 <style>
 	:root {
 		--main-color: rgb(31, 31, 31);
@@ -336,31 +354,4 @@
 	}
 
 </script>
-
-<body>
-	<label>Name: <input id="nameInput" type="text"></label>
-
-	<hr>
-
-	<tabs>
-		<pane title="Write">
-			<textarea id="descriptionInput" placeholder="Describe your petition here.
-Markdown is supported.
-If enter doesn't work, you have to copy some new lines from another text editor..."></textarea>
-		</pane>
-		<pane title="Preview">
-			<div id="preview"></div>
-		</pane>
-
-		<input id="createButton" type="submit" value="Create" onclick="submit_petition()">
-	</tabs>
-
-	<div id="notification_list" ng-controller="petitionCreatorController as notificationList">
-		<div class="notification" ng-repeat="notification in Notifications">
-			<span>{{notification.text}}</span>
-			<div class="notificationCloseButton" onclick="gScope.Notifications = []; UpdateDigest(gScope, 50)">X</div>
-		</div>
-	</div>
-</body>
-
 </html>
