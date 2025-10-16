@@ -1,5 +1,8 @@
+---@diagnostic disable: inject-field
+
 local buttons =  {
 	{ Text=FTranslate("vote.petitions"), Func=function(menu) RunConsoleCommand("vote") menu:Close() end },
+	{ Text=FTranslate("rules"), Func=function(menu) RunConsoleCommand("rules") menu:Close() end },
 }
 
 local checkboxes = {
@@ -11,8 +14,8 @@ local clr_hover = Color(60, 60, 60, 255)
 local clr_nothover = Color(50, 50, 50, 255)
 
 surface.CreateFont("player_menu_title", {font="Roboto", size=18, antialias=true, extended=true})
-surface.CreateFont("player_menu_button", {font="Roboto", size=18, antialias=true, extended=true})
 
+---@return DPanel
 local function create_window(name, size_x, size_y, is_popup)
 	local menu = vgui.Create("DFrame")
 	menu:SetSize(size_x, size_y)
@@ -23,7 +26,6 @@ local function create_window(name, size_x, size_y, is_popup)
 	menu:Center()
 	if is_popup then menu:MakePopup() end
 	function menu:Paint(w,h)
-		--draw.RoundedBox(4, 2, 3, w - 2, h -2, Color(180,177,177,150))
 		draw.RoundedBox(4, 0, 0, w - 2, h - 2, Color(26, 26, 26))
 		draw.DrawText(name, "player_menu_title", 5, 5, Color(219, 219, 219))
 	end
@@ -51,7 +53,7 @@ local function create_button(name, margin_left, margin_top, margin_right, margin
 		else
 			draw.RoundedBox(5,2, 0, w - 4, h, clr_nothover)
 		end
-		draw.SimpleText(name, "player_menu_button", button:GetWide() / 2, 2, color_white, TEXT_ALIGN_CENTER)
+		draw.SimpleText(name, "player_menu_title", button:GetWide() / 2, 2, color_white, TEXT_ALIGN_CENTER)
 	end
 	return button
 end
@@ -82,7 +84,7 @@ concommand.Add("menu", function()
 		checkbox:SetPos( 0, cy)
 		checkbox:SetText(checkboxes[i].Text)
 		checkbox:SetConVar(checkboxes[i].ConVar)
-		checkbox:SetFont("player_menu_button")
+		checkbox:SetFont("player_menu_title")
 		cy = cy + 16
 	end
 end)

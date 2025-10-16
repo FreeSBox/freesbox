@@ -9,23 +9,19 @@ local petitions_available = {}
 
 --#region vgui2
 
--- Maybe use an existing font.
-surface.CreateFont("vote_menu_title", {font="Roboto", size=18, antialias=true, extended=true})
-
 ---@return DFrame
-local function createWindow(name, size_x, size_y, is_popup, class)
+local function createWindow(name, size_x, size_y, is_popup)
 	local menu = vgui.Create("DFrame")
 	menu:SetSize(size_x, size_y)
 	menu:SetSizable(true)
 	menu:SetTitle("")
 	menu:SetKeyboardInputEnabled(true)
-	menu:MakePopup()
 	menu:ShowCloseButton(true)
 	menu:Center()
 	if is_popup then menu:MakePopup() end
 	function menu:Paint(w,h)
 		draw.RoundedBox(4, 0, 0, w - 2, h - 2, Color(26, 26, 26))
-		draw.DrawText(name, "vote_menu_title", size_x/2, 5, Color(219, 219, 219), TEXT_ALIGN_CENTER)
+		draw.DrawText(name, "player_menu_title", size_x/2, 5, Color(219, 219, 219), TEXT_ALIGN_CENTER)
 	end
 
 	return menu
@@ -34,13 +30,6 @@ end
 --#endregion vgui2
 
 --#region HTML Window
-
----@param name string
----@return string
-local function getResource(name)
-	return include("resources/vote/" .. name .. ".lua")
-end
-
 
 local eWindowMode = {
 	Closed = 0,
@@ -166,7 +155,7 @@ local function setAppropriateCurnerIcon()
 end
 
 local function loadPetitionBrowserPage(html)
-	html:SetHTML(getResource("petition_browser.html"))
+	html:SetHTML(GetFSBResource("vote/petition_browser.html"))
 	html.OnFinishLoadingDocument = function(self, url)
 		if VoteWindowState ~= eWindowMode.Browse then return end
 
@@ -184,14 +173,14 @@ local function loadPetitionBrowserPage(html)
 end
 
 local function loadPetitionEditorPage(html)
-	html:SetHTML(getResource("petition_editor.html"))
+	html:SetHTML(GetFSBResource("vote/petition_editor.html"))
 	VoteWindowState = eWindowMode.Edit
 
 	setAppropriateCurnerIcon()
 end
 
 local function loadPetitionViewPage(html, petition_id)
-	html:SetHTML(getResource("petition_viewer.html"))
+	html:SetHTML(GetFSBResource("vote/petition_viewer.html"))
 	html.OnFinishLoadingDocument = function(self, url)
 		if VoteWindowState ~= eWindowMode.View then return end
 
@@ -213,7 +202,7 @@ concommand.Add("vote", function()
 	if VoteWindowState ~= eWindowMode.Closed then return end
 	VoteWindowState = eWindowMode.Browse
 
-	VoteWindow = createWindow("Voting", 800, 600, false)
+	VoteWindow = createWindow("Voting", 800, 600, true)
 
 	local html = VoteWindow:Add("DHTML")
 	html:Dock(FILL)
