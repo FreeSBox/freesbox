@@ -160,8 +160,8 @@ return [[
 	<span>Expires on: {{Petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
 
 	<div id="vote_menu">
-		<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" id="like_button" ng-class="{btn_active: petition.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
-		<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" id="like_button" ng-class="{btn_active: petition.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+		<button ng-disabled="Petition.expired" ng-click="likeClicked()" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{Petition.likes}}</button>
+		<button ng-disabled="Petition.expired" ng-click="dislikeClicked()" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{Petition.dislikes}}</button>
 	</div>
 
 	<hr>
