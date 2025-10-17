@@ -202,7 +202,7 @@ concommand.Add("vote", function()
 	if VoteWindowState ~= eWindowMode.Closed then return end
 	VoteWindowState = eWindowMode.Browse
 
-	VoteWindow = createWindow("Voting", 800, 600, true)
+	VoteWindow = createWindow(FTranslate("vote.petitions"), 800, 600, true)
 
 	local html = VoteWindow:Add("DHTML")
 	html:Dock(FILL)

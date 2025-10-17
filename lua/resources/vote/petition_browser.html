@@ -16,12 +16,12 @@
 		<div infinite-scroll='loadMore()' infinite-scroll-distance='1'>
 			<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
 				<a id="petitionName" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
-				<span style="float: right;">Author: {{petition.author}}</span>
+				<span style="float: right;">Автор: {{petition.author}}</span>
 				<br>
 				<br>
-				<span>Added on: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+				<span>Добавлено: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
 				<br>
-				<span>Expires on: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
+				<span>Открыто до: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
 				<div id="vote_menu">
 					<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" id="like_button" ng-class="{btn_active: petition.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
 					<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" id="like_button" ng-class="{btn_active: petition.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>

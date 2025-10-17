@@ -16,13 +16,13 @@
 <body ng-controller="petitionViewerController as petitionViewer">
 	<label>{{Petition.name}}</label>
 
-	<span style="float: right;">Author: {{Petition.author}}</span>
+	<span style="float: right;">Автор: {{Petition.author}}</span>
 	<br>
 	<br>
 
-	<span>Added on: {{Petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+	<span>Добавлено: {{Petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
 	<br>
-	<span>Expires on: {{Petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
+	<span>Открыто до: {{Petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
 
 	<div id="vote_menu">
 		<button ng-disabled="Petition.expired" ng-click="likeClicked()" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{Petition.likes}}</button>

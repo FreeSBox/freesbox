@@ -13,21 +13,21 @@
 <!-- not_in_lua --> <script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
 </head>
 <body>
-	<label>Name: <input id="nameInput" type="text"></label>
+	<label>Название: <input id="nameInput" type="text"></label>
 
 	<hr>
 
 	<tabs>
-		<pane title="Write">
-			<textarea id="descriptionInput" placeholder="Describe your petition here.
-Markdown is supported.
-If enter doesn't work, you have to copy some new lines from another text editor..."></textarea>
+		<pane title="Писать">
+			<textarea id="descriptionInput" placeholder="Опишите здесь свою петицию.
+Поддерживется форматирование Markdown.
+Если enter не работает, вам придётся скопировать новые строки из другого редактора..."></textarea>
 		</pane>
-		<pane title="Preview">
+		<pane title="Предпросмотр">
 			<div id="preview"></div>
 		</pane>
 
-		<input id="createButton" type="submit" value="Create" onclick="submit_petition()">
+		<input id="createButton" type="submit" value="Создать" onclick="submit_petition()">
 	</tabs>
 
 	<div id="notification_list" ng-controller="petitionCreatorController as notificationList">
@@ -337,7 +337,7 @@ If enter doesn't work, you have to copy some new lines from another text editor.
 
 		if (isWhitespaceString(name))
 		{
-			gScope.Notifications.push({text: "Name must not be empty"})
+			gScope.Notifications.push({text: "Название не может быть пустым"})
 			UpdateDigest(gScope, 50);
 			return;
 		}
@@ -345,7 +345,7 @@ If enter doesn't work, you have to copy some new lines from another text editor.
 		var description_text = $("#descriptionInput").val();
 		if (isWhitespaceString(description_text))
 		{
-			gScope.Notifications.push({text: "Description must not be empty"})
+			gScope.Notifications.push({text: "Описание не может быть пустым"})
 			UpdateDigest(gScope, 50);
 			return;
 		}

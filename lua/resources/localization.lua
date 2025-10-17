@@ -2,6 +2,7 @@
 return {
 	["en"] =
 	{
+		--Most of this stuff is unused, since we can't translate in HTML.
 		["vote.added_on"] = "Added on:",
 		["vote.expires_on"] = "Expires on:",
 		["vote.author"] = "Author:",
@@ -22,6 +23,7 @@ return {
 	},
 	["ru"] =
 	{
+		--Большенство из этого вещь не исползуется, так-как мы не можем переводить в HTML.
 		["vote.added_on"] = "Добавлено:",
 		["vote.expires_on"] = "Открыто до:",
 		["vote.author"] = "Автор:",
