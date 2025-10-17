@@ -19,5 +19,5 @@ function FTranslate(label)
 		return lang[label] or label
 	end
 
-	return localization_data[english_data][label] or label
+	return english_data[label] or label
 end
