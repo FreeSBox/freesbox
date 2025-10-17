@@ -15,7 +15,7 @@ return [[
 				Исключением является промежуток между 17.10.2025 и 17.11.2025,
 				в которые администрация в праве вносить изменения в заповеди.
 				<br>
-				Все изменения можно посмотреть в нашем <a href="#" onclick="gmod.OpenURL('https://example.com')">git репозитории</a>.
+				Все изменения можно посмотреть в нашем <a href="#" onclick="gmod.OpenURL('https://github.com/FreeSBox/freesbox/blob/master/lua/resources/rules.html')">git репозитории</a>.
 			</small>
 		</li>
 		<li>Все игроки обязаны соблюдать <a href="#" onclick="gmod.OpenURL('https://wiki.facepunch.com/gmod/Server_Operator_Rules')">Server Operator Rules</a>.</li>
