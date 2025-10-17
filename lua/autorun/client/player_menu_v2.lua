@@ -89,3 +89,8 @@ concommand.Add("menu", function()
 	end
 end)
 
+
+hook.Add("InitPostEntity", "advertise_f2_menu", function()
+	LocalPlayer():PrintMessage(HUD_PRINTTALK, FTranslate("pi_menu.advert"))
+end)
+
