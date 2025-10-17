@@ -20,6 +20,9 @@ return {
 		["pi_menu.enable_auto_jump"] = "Enable auto jump?",
 		["pi_menu.advert"] = "Press F2 to access the server menu.",
 		["rules"] = "Rules",
+
+		["timer.shutdown"] = "The server will shut down in %.1f seconds!",
+		["timer.cleanup"] = "The map will be cleaned up in %.1f seconds!",
 	},
 	["ru"] =
 	{
@@ -41,5 +44,8 @@ return {
 		["pi_menu.enable_auto_jump"] = "Включить авто-прыжок?",
 		["pi_menu.advert"] = "Нажмите F2 чтобы открыть меню сервера.",
 		["rules"] = "Правила",
+
+		["timer.shutdown"] = "Сервер выключится через %.1f секунд!",
+		["timer.cleanup"] = "Карта будет очищена через %.1f секунд!",
 	}
 }
