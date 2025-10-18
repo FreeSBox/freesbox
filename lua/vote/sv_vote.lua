@@ -710,7 +710,7 @@ net.Receive("petition_transmit", function(len, ply)
 	petition.author_steamid = ply:OwnerSteamID64()
 
 	--TODO: Add automatic calculation of how long the petition should last.
-	local petition_expire_time = os.time() + 60*60*24
+	local petition_expire_time = os.time() + 60*60*24*3
 
 	local one_day_ago = os.time() - 60*60*24
 	local results = sql.QueryTyped("SELECT * FROM petitions WHERE creation_time > ? AND author_steamid = ?", one_day_ago, petition.author_steamid)
