@@ -1,4 +1,4 @@
-local threshold = 1.5
+local threshold = 1.8
 local notification = "Big lag detected! Clean up in 1 minute."
 local seconds_before_cleanup = 60
 
@@ -25,3 +25,19 @@ hook.Add("Tick", "lag_detect", function()
 	end
 	last_ticktime = sys_time
 end)
+
+
+local model_blacklist =
+{
+	["models/props_combine/combine_citadel001.mdl"] = true,
+}
+
+
+local function handle_prop_spawn_attempt(ply, model, skin)
+	if model_blacklist[model] then
+		return false
+	end
+end
+
+hook.Add("PlayerSpawnObject", "blocked_props", handle_prop_spawn_attempt)
+
