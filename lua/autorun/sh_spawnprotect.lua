@@ -12,17 +12,30 @@ if current_zone == nil then
 end
 
 if SERVER then
-	--[[
-	Turns out we need CPPI for this, otherwise it deletes half the player.
+	-- We need CPPI for filtering entities spawned by players, so just delete stuff that seems bad.
+	local blocked_classes = {
+		["prop_physics"] = true,
+		["prop_vehicle_prisoner_pod"] = true, -- any chair
+		["prop_vehicle_airboat"] = true,
+		["prop_vehicle_jeep"] = true,
+	}
+	local allowed_classes = {
+		["gmod_hands"] = true
+	}
+
+	local function isEntityAllowedAtSpawn(ent)
+		local class = ent:GetClass()
+		return (ent:IsScripted() or ent:IsNPC() or blocked_classes[class]) and not ent:CreatedByMap() and not ent:IsWeapon() and not allowed_classes[class]
+	end
+
 	hook.Add("Think", "check_spawnzone_ents", function()
 		for _, ent in ipairs(ents.FindInBox(current_zone[1], current_zone[2])) do
-			if not ent:IsPlayer() and not ent:IsWeapon() and not ent:CreatedByMap() then
-				print(ent)
+			if isEntityAllowedAtSpawn(ent) then
+				print("Bad entity at spawn, removing:", ent)
 				ent:Remove()
 			end
 		end
 	end)
-	--]]
 
 	hook.Add("PlayerSpawnObject", "block_spawn_in_spawnzone", function(ply, model, skin)
 		if ply:GetPos():WithinAABox(current_zone[1], current_zone[2]) then
@@ -36,7 +49,10 @@ if SERVER then
 		end
 	end)
 else
+	local fsb_draw_spawnzone = CreateClientConVar("fsb_draw_spawnzone", "1", true, false)
 	hook.Add("PostDrawTranslucentRenderables", "draw_spawnzone", function(bDrawingDepth, bDrawingSkybox, isDraw3DSkybox)
-		render.DrawWireframeBox(vector_origin, angle_zero, current_zone[1], current_zone[2], spawnzone_color, true)
+		if fsb_draw_spawnzone:GetBool() then
+			render.DrawWireframeBox(vector_origin, angle_zero, current_zone[1], current_zone[2], spawnzone_color, true)
+		end
 	end)
 end

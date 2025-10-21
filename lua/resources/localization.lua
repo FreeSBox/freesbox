@@ -19,6 +19,7 @@ return {
 		["pi_menu.no_render_on_lost_focus"] = "Disable render on lost focus?",
 		["pi_menu.enable_auto_jump"] = "Enable auto jump?",
 		["pi_menu.advert"] = "Press F2 to access the server menu.",
+		["pi_menu.draw_spawnzone"] = "Draw spawn-zone limits?",
 		["rules"] = "Rules",
 
 		["timer.shutdown"] = "The server will shut down in %.1f seconds!",
@@ -43,6 +44,7 @@ return {
 		["pi_menu.no_render_on_lost_focus"] = "Не рисовать при потери фокуса?",
 		["pi_menu.enable_auto_jump"] = "Включить авто-прыжок?",
 		["pi_menu.advert"] = "Нажмите F2 чтобы открыть меню сервера.",
+		["pi_menu.draw_spawnzone"] = "Отображать спавн-зону?",
 		["rules"] = "Правила",
 
 		["timer.shutdown"] = "Сервер выключится через %.1f секунд!",

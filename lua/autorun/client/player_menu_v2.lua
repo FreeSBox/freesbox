@@ -8,6 +8,7 @@ local buttons =  {
 local checkboxes = {
 	{Text=FTranslate("pi_menu.no_render_on_lost_focus"), ConVar="cl_disable_render_on_focus_loss" },
 	{Text=FTranslate("pi_menu.enable_auto_jump"), ConVar="auto_jump" },
+	{Text=FTranslate("pi_menu.draw_spawnzone"), ConVar="fsb_draw_spawnzone" },
 }
 
 local clr_hover = Color(60, 60, 60, 255)
