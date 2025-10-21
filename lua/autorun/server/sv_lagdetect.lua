@@ -1,4 +1,4 @@
-local threshold = 1.8
+local threshold = 1.6
 local notification = "Big lag detected! Clean up in 1 minute."
 local seconds_before_cleanup = 60
 
