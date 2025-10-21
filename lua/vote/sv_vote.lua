@@ -817,6 +817,13 @@ net.Receive("petition_vote_on", function(len, ply)
 
 	local vote_status_ = dislike and eVoteStatus.DISLIKE or eVoteStatus.LIKE
 
+	local results = sql.QueryTyped("SELECT id FROM petitions WHERE id = ? AND author_steamid = ?", petition_id, player_id)
+	if results == false then return end
+	if #results > 0 then
+		ply:PrintMessage(HUD_PRINTTALK, "You cannot vote on your own petitions.")
+		return
+	end
+
 	local results = sql.QueryTyped("SELECT expire_time FROM petitions WHERE id = ?", petition_id)
 	if results == false then return end
 	if #results == 0 then
