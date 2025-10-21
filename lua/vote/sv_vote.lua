@@ -792,7 +792,11 @@ local function sendVoteResponce(petition_id, ply)
 		net.WriteUInt(num_likes, PETITION_VOTE_BITS)
 		net.WriteUInt(num_dislikes, PETITION_VOTE_BITS)
 		net.WriteUInt(vote_status, 2)
-	net.Send(ply)
+	if ply ~= nil then
+		net.Send(ply)
+	else
+		net.Broadcast()
+	end
 end
 
 net.Receive("petition_votes_request", function(len, ply)
@@ -833,7 +837,7 @@ net.Receive("petition_vote_on", function(len, ply)
 			sql.QueryTyped("UPDATE votes SET vote_status = ? WHERE petition_id = ? AND author_steamid = ?", vote_status_, petition_id, player_id)
 		end
 
-		sendVoteResponce(petition_id, ply)
+		sendVoteResponce(petition_id, nil)
 		return
 	end
 
@@ -849,7 +853,7 @@ net.Receive("petition_vote_on", function(len, ply)
 		player_id
 	)
 
-	sendVoteResponce(petition_id, ply)
+	sendVoteResponce(petition_id, nil)
 end)
 
 --#endregion

@@ -300,7 +300,8 @@ net.Receive("petition_votes_responce", function(len, ply)
 	local num_dislikes = net.ReadUInt(PETITION_VOTE_BITS)
 	local our_vote_status = net.ReadUInt(2)
 
-	assert(petitions_cache[petition_id], "Received votes for petition that wasn't cached")
+	if petitions_cache[petition_id] == nil then return end
+
 	petitions_cache[petition_id].num_likes = num_likes
 	petitions_cache[petition_id].num_dislikes = num_dislikes
 	petitions_cache[petition_id].our_vote_status = our_vote_status
