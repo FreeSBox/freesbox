@@ -780,22 +780,21 @@ end)
 local function sendVoteResponce(petition_id, ply)
 	local num_likes, num_dislikes = getVotesFromIndex(petition_id)
 
-	local results = sql.QueryTyped("SELECT vote_status FROM votes WHERE petition_id = ? AND author_steamid = ?", petition_id, ply:OwnerSteamID64())
-	assert(results ~= false, "The SQL Query is broken in 'sendVoteResponce'")
-	local vote_status = eVoteStatus.NOT_VOTED
-	if #results == 1 then
-		vote_status = results[1].vote_status
-	end
+	local players = ply and {ply} or player.GetAll()
+	for index, ply in ipairs(players) do
+		local results = sql.QueryTyped("SELECT vote_status FROM votes WHERE petition_id = ? AND author_steamid = ?", petition_id, ply:OwnerSteamID64())
+		assert(results ~= false, "The SQL Query is broken in 'sendVoteResponce'")
+		local vote_status = eVoteStatus.NOT_VOTED
+		if #results == 1 then
+			vote_status = results[1].vote_status
+		end
 
-	net.Start("petition_votes_responce")
-		net.WriteUInt(petition_id, PETITION_ID_BITS)
-		net.WriteUInt(num_likes, PETITION_VOTE_BITS)
-		net.WriteUInt(num_dislikes, PETITION_VOTE_BITS)
-		net.WriteUInt(vote_status, 2)
-	if ply ~= nil then
+		net.Start("petition_votes_responce")
+			net.WriteUInt(petition_id, PETITION_ID_BITS)
+			net.WriteUInt(num_likes, PETITION_VOTE_BITS)
+			net.WriteUInt(num_dislikes, PETITION_VOTE_BITS)
+			net.WriteUInt(vote_status, 2)
 		net.Send(ply)
-	else
-		net.Broadcast()
 	end
 end
 
