@@ -2,6 +2,9 @@
 local seconds_before_shutdown = 60
 
 function StopServer()
+	if player.GetCountConnecting() + player.GetCount() == 0 then
+		RunConsoleCommand("exit")
+	end
 
 	local cur_time = CurTime()
 	FSBBroadcastTimer(cur_time, cur_time+seconds_before_shutdown, "timer.shutdown")
