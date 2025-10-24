@@ -3,6 +3,7 @@
 local buttons =  {
 	{ Text=FTranslate("vote.petitions"), Func=function(menu) RunConsoleCommand("vote") menu:Close() end },
 	{ Text=FTranslate("rules"), Func=function(menu) RunConsoleCommand("rules") menu:Close() end },
+	{ Text=FTranslate("pi_menu.ulx_menu"), Func=function(menu) RunConsoleCommand("ulx", "menu") menu:Close() end },
 }
 
 local checkboxes = {
