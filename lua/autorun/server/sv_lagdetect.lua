@@ -10,7 +10,7 @@ hook.Add("Tick", "lag_detect", function()
 	local sys_time = SysTime()
 	local delta_time = sys_time-last_ticktime
 	local not_from_hybernation = player.GetCount() > 0 -- GetCount doesn't count loading players.
-	if delta_time > threshold and ( sv_hibernate_think:GetBool() or not_from_hybernation ) and last_ticktime ~= 0 and not clean_up_started then
+	if delta_time > threshold and ( sv_hibernate_think:GetBool() or not_from_hybernation ) and last_ticktime ~= 0 and not clean_up_started and game.MaxPlayers() ~= 1 then
 		RunConsoleCommand("phys_timescale", "0")
 		PrintMessage(HUD_PRINTTALK, notification)
 		local cur_time = CurTime()
