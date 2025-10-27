@@ -23,10 +23,13 @@ local function create_window(name, size_x, size_y, is_popup)
 	menu:SetSize(size_x, size_y)
 	menu:SetSizable(false)
 	menu:SetTitle("")
-	gui.EnableScreenClicker(true)
 	menu:ShowCloseButton(true)
 	menu:Center()
-	if is_popup then menu:MakePopup() end
+	if is_popup then
+		menu:MakePopup()
+	else
+		gui.EnableScreenClicker(true)
+	end
 	function menu:Paint(w,h)
 		draw.RoundedBox(4, 0, 0, w - 2, h - 2, Color(26, 26, 26))
 		draw.DrawText(name, "player_menu_title", 5, 5, Color(219, 219, 219))
@@ -61,6 +64,8 @@ local function create_button(name, margin_left, margin_top, margin_right, margin
 end
 
 concommand.Add("menu", function()
+	if vgui.CursorVisible() then return end
+
 	local window_width = 600
 	local window_hight = 400
 	local window = create_window(FTranslate("pi_menu.title"), window_width, window_hight, false)
