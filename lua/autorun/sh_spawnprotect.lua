@@ -13,7 +13,8 @@ end
 
 if SERVER then
 	local allowed_classes = {
-		["gmod_hands"] = true
+		["gmod_hands"] = true,
+		["predicted_viewmodel"] = true,
 	}
 
 	local function isEntityAllowedAtSpawn(ent)
