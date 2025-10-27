@@ -12,20 +12,13 @@ if current_zone == nil then
 end
 
 if SERVER then
-	-- We need CPPI for filtering entities spawned by players, so just delete stuff that seems bad.
-	local blocked_classes = {
-		["prop_physics"] = true,
-		["prop_vehicle_prisoner_pod"] = true, -- any chair
-		["prop_vehicle_airboat"] = true,
-		["prop_vehicle_jeep"] = true,
-	}
 	local allowed_classes = {
 		["gmod_hands"] = true
 	}
 
 	local function isEntityAllowedAtSpawn(ent)
 		local class = ent:GetClass()
-		return (ent:IsScripted() or ent:IsNPC() or blocked_classes[class]) and not ent:CreatedByMap() and not ent:IsWeapon() and not allowed_classes[class]
+		return ent:CPPIGetOwner() ~= nil and not ent:CreatedByMap() and not ent:IsWeapon() and not allowed_classes[class]
 	end
 
 	hook.Add("Think", "check_spawnzone_ents", function()
