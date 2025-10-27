@@ -7,6 +7,9 @@ Included in this addon are:
 - F2 menu for settings and most of the commands inside it.
 - Weapon dropping (`+drop`).
 - A file to require a custom binary module.
+- Spawn protection.
+- Basic localization system.
+- Server rules and commandments.
 
 
 ### Random notes
