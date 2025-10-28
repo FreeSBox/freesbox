@@ -18,14 +18,14 @@ if SERVER then
 		["physgun_beam"] = true,
 	}
 
-	local function isEntityAllowedAtSpawn(ent)
+	local function isEntityDisallowedAtSpawn(ent)
 		local class = ent:GetClass()
 		return ent:CPPIGetOwner() ~= nil and not ent:CreatedByMap() and not ent:IsWeapon() and not allowed_classes[class]
 	end
 
 	hook.Add("Think", "check_spawnzone_ents", function()
 		for _, ent in ipairs(ents.FindInBox(current_zone[1], current_zone[2])) do
-			if isEntityAllowedAtSpawn(ent) then
+			if isEntityDisallowedAtSpawn(ent) then
 				print("Bad entity at spawn, removing:", ent)
 				ent:Remove()
 			end
