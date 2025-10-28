@@ -55,7 +55,7 @@ local function handleFindPropPenetration()
 	for _, ent in ipairs(ents.GetAll()) do
 		if IsValid(ent) then
 			local phys_object = ent:GetPhysicsObject()
-			if IsValid(phys_object) and phys_object:IsPenetrating() then
+			if IsValid(phys_object) and phys_object:IsPenetrating() and phys_object:IsMotionEnabled() then
 				phys_object:EnableMotion(false)
 				num_penetrations = num_penetrations + 1
 				local owner = ent:CPPIGetOwner()
@@ -67,13 +67,12 @@ local function handleFindPropPenetration()
 	end
 	if num_penetrations > 10 then
 		PrintMessage(HUD_PRINTTALK, "Lag detected, freezing penetrating props")
-		
+
 		-- GPL3 code
 		-- https://github.com/PAC3-Server/notagain/blob/3d1d0d0814dde53f2ce46a345b7c8db7d211f2e8/lua/notagain/essential/autorun/server/freeze_penetrating.lua
 		local temp = {}
 		for k,v in pairs(num_penetrations_per_player) do table.insert(temp, {ply = k, count = v}) end
 		table.sort(temp, function(a, b) return a.count > b.count end)
-		PrintTable(temp)
 		if temp[1] then
 			PrintMessage(HUD_PRINTTALK, temp[1].ply:Nick() .. " owns " .. temp[1].count .. " penetrating props")
 		end
