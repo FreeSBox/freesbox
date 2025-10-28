@@ -6,17 +6,12 @@ hook.Add("PreRender", "disable_render", function()
 end)
 
 local auto_jump = CreateClientConVar("auto_jump", "0", true, false, "Auto jump")
-local last_move_was_jump = false
 hook.Add("CreateMove", "autojump", function(cmd)
 	if auto_jump:GetBool() then
-		local lp = LocalPlayer()
-		local button_bits = cmd:GetButtons()
-		local is_jump = bit.band(button_bits, IN_JUMP) ~= 0
-		if is_jump and lp:GetMoveType() ~= MOVETYPE_NOCLIP and lp:WaterLevel() <= 1 then
-			if last_move_was_jump then
-				cmd:SetButtons(bit.band(button_bits, bit.bnot(IN_JUMP)))
+		if bit.band(cmd:GetButtons(), IN_JUMP) ~= 0 then
+			if not LocalPlayer():IsOnGround() and LocalPlayer():GetMoveType() ~= MOVETYPE_NOCLIP and LocalPlayer():WaterLevel() <= 1 then
+				cmd:SetButtons(bit.band(cmd:GetButtons(), bit.bnot(IN_JUMP)))
 			end
-			last_move_was_jump = not last_move_was_jump
 		end
 	end
 end)
