@@ -97,23 +97,33 @@ local function voteOnPetition(petition_id, dislike)
 end
 
 local function requestMorePetitions()
-	local request = {}
+	local tmp_available = {}
 	local i = 1
 	for index, _ in pairs(petitions_available) do
+		tmp_available[i] = index
+		i = i + 1
+	end
+
+	table.sort(tmp_available, function (a, b)
+		return a > b
+	end)
+
+	local request = {}
+	for i = 1, #tmp_available do
+		local index = tmp_available[i]
 		if petitions_cache[index] ~= nil then goto CONTITNUE end
 		if #request >= PETITION_MAX_PETITIONS_PER_REQUEST then break end
 
 		request[#request+1] = index
 		::CONTITNUE::
-		i = i + 1
 	end
 
 	if #request == 0 then return end
 
 	net.Start("petition_request")
 		net.WriteUInt(#request, 8)
-		for index, value in ipairs(request) do
-			net.WriteUInt(value, PETITION_ID_BITS)
+		for i = 1, #request do
+			net.WriteUInt(request[i], PETITION_ID_BITS)
 		end
 	net.SendToServer()
 end
