@@ -5,6 +5,8 @@ local spawnzones =
 	["gm_construct"] = {Vector(1024, -896, -144), Vector(640, 800, 64)}
 }
 
+local fsb_draw_spawnzone = CreateClientConVar("fsb_draw_spawnzone", "1", true, false)
+
 local current_zone = spawnzones[game.GetMap()]
 if current_zone == nil then
 	print("FIXME: Current map has no spawnzone!")
@@ -48,7 +50,6 @@ if SERVER then
 		end
 	end)
 else
-	local fsb_draw_spawnzone = CreateClientConVar("fsb_draw_spawnzone", "1", true, false)
 	hook.Add("PostDrawTranslucentRenderables", "draw_spawnzone", function(bDrawingDepth, bDrawingSkybox, isDraw3DSkybox)
 		if fsb_draw_spawnzone:GetBool() then
 			render.DrawWireframeBox(vector_origin, angle_zero, current_zone[1], current_zone[2], spawnzone_color, true)
