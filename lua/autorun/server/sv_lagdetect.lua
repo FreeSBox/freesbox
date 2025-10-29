@@ -41,12 +41,16 @@ local function pushFramerate(framerate)
 	last_frames[num_frames] = framerate
 end
 
-local function getAvarageFramerate()
+local function getAverageFramerate()
 	local sum = 0
 	for i = 1, num_frames do
 		sum = sum + last_frames[i]
 	end
 	return sum/num_frames
+end
+
+function FSBGetAverageTPS()
+	return getAverageFramerate()
 end
 
 local function handleFindPropPenetration()
@@ -104,10 +108,10 @@ hook.Add("Tick", "lag_detect", function()
 	local not_from_hybernation = player.GetCount() > 0 -- GetCount doesn't count loading players.
 	local should_run_cleanup_logic = ( sv_hibernate_think:GetBool() or not_from_hybernation ) and last_ticktime ~= 0 and not clean_up_started and game.MaxPlayers() ~= 1
 	if should_run_cleanup_logic then
-		if getAvarageFramerate() < penetration_stopper_threshold then
+		if getAverageFramerate() < penetration_stopper_threshold then
 			handleFindPropPenetration()
 		end
-		if getAvarageFramerate() < cleanup_threshold then
+		if getAverageFramerate() < cleanup_threshold then
 			clean_up_started = true
 			handleCleanUp()
 		end
