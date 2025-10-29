@@ -29,10 +29,12 @@ end
 ---@class Player
 local PLAYER = FindMetaTable("Player")
 
+--Basically a networked version of `system.HasFocus()`
 function PLAYER:HasFocus()
 	return self:GetNWFloat("focus_loss_time") == 0
 end
 
+---@return number focus_loss_time CurTime based timestamp, of when the focus was lost.
 function PLAYER:GetFocusLossTime()
 	return self:GetNWFloat("focus_loss_time")
 end
