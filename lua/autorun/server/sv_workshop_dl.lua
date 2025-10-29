@@ -9,5 +9,7 @@ resource.AddWorkshop("1360233031") -- Half-Life-SWEPs
 resource.AddWorkshop("2821862386") -- Simple Weapons
 resource.AddWorkshop("2821865508") -- Simple Weapons CSS
 resource.AddWorkshop("609412954") -- Recolorable CS:S Skins
-resource.AddWorkshop("105982362") -- gm_bigcity
+if game.GetMap() == "gm_bigcity" then
+	resource.AddWorkshop("105982362") -- gm_bigcity
+end
 --#endregion
