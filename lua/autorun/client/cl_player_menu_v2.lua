@@ -4,12 +4,16 @@ local buttons =  {
 	{ Text=FTranslate("vote.petitions"), Func=function(menu) RunConsoleCommand("vote") menu:Close() end },
 	{ Text=FTranslate("rules"), Func=function(menu) RunConsoleCommand("rules") menu:Close() end },
 	{ Text=FTranslate("pi_menu.ulx_menu"), Func=function(menu) RunConsoleCommand("ulx", "menu") menu:Close() end },
+	{ Text=FTranslate("pi_menu.change_name"), Func=function(menu) RunConsoleCommand("setnamegui") menu:Close() end },
+	{ Text=FTranslate("pi_menu.change_nametag"), Func=function(menu) RunConsoleCommand("setnametaggui") menu:Close() end }
 }
 
 local checkboxes = {
 	{Text=FTranslate("pi_menu.no_render_on_lost_focus"), ConVar="cl_disable_render_on_focus_loss" },
 	{Text=FTranslate("pi_menu.enable_auto_jump"), ConVar="auto_jump" },
 	{Text=FTranslate("pi_menu.draw_spawnzone"), ConVar="fsb_draw_spawnzone" },
+	{Text=FTranslate("pi_menu.nametag_toggle"), ConVar="cl_nametags_enable" },
+	{Text=FTranslate("pi_menu.nametags_localplayer"), ConVar="cl_nametags_localplayer" },
 }
 
 local clr_hover = Color(60, 60, 60, 255)
@@ -96,6 +100,49 @@ concommand.Add("menu", function()
 	end
 end)
 
+local function createNameChangeUI(window_name, placeholder_text, current_name, submit_function)
+	local window = create_window(window_name, 200, 100, true)
+	local name_input = vgui.Create( "DTextEntry", window )
+	local name_display = vgui.Create( "DLabel", window )
+	local name_markup = ec_markup.Parse(current_name)
+
+	local on_click = function()
+		submit_function(name_input:GetText())
+		window:GetParent():Close()
+	end
+
+	name_input:SetPlaceholderText(placeholder_text)
+	name_input:SetText(current_name)
+	name_input:RequestFocus()
+	name_input:Dock( TOP )
+	name_input.OnEnter = on_click
+	name_input.OnChange = function()
+		name_markup = ec_markup.Parse(name_input:GetText())
+	end
+
+	name_display:Dock( FILL )
+	name_display:SetText("")
+	function name_display:Paint(w, h)
+		name_markup:Draw(w/2-name_markup:GetWide()/2, h/6)
+	end
+
+	local name_submit = create_button(FTranslate("set"), 0,0,0,1, window)
+	name_submit:Dock( BOTTOM )
+	name_submit.DoClick = on_click
+end
+
+concommand.Add("setnamegui", function()
+	local local_player = LocalPlayer()
+	createNameChangeUI(FTranslate("player_name"), FTranslate("new_name"), local_player:GetRichName(), function (text)
+		local_player:SetName(text)
+	end)
+end)
+concommand.Add("setnametaggui", function()
+	local local_player = LocalPlayer()
+	createNameChangeUI(FTranslate("player_nametag"), FTranslate("new_tag"), local_player:GetNameTag(), function (text)
+		local_player:SetNameTag(text)
+	end)
+end)
 
 hook.Add("InitPostEntity", "advertise_f2_menu", function()
 	LocalPlayer():PrintMessage(HUD_PRINTTALK, FTranslate("pi_menu.advert"))
