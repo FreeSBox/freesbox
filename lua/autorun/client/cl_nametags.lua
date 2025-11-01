@@ -31,7 +31,6 @@ function nametag:ParseNick(ply)
 	end
 	if nametag ~= self.NameTag or not self.MarkupTag then
 		self.MarkupTag = ec_markup.AdvancedParse(nametag, {
-			nick = true,
 			default_color = color_white,
 			default_font = "AFKFont",
 			default_shadow_font = "AFKShadowFont",
@@ -62,6 +61,13 @@ local IsValid, EyeAngles, Vector = _G.IsValid, _G.EyeAngles, _G.Vector
 local cam_Start3D2D, cam_End3D2D = _G.cam.Start3D2D, _G.cam.End3D2D
 local draw_SimpleText = _G.draw.SimpleText
 local table_copy = _G.table.Copy
+
+-- Reset tags for live reloading.
+for _, ply in ipairs(player_GetAll()) do
+	if ply.Nametag ~= nil then
+		ply.Nametag = nil
+	end
+end
 
 ---@param ply Player
 local function shouldGetOverheadPos(ply)
