@@ -19,10 +19,13 @@ if SERVER then
 		["predicted_viewmodel"] = true,
 		["physgun_beam"] = true,
 	}
+	local disallowed_classes = {
+		["monster_snark"] = true,
+	}
 
 	local function isEntityDisallowedAtSpawn(ent)
 		local class = ent:GetClass()
-		return ent:CPPIGetOwner() ~= nil and not ent:CreatedByMap() and not ent:IsWeapon() and not allowed_classes[class]
+		return (ent:CPPIGetOwner() ~= nil and not ent:CreatedByMap() and not ent:IsWeapon() and not allowed_classes[class]) or disallowed_classes[class] == true
 	end
 
 	hook.Add("Think", "check_spawnzone_ents", function()
