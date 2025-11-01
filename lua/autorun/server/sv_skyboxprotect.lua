@@ -9,7 +9,7 @@ if current_zone == nil then
 	return
 end
 
-hook.Add("Think", "check_spawnzone_ents", function()
+hook.Add("Think", "check_skybox_ents", function()
 	for _, ent in ipairs(ents.FindInBox(current_zone[1], current_zone[2])) do
 		if ent:IsPlayer() then
 			ent:Spawn()
