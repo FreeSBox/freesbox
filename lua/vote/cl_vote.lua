@@ -91,7 +91,7 @@ end
 ---@param dislike boolean
 local function voteOnPetition(petition_id, dislike)
 	net.Start("petition_vote_on")
-		net.WriteInt(petition_id, PETITION_ID_BITS)
+		net.WriteUInt(petition_id, PETITION_ID_BITS)
 		net.WriteBool(dislike)
 	net.SendToServer()
 end
