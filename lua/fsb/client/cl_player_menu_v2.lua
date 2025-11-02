@@ -145,6 +145,6 @@ concommand.Add("setnametaggui", function()
 end)
 
 hook.Add("InitPostEntity", "advertise_f2_menu", function()
-	LocalPlayer():PrintMessage(HUD_PRINTTALK, FSB.Translate("pi_menu.advert"))
+	chat.AddText(FSB.Translate("pi_menu.advert"))
 end)
 
