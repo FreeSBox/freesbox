@@ -170,7 +170,6 @@ local function loadPetitionBrowserPage(html)
 		if VoteWindowState ~= eWindowMode.Browse then return end
 
 		for index, petition in pairs(petitions_cache) do
-			print("Added", petition.index, petition.name)
 			addPetitionToHTML(html, petition)
 		end
 	end
@@ -290,8 +289,6 @@ net.Receive("petition_transmit", function(len, ply)
 		---@diagnostic disable-next-line: param-type-mismatch
 		addPetitionToHTML(html, petition)
 	end
-
-	print("Recieved: " .. petition.index)
 end)
 
 net.Receive("petition_list_responce", function(len, ply)
