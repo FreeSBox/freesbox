@@ -32,6 +32,7 @@ return {
 		["new_name"] = "New name",
 		["new_nametag"] = "New Name Tag",
 
+		["no_noclip_in_pvp"] = "In PVP, can't use noclip for %i seconds.",
 
 		["timer.shutdown"] = "The server will shut down in %.1f seconds!",
 		["timer.cleanup"] = "The map will be cleaned up in %.1f seconds!",
@@ -67,6 +68,8 @@ return {
 		["player_nametag"] = "Тег игрока",
 		["new_name"] = "Новый ник",
 		["new_nametag"] = "Новый тег",
+
+		["no_noclip_in_pvp"] = "В PVP, нельзя использовать noclip ещё %i секунд.",
 
 		["timer.shutdown"] = "Сервер выключится через %.1f секунд!",
 		["timer.cleanup"] = "Карта будет очищена через %.1f секунд!",
