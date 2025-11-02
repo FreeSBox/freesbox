@@ -1,4 +1,7 @@
 
+-- `FSB` as in Free SandBox, not Федеральная Служба Безопасности...
+FSB = FSB or {}
+
 local shared_files = {
 	"fsb/sh_anti_noclip_pvp.lua",
 	"fsb/sh_custom_name.lua",
@@ -10,6 +13,7 @@ local shared_files = {
 	"fsb/sh_resources.lua",
 	"fsb/sh_rules.lua",
 	"fsb/sh_spawnprotect.lua",
+	"vote/sh_vote.lua",
 }
 
 local server_files = {

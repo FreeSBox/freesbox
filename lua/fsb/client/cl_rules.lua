@@ -20,11 +20,11 @@ end
 concommand.Add("rules", function()
 	local window_width = 800
 	local window_hight = 600
-	local window = createWindow(FTranslate("rules"), window_width, window_hight, true)
+	local window = createWindow(FSB.Translate("rules"), window_width, window_hight, true)
 
 	local html = window:Add("DHTML")
 	html:Dock(FILL)
-	html:SetHTML(GetFSBResource("rules.html"))
+	html:SetHTML(FSB.GetResource("rules.html"))
 	html.OnDocumentReady = function (self, url)
 		html:AddFunction("gmod", "OpenURL", gui.OpenURL)
 	end

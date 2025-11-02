@@ -26,7 +26,7 @@ MAX_PETITIONS_PER_DAY = 2
 ---@param petition petition
 ---@param target_player Player? Only available on the server side.
 ---The server will discard all the data it can obtain itself, so don't bother trying to send it.
-function SendPetition(petition, target_player)
+function FSB.SendPetition(petition, target_player)
 
 	local description_compressed = util.Compress(petition.description)
 	local description_compressed_len = #description_compressed

@@ -627,7 +627,7 @@ local function randomWord()
 	return words[math.random(#words)]
 end
 
-function GenerateRandomPetition()
+function FSB.GenerateRandomPetition()
 	local name = randomWord() .. "_" .. randomWord() .. "_" .. randomWord()
 	local description_length = math.random(1000)
 	local description = randomWord()
@@ -757,7 +757,7 @@ net.Receive("petition_request", function(len, ply)
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Invalid petition '".. petition_id .. "' requested.")
 			goto CONTINUE
 		end
-		SendPetition(petition, ply)
+		FSB.SendPetition(petition, ply)
 
 		::CONTINUE::
 	end

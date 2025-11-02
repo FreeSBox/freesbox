@@ -49,7 +49,7 @@ local function getAverageFramerate()
 	return sum/num_frames
 end
 
-function FSBGetAverageTPS()
+function FSB.GetAverageTPS()
 	return getAverageFramerate()
 end
 
