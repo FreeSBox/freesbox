@@ -80,7 +80,7 @@ local function addPetitionToHTML(html, petition)
 end
 
 local function createPetition(name, description)
-	SendPetition({
+	FSB.SendPetition({
 		name=name,
 		description=description
 	})
@@ -165,7 +165,7 @@ local function setAppropriateCurnerIcon()
 end
 
 local function loadPetitionBrowserPage(html)
-	html:SetHTML(GetFSBResource("vote/petition_browser.html"))
+	html:SetHTML(FSB.GetResource("vote/petition_browser.html"))
 	html.OnFinishLoadingDocument = function(self, url)
 		if VoteWindowState ~= eWindowMode.Browse then return end
 
@@ -182,14 +182,14 @@ local function loadPetitionBrowserPage(html)
 end
 
 local function loadPetitionEditorPage(html)
-	html:SetHTML(GetFSBResource("vote/petition_editor.html"))
+	html:SetHTML(FSB.GetResource("vote/petition_editor.html"))
 	VoteWindowState = eWindowMode.Edit
 
 	setAppropriateCurnerIcon()
 end
 
 local function loadPetitionViewPage(html, petition_id)
-	html:SetHTML(GetFSBResource("vote/petition_viewer.html"))
+	html:SetHTML(FSB.GetResource("vote/petition_viewer.html"))
 	html.OnFinishLoadingDocument = function(self, url)
 		if VoteWindowState ~= eWindowMode.View then return end
 
@@ -211,7 +211,7 @@ concommand.Add("vote", function()
 	if VoteWindowState ~= eWindowMode.Closed then return end
 	VoteWindowState = eWindowMode.Browse
 
-	VoteWindow = createWindow(FTranslate("vote.petitions"), 800, 600, true)
+	VoteWindow = createWindow(FSB.Translate("vote.petitions"), 800, 600, true)
 
 	local html = VoteWindow:Add("DHTML")
 	html:Dock(FILL)
@@ -224,7 +224,7 @@ concommand.Add("vote", function()
 		html:AddFunction("gmod", "OpenPetition", openPetition)
 		html:AddFunction("gmod", "RequestMorePetitions", requestMorePetitions)
 		html:AddFunction("gmod", "OpenURL", gui.OpenURL)
-		html:AddFunction("language", "Update", FTranslate)
+		html:AddFunction("language", "Update", FSB.Translate)
 	end
 
 	loadPetitionBrowserPage(html)

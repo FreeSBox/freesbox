@@ -60,7 +60,7 @@ else
 				return
 			end
 
-			local formatted_text = string.format(FTranslate(timer.label_text), time_left)
+			local formatted_text = string.format(FSB.Translate(timer.label_text), time_left)
 			surface.SetFont("CloseCaption_Bold")
 			surface.SetTextColor(0,0,0)
 			local text_w, text_h = surface.GetTextSize(formatted_text)

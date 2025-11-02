@@ -1,7 +1,7 @@
 
 local seconds_before_shutdown = 60
 
-function StopServer()
+function FSB.StopServer()
 	if player.GetCountConnecting() + player.GetCount() == 0 then
 		RunConsoleCommand("exit")
 	end

@@ -13,7 +13,7 @@ local english_data = localization_data["en"]
 ---FreeSBox's internal translation function.
 ---@param label string
 ---@return string localized_string
-function FTranslate(label)
+function FSB.Translate(label)
 	local lang = localization_data[gmod_language:GetString()]
 	if lang then
 		return lang[label] or label

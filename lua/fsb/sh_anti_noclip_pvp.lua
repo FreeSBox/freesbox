@@ -24,7 +24,7 @@ hook.Add("PlayerNoClip", "prevent_noclip_in_pvp", function (ply, enable_noclip)
 	local curtime = CurTime()
 	if enable_noclip and pvp_mode_end_time > curtime then
 		if CLIENT and not math.IsNearlyEqual(lastmsg, curtime, 1) then
-			ply:PrintMessage(HUD_PRINTTALK, string.format(FTranslate("no_noclip_in_pvp"), pvp_mode_end_time-curtime))
+			ply:PrintMessage(HUD_PRINTTALK, string.format(FSB.Translate("no_noclip_in_pvp"), pvp_mode_end_time-curtime))
 			lastmsg = curtime
 		end
 		return false

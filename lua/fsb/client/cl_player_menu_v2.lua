@@ -1,19 +1,19 @@
 ---@diagnostic disable: inject-field
 
 local buttons =  {
-	{ Text=FTranslate("vote.petitions"), Func=function(menu) RunConsoleCommand("vote") menu:Close() end },
-	{ Text=FTranslate("rules"), Func=function(menu) RunConsoleCommand("rules") menu:Close() end },
-	{ Text=FTranslate("pi_menu.ulx_menu"), Func=function(menu) RunConsoleCommand("ulx", "menu") menu:Close() end },
-	{ Text=FTranslate("pi_menu.change_name"), Func=function(menu) RunConsoleCommand("setnamegui") menu:Close() end },
-	{ Text=FTranslate("pi_menu.change_nametag"), Func=function(menu) RunConsoleCommand("setnametaggui") menu:Close() end }
+	{ Text=FSB.Translate("vote.petitions"), Func=function(menu) RunConsoleCommand("vote") menu:Close() end },
+	{ Text=FSB.Translate("rules"), Func=function(menu) RunConsoleCommand("rules") menu:Close() end },
+	{ Text=FSB.Translate("pi_menu.ulx_menu"), Func=function(menu) RunConsoleCommand("ulx", "menu") menu:Close() end },
+	{ Text=FSB.Translate("pi_menu.change_name"), Func=function(menu) RunConsoleCommand("setnamegui") menu:Close() end },
+	{ Text=FSB.Translate("pi_menu.change_nametag"), Func=function(menu) RunConsoleCommand("setnametaggui") menu:Close() end }
 }
 
 local checkboxes = {
-	{Text=FTranslate("pi_menu.no_render_on_lost_focus"), ConVar="cl_disable_render_on_focus_loss" },
-	{Text=FTranslate("pi_menu.enable_auto_jump"), ConVar="auto_jump" },
-	{Text=FTranslate("pi_menu.draw_spawnzone"), ConVar="fsb_draw_spawnzone" },
-	{Text=FTranslate("pi_menu.nametag_toggle"), ConVar="cl_nametags_enable" },
-	{Text=FTranslate("pi_menu.nametags_localplayer"), ConVar="cl_nametags_localplayer" },
+	{Text=FSB.Translate("pi_menu.no_render_on_lost_focus"), ConVar="cl_disable_render_on_focus_loss" },
+	{Text=FSB.Translate("pi_menu.enable_auto_jump"), ConVar="auto_jump" },
+	{Text=FSB.Translate("pi_menu.draw_spawnzone"), ConVar="fsb_draw_spawnzone" },
+	{Text=FSB.Translate("pi_menu.nametag_toggle"), ConVar="cl_nametags_enable" },
+	{Text=FSB.Translate("pi_menu.nametags_localplayer"), ConVar="cl_nametags_localplayer" },
 }
 
 local clr_hover = Color(60, 60, 60, 255)
@@ -72,7 +72,7 @@ concommand.Add("menu", function()
 
 	local window_width = 600
 	local window_hight = 400
-	local window = create_window(FTranslate("pi_menu.title"), window_width, window_hight, false)
+	local window = create_window(FSB.Translate("pi_menu.title"), window_width, window_hight, false)
 
 	for i=1, #buttons do
 		--button:DockMargin( 0, 7, 300, -4 )
@@ -126,25 +126,25 @@ local function createNameChangeUI(window_name, placeholder_text, current_name, s
 		name_markup:Draw(w/2-name_markup:GetWide()/2, h/6)
 	end
 
-	local name_submit = create_button(FTranslate("set"), 0,0,0,1, window)
+	local name_submit = create_button(FSB.Translate("set"), 0,0,0,1, window)
 	name_submit:Dock( BOTTOM )
 	name_submit.DoClick = on_click
 end
 
 concommand.Add("setnamegui", function()
 	local local_player = LocalPlayer()
-	createNameChangeUI(FTranslate("player_name"), FTranslate("new_name"), local_player:GetRichName(), function (text)
+	createNameChangeUI(FSB.Translate("player_name"), FSB.Translate("new_name"), local_player:GetRichName(), function (text)
 		local_player:SetName(text)
 	end)
 end)
 concommand.Add("setnametaggui", function()
 	local local_player = LocalPlayer()
-	createNameChangeUI(FTranslate("player_nametag"), FTranslate("new_tag"), local_player:GetNameTag(), function (text)
+	createNameChangeUI(FSB.Translate("player_nametag"), FSB.Translate("new_tag"), local_player:GetNameTag(), function (text)
 		local_player:SetNameTag(text)
 	end)
 end)
 
 hook.Add("InitPostEntity", "advertise_f2_menu", function()
-	LocalPlayer():PrintMessage(HUD_PRINTTALK, FTranslate("pi_menu.advert"))
+	LocalPlayer():PrintMessage(HUD_PRINTTALK, FSB.Translate("pi_menu.advert"))
 end)
 
