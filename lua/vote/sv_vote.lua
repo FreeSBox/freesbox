@@ -657,7 +657,7 @@ end
 net.Receive("petition_transmit", function(len, ply)
 	if not ply:IsFullyAuthenticated() then
 		-- We cannot verify this player's identity.
-		ply:PrintMessage(HUD_PRINTTALK, "You are not fully authenticated, petition discarded.")
+		ply:SendLocalizedMessage("vote.not_fully_authed_p")
 		return
 	end
 	---@type petition
@@ -670,11 +670,11 @@ net.Receive("petition_transmit", function(len, ply)
 	petition.name = net.ReadString()
 	local name_length = #petition.name
 	if name_length > PETITION_NAME_MAX_LENGTH then
-		ply:PrintMessage(HUD_PRINTTALK, "Your name is longer then the maximum allowed length (" .. tostring(name_length) .. "/" .. tostring(PETITION_NAME_MAX_LENGTH) .. ").")
+		ply:SendLocalizedMessage("vote.name_too_long", name_length, PETITION_NAME_MAX_LENGTH)
 		return
 	end
 	if string.IsOnlyWhiteSpace(petition.name) then
-		ply:PrintMessage(HUD_PRINTTALK, "Name cannot be empty.")
+		ply:SendLocalizedMessage("vote.name_cant_be_empty")
 		return
 	end
 
@@ -699,11 +699,11 @@ net.Receive("petition_transmit", function(len, ply)
 	---@diagnostic disable-next-line: assign-type-mismatch
 	petition.description = util.Decompress(description_compressed)
 	if petition.description == nil or #petition.description > PETITION_DESCRIPTION_MAX_LENGTH then
-		ply:PrintMessage(HUD_PRINTTALK, "Your description is longer then the maximum allowed length (" .. tostring(description_length) .. "/" .. tostring(PETITION_DESCRIPTION_MAX_LENGTH) .. ").")
+		ply:SendLocalizedMessage("vote.description_too_long", description_length, PETITION_NAME_MAX_LENGTH)
 		return
 	end
 	if string.IsOnlyWhiteSpace(petition.description) then
-		ply:PrintMessage(HUD_PRINTTALK, "Description cannot be empty.")
+		ply:SendLocalizedMessage("vote.description_cant_be_empty")
 		return
 	end
 
@@ -715,7 +715,7 @@ net.Receive("petition_transmit", function(len, ply)
 	local one_day_ago = os.time() - 60*60*24
 	local results = sql.QueryTyped("SELECT * FROM petitions WHERE creation_time > ? AND author_steamid = ?", one_day_ago, petition.author_steamid)
 	if #results >= MAX_PETITIONS_PER_DAY and not petition_no_limit:GetBool() then
-		ply:PrintMessage(HUD_PRINTTALK, "You can only create " .. MAX_PETITIONS_PER_DAY .. " petitions per day.")
+		ply:SendLocalizedMessage("vote.too_many_created", MAX_PETITIONS_PER_DAY)
 		return
 	end
 
@@ -746,7 +746,7 @@ end)
 net.Receive("petition_request", function(len, ply)
 	local num_petitions = net.ReadUInt(8)
 	if num_petitions > PETITION_MAX_PETITIONS_PER_REQUEST then
-		ply:PrintMessage(HUD_PRINTCONSOLE, "Too many petitions requested.")
+		ply:SendLocalizedMessage("vote.too_many_requested")
 		return
 	end
 
@@ -754,7 +754,7 @@ net.Receive("petition_request", function(len, ply)
 		local petition_id = net.ReadUInt(PETITION_ID_BITS)
 		local petition = getPetitionFromIndex(petition_id, ply)
 		if petition == nil then
-			ply:PrintMessage(HUD_PRINTCONSOLE, "Invalid petition '".. petition_id .. "' requested.")
+			ply:SendLocalizedMessage("vote.invalid_petition_requested", petition_id)
 			goto CONTINUE
 		end
 		FSB.SendPetition(petition, ply)
@@ -806,7 +806,7 @@ end)
 net.Receive("petition_vote_on", function(len, ply)
 	if not ply:IsFullyAuthenticated() then
 		-- We cannot verify this players' identity.
-		ply:PrintMessage(HUD_PRINTTALK, "You are not fully authenticated, vote discarded.")
+		ply:SendLocalizedMessage("vote.not_fully_authed_v")
 		return
 	end
 
@@ -819,18 +819,18 @@ net.Receive("petition_vote_on", function(len, ply)
 	local results = sql.QueryTyped("SELECT id FROM petitions WHERE id = ? AND author_steamid = ?", petition_id, player_id)
 	if results == false then return end
 	if #results > 0 then
-		ply:PrintMessage(HUD_PRINTTALK, "You cannot vote on your own petitions.")
+		ply:SendLocalizedMessage("vote.vote_on_self")
 		return
 	end
 
 	local results = sql.QueryTyped("SELECT expire_time FROM petitions WHERE id = ?", petition_id)
 	if results == false then return end
 	if #results == 0 then
-		ply:PrintMessage(HUD_PRINTTALK, "The petition you are voting for does not exist.")
+		ply:SendLocalizedMessage("vote.invalid_vote", petition_id)
 		return
 	end
 	if results[1].expire_time < os.time() then
-		ply:PrintMessage(HUD_PRINTTALK, "You can no longer vote on this petition.")
+		ply:SendLocalizedMessage("vote.expired_vote")
 		return
 	end
 

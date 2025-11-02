@@ -1,5 +1,6 @@
 
 -- `FSB` as in Free SandBox, not Федеральная Служба Безопасности...
+---@class FSB
 FSB = FSB or {}
 
 local shared_files = {

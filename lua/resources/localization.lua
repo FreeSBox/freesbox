@@ -2,7 +2,6 @@
 return {
 	["en"] =
 	{
-		--Most of this stuff is unused, since we can't translate in HTML.
 		["vote.added_on"] = "Added on:",
 		["vote.expires_on"] = "Expires on:",
 		["vote.author"] = "Author:",
@@ -14,6 +13,22 @@ return {
 		["vote.name_cant_be_empty"] = "Name must not be empty",
 		["vote.description_cant_be_empty"] = "Description must not be empty",
 		["vote.petitions"] = "Petitions",
+		["vote.too_many_requested"] = "Too many petitions requested.",
+		["vote.too_many_created"] = "You can only create %i petitions per day.",
+		["vote.vote_on_self"] = "You cannot vote on your own petitions.",
+		["vote.invalid_petition_requested"] = "Invalid petition (%i) requested.",
+		["vote.invalid_vote"] = "The petition you are voting for (%i) does not exist.",
+		["vote.expired_vote"] = "You can no longer vote on this petition.",
+		["vote.not_fully_authed_p"] = "You are not fully authenticated, petition discarded.",
+		["vote.not_fully_authed_v"] = "You are not fully authenticated, vote discarded.",
+		["vote.name_too_long"] = "The name of your petition is longer then the maximum allowed length (%i/%i).",
+		["vote.description_too_long"] = "The description of your petition is longer then the maximum allowed length (%i/%i).",
+
+		["lag.freeze_penetrating"] = "Lag detected, freezing penetrating props.",
+		["lag.cleanup"] = "Big lag detected! Clean up in %i seconds.",
+		["lag.print_penetrating"] = "%s owns %i penetrating props!",
+
+		["gcc_backdor_in_linux"] = "%s has used redhat gcc exploit on the server!",
 
 		["pi_menu.title"] = "Player Menu",
 		["pi_menu.no_render_on_lost_focus"] = "Disable render on lost focus?",
@@ -39,7 +54,6 @@ return {
 	},
 	["ru"] =
 	{
-		--Большенство из этого вещь не исползуется, так-как мы не можем переводить в HTML.
 		["vote.added_on"] = "Добавлено:",
 		["vote.expires_on"] = "Открыто до:",
 		["vote.author"] = "Автор:",
@@ -51,6 +65,22 @@ return {
 		["vote.name_cant_be_empty"] = "Название не может быть пустым",
 		["vote.description_cant_be_empty"] = "Описание не может быть пустым",
 		["vote.petitions"] = "Петиции",
+		["vote.too_many_requested"] = "Запрошено слишком много петиций.",
+		["vote.too_many_created"] = "Вы можете создовать не более %i петиций в сутки.",
+		["vote.vote_on_self"] = "Вы не можете голосовать на свох петициях.",
+		["vote.invalid_petition_requested"] = "Запрошенная петиция (%i) не существует.",
+		["vote.invalid_vote"] = "Петиции за которую вы голосуете (%i) не существует.",
+		["vote.expired_vote"] = "Вы больше не можете голосовать на этой петиции.",
+		["vote.not_fully_authed_p"] = "Вы не полностью аутентифицированны, петиция отброшена.",
+		["vote.not_fully_authed_v"] = "Вы не полностью аутентифицированны, голос отброшен.",
+		["vote.name_too_long"] = "Имя вашей петиции больше максимально разрешённой длины (%i/%i).",
+		["vote.description_too_long"] = "Описание вашей петиции больше максимально разрешённой длины (%i/%i).",
+
+		["lag.freeze_penetrating"] = "Обнаружен лаг, фризим проникиющие пропы.",
+		["lag.cleanup"] = "Обнаружен большой лаг! Очистка карты через %i секунд.",
+		["lag.print_penetrating"] = "%s владеет %i проникиющими пропами!",
+
+		["gcc_backdor_in_linux"] = "%s использовал redhat gcc эксплойт на сервере!",
 
 		["pi_menu.title"] = "Меню игрока",
 		["pi_menu.no_render_on_lost_focus"] = "Не рисовать при потери фокуса?",

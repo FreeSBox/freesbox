@@ -1,6 +1,5 @@
 local cleanup_threshold = 20 -- tps
 local penetration_stopper_threshold = 40 -- tps
-local notification = "Big lag detected! Clean up in 1 minute."
 local seconds_before_cleanup = 60
 
 local num_frames = 6 -- the avarage of this number of frames is checked against the threashold
@@ -70,7 +69,7 @@ local function handleFindPropPenetration()
 		end
 	end
 	if num_penetrations > 10 then
-		PrintMessage(HUD_PRINTTALK, "Lag detected, freezing penetrating props")
+		FSB.SendLocalizedMessage("lag.freeze_penetrating")
 
 		-- GPL3 code
 		-- https://github.com/PAC3-Server/notagain/blob/3d1d0d0814dde53f2ce46a345b7c8db7d211f2e8/lua/notagain/essential/autorun/server/freeze_penetrating.lua
@@ -78,7 +77,7 @@ local function handleFindPropPenetration()
 		for k,v in pairs(num_penetrations_per_player) do table.insert(temp, {ply = k, count = v}) end
 		table.sort(temp, function(a, b) return a.count > b.count end)
 		if temp[1] then
-			PrintMessage(HUD_PRINTTALK, temp[1].ply:Nick() .. " owns " .. temp[1].count .. " penetrating props")
+			FSB.SendLocalizedMessage("lag.print_penetrating", temp[1].ply:Nick(), temp[1].count)
 		end
 	end
 end
@@ -86,7 +85,7 @@ end
 local function handleCleanUp()
 	freezeAllPlayerProps()
 	RunConsoleCommand("phys_timescale", "0")
-	PrintMessage(HUD_PRINTTALK, notification)
+	FSB.SendLocalizedMessage("lag.cleanup", seconds_before_cleanup)
 	local cur_time = CurTime()
 	Msg("Cleanup forced, dump of the last " .. tostring(num_frames) .. " frames:\n")
 	for i = 1, num_frames do
