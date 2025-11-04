@@ -7,7 +7,7 @@ end
 if SERVER then
 	hook.Add("EntityTakeDamage", "set_pvp_mode", function (target, dmg)
 		local attacker = dmg:GetAttacker()
-		if not attacker:IsPlayer() or (not target:IsPlayer() and target:CPPIGetOwner() == attacker) or attacker == target then return end
+		if not attacker:IsPlayer() or (not target:IsPlayer() and (target:Health() == 0 or target:CPPIGetOwner() == attacker)) or attacker == target then return end
 
 		attacker:SetNWFloat("PVPModeEnd", CurTime()+time_until_pvp_ends)
 		if isInNoclip(attacker) then
