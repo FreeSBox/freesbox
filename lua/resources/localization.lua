@@ -27,6 +27,7 @@ return {
 		["lag.freeze_penetrating"] = "Lag detected, freezing penetrating props.",
 		["lag.cleanup"] = "Big lag detected! Clean up in %i seconds.",
 		["lag.print_penetrating"] = "%s owns %i penetrating props!",
+		["lag.timing_out"] = "Lost connection to server!",
 
 		["gcc_backdor_in_linux"] = "%s has used redhat gcc exploit on the server!",
 
@@ -79,6 +80,7 @@ return {
 		["lag.freeze_penetrating"] = "Обнаружен лаг, фризим проникиющие пропы.",
 		["lag.cleanup"] = "Обнаружен большой лаг! Очистка карты через %i секунд.",
 		["lag.print_penetrating"] = "%s владеет %i проникиющими пропами!",
+		["lag.timing_out"] = "Потерено соединение с сервером!",
 
 		["gcc_backdor_in_linux"] = "%s использовал redhat gcc эксплойт на сервере!",
 

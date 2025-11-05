@@ -8,7 +8,7 @@ net.Incoming = function(len, ply)
 	local strName = util.NetworkIDToString( i )
 
 
-	LAST_NETMSG_TIME = RealTime()
+	FSB.LAST_NETMSG_TIME = RealTime()
 
 	if hook.Run("NetIncoming", i, strName, len, ply) ~= nil then return end
 
