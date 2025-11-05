@@ -58,6 +58,3 @@ function FSB.DisableFreecam()
 	hook.Remove("CreateMove", "fsb_freecam_input")
 	hook.Remove("CalcView", "fsb_freecam_view")
 end
-
-
-for index, value in ipairs(ents.FindByClass( "gmod_wire_expression2" )) do print(value:CPPIGetOwner()) end
