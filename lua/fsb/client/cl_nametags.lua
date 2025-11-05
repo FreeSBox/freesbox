@@ -69,21 +69,21 @@ for _, ply in ipairs(player_GetAll()) do
 	end
 end
 
+---@param lp Player
+---@param local_pos Vector
 ---@param ply Player
-local function shouldGetOverheadPos(ply)
-	local lp = LocalPlayer()
+local function shouldRender(lp, local_pos, ply)
 	if lp == ply and ( not lp:ShouldDrawLocalPlayer() or not cl_nametags_localplayer:GetBool() ) then return false end
+	if ply:IsDormant() then return false end
 	if ply:Crouching() then return false end
 	if ply:InVehicle() then return false end
-	if lp:GetPos():DistToSqr(ply:GetPos()) > 5000 * 5000 then return false end
+	if local_pos:DistToSqr(ply:GetPos()) > 5000 * 5000 then return false end
 
 	return true
 end
 
 ---@param ply Player
 local function getOverheadPos(ply)
-	if not shouldGetOverheadPos(ply) then return end
-
 	local bone = 6
 	local pos = ply:GetBonePosition(bone) or ply:EyePos()
 
@@ -113,8 +113,10 @@ end
 
 hook.Add("PostDrawTranslucentRenderables", "player_name_tags", function()
 	if not cl_nametags_enable:GetBool() then return end
+	local lp = LocalPlayer()
+	local local_pos = lp:GetPos()
 	for _, ply in ipairs(player_GetAll()) do
-		if ply:IsDormant() then return end
+		if not shouldRender(lp, local_pos, ply) then continue end
 		local pos = getOverheadPos(ply)
 		if pos then
 			local ang = EyeAngles()
