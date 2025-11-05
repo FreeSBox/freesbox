@@ -15,6 +15,7 @@ local shared_files = {
 	"fsb/sh_resources.lua",
 	"fsb/sh_rules.lua",
 	"fsb/sh_spawnprotect.lua",
+	"fsb/sh_timing_out.lua",
 	"vote/sh_vote.lua",
 }
 
