@@ -9,6 +9,7 @@ local shared_files = {
 	"fsb/sh_dont_tool_players.lua",
 	"fsb/sh_has_focus.lua",
 	"fsb/sh_localization.lua",
+	"fsb/sh_netmsg_hook.lua",
 	"fsb/sh_on_screen_timer.lua",
 	"fsb/sh_playermodels.lua",
 	"fsb/sh_playtime.lua",
@@ -40,6 +41,8 @@ local client_files ={
 	"fsb/client/cl_nametags.lua",
 	"fsb/client/cl_player_menu_v2.lua",
 	"fsb/client/cl_rules.lua",
+	"fsb/client/cl_freecam.lua",
+	"fsb/client/cl_crash_detect.lua",
 }
 
 for index, value in ipairs(shared_files) do
