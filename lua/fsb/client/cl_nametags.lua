@@ -114,6 +114,7 @@ end
 hook.Add("PostDrawTranslucentRenderables", "player_name_tags", function()
 	if not cl_nametags_enable:GetBool() then return end
 	for _, ply in ipairs(player_GetAll()) do
+		if ply:IsDormant() then return end
 		local pos = getOverheadPos(ply)
 		if pos then
 			local ang = EyeAngles()
