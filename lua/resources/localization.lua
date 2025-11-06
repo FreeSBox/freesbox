@@ -29,6 +29,8 @@ return {
 		["lag.print_penetrating"] = "%s owns %i penetrating props!",
 		["lag.timing_out"] = "Lost connection to server!",
 
+		["cant_use_yet"] = "You have to play %i hours on this server until you can use this feature.",
+
 		["gcc_backdor_in_linux"] = "%s has used redhat gcc exploit on the server!",
 
 		["pi_menu.title"] = "Player Menu",
@@ -81,6 +83,8 @@ return {
 		["lag.cleanup"] = "Обнаружен большой лаг! Очистка карты через %i секунд.",
 		["lag.print_penetrating"] = "%s владеет %i проникиющими пропами!",
 		["lag.timing_out"] = "Потерено соединение с сервером!",
+
+		["cant_use_yet"] = "Вам нужно наиграть ещё %i часов на сервере прежде чем вы сможете использовать эту функцию.",
 
 		["gcc_backdor_in_linux"] = "%s использовал redhat gcc эксплойт на сервере!",
 
