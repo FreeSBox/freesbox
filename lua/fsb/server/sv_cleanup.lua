@@ -25,7 +25,7 @@ local function cancelCleanupULXWrapper(calling_ply)
 end
 
 local cleanup = ulx.command("FreeSBox", "ulx cleanup", cleanupULXWrapper, "!cleanup")
-cleanup:addParam{ type=ULib.cmds.NumArg, min=10, default=60, hint="seconds to wait before cleaning up", ULib.cmds.round, ULib.cmds.optional }
+cleanup:addParam{ type=ULib.cmds.NumArg, min=10, max=120, default=60, hint="seconds to wait before cleaning up", ULib.cmds.round, ULib.cmds.optional }
 cleanup:defaultAccess( ULib.ACCESS_ADMIN )
 cleanup:help( "Cleans up the map with a visual timer." )
 cleanup:setOpposite("ulx stopcleanup", {true}, "!stopcleanup")
