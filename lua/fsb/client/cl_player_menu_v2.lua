@@ -144,8 +144,3 @@ concommand.Add("setnametaggui", function()
 		local_player:SetNameTag(text)
 	end)
 end)
-
-hook.Add("InitPostEntity", "advertise_f2_menu", function()
-	chat.AddText(FSB.Translate("pi_menu.advert"))
-end)
-
