@@ -7,7 +7,7 @@ function FSB.StopServer()
 	end
 
 	local cur_time = CurTime()
-	FSBBroadcastTimer(cur_time, cur_time+seconds_before_shutdown, "timer.shutdown")
+	FSB.BroadcastTimer(cur_time, cur_time+seconds_before_shutdown, "timer.shutdown")
 
 	timer.Create("server_shutdown", 1, 60, function()
 		local reps_left = timer.RepsLeft("server_shutdown")

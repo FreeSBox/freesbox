@@ -91,7 +91,7 @@ local function handleCleanUp()
 	for i = 1, num_frames do
 		MsgN(last_frames[i])
 	end
-	FSBBroadcastTimer(cur_time, cur_time+seconds_before_cleanup, "timer.cleanup")
+	FSB.BroadcastTimer(cur_time, cur_time+seconds_before_cleanup, "timer.cleanup")
 
 	timer.Simple(60, function()
 		game.CleanUpMap()

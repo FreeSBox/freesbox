@@ -1,10 +1,15 @@
 ---@diagnostic disable: inject-field
 
 if SERVER then
-	util.AddNetworkString("start_on_screen_timer")
+	util.AddNetworkString("on_screen_timer")
 
-	function FSBBroadcastTimer(start_time, end_time, translation_label)
-		net.Start("start_on_screen_timer")
+	---Runs `FSB.CreateTimer` on all clients.
+	---@param start_time number
+	---@param end_time number
+	---@param translation_label string
+	function FSB.BroadcastTimer(start_time, end_time, translation_label)
+		net.Start("on_screen_timer")
+			net.WriteBool(false) --stoptimer.
 			net.WriteFloat(start_time)
 			net.WriteFloat(end_time)
 			net.WriteString(translation_label)
@@ -27,7 +32,7 @@ else
 	---@param start_time number
 	---@param end_time number
 	---@param translation_label string
-	function FSBCreateTimer(start_time, end_time, translation_label)
+	function FSB.CreateTimer(start_time, end_time, translation_label)
 		if timer.panel then
 			timer.panel:Remove()
 			timer.bar:Remove()
@@ -72,13 +77,31 @@ else
 
 	end
 
+	net.Receive("on_screen_timer", function(len, ply)
+		if net.ReadBool() then
+			FSB.StopTimer()
+			return
+		end
 
-	net.Receive("start_on_screen_timer", function(len, ply)
 		local start_time = net.ReadFloat()
 		local end_time = net.ReadFloat()
 		local label_text = net.ReadString()
 
-		FSBCreateTimer(start_time, end_time, label_text)
+		FSB.CreateTimer(start_time, end_time, label_text)
 	end)
 
+end
+
+---Manually stops the current timer.
+function FSB.StopTimer()
+	if CLIENT then
+		if timer.panel then
+			timer.panel:Remove()
+			timer.bar:Remove()
+		end
+	else
+		net.Start("on_screen_timer")
+			net.WriteBool(true) --stoptimer.
+		net.Broadcast()
+	end
 end
