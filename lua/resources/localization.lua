@@ -33,16 +33,19 @@ return {
 
 		["gcc_backdor_in_linux"] = "%s has used redhat gcc exploit on the server!",
 
+		["advert.pi_menu"] = "Press F2 to access the server menu.",
+		["advert.petitions"] = "It would be nice if you signed some petitions in the F2 menu.",
+
 		["pi_menu.title"] = "Player Menu",
 		["pi_menu.no_render_on_lost_focus"] = "Disable render on lost focus?",
 		["pi_menu.enable_auto_jump"] = "Enable auto jump?",
-		["pi_menu.advert"] = "Press F2 to access the server menu.",
 		["pi_menu.draw_spawnzone"] = "Draw spawn-zone limits?",
 		["pi_menu.ulx_menu"] = "ULX Menu",
 		["pi_menu.change_name"] = "Change Nickname",
 		["pi_menu.change_nametag"] = "Change Nametag",
 		["pi_menu.nametag_toggle"] = "Show nicks above head?",
 		["pi_menu.nametags_localplayer"] = "Show your nick in 3rd person?",
+		["pi_menu.enable_adverts"] = "Advertise this menu in chat?",
 		["rules"] = "Rules",
 		["set"] = "Set",
 		["player_name"] = "Player Name",
@@ -88,6 +91,9 @@ return {
 
 		["gcc_backdor_in_linux"] = "%s использовал redhat gcc эксплойт на сервере!",
 
+		["advert.pi_menu"] = "Нажмите F2 чтобы открыть меню сервера.",
+		["advert.petitions"] = "Было бы неплохо если бы ты подписал несколько петиций в F2 меню.",
+
 		["pi_menu.title"] = "Меню игрока",
 		["pi_menu.no_render_on_lost_focus"] = "Не рисовать при потери фокуса?",
 		["pi_menu.enable_auto_jump"] = "Включить авто-прыжок?",
@@ -98,6 +104,7 @@ return {
 		["pi_menu.change_nametag"] = "Изменить тег",
 		["pi_menu.nametag_toggle"] = "Показать ники над головой?",
 		["pi_menu.nametags_localplayer"] = "Показать свой ник в 3-ем лице?",
+		["pi_menu.enable_adverts"] = "Рекламировать это меню в чате?",
 		["rules"] = "Правила",
 		["set"] = "Поставить",
 		["player_name"] = "Ник игрока",
