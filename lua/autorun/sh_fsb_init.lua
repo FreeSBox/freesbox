@@ -38,6 +38,7 @@ local server_files = {
 }
 
 local client_files ={
+	"fsb/client/cl_advertise.lua",
 	"fsb/client/cl_concommands_v2.lua",
 	"fsb/client/cl_gcc_exploit_radhat.lua",
 	"fsb/client/cl_nametags.lua",
