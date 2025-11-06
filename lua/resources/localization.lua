@@ -29,7 +29,7 @@ return {
 		["lag.print_penetrating"] = "%s owns %i penetrating props!",
 		["lag.timing_out"] = "Lost connection to server!",
 
-		["cant_use_yet"] = "You have to play %i hours on this server until you can use this feature.",
+		["cant_use_yet"] = "You have to play %i more hours on this server until you can use this feature.",
 
 		["gcc_backdor_in_linux"] = "%s has used redhat gcc exploit on the server!",
 
