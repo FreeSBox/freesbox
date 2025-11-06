@@ -16,6 +16,12 @@ if SERVER then
 		net.Broadcast()
 	end
 
+	function FSB.StopTimer()
+		net.Start("on_screen_timer")
+			net.WriteBool(true) --stoptimer.
+		net.Broadcast()
+	end
+
 else
 
 	local timer = {
@@ -90,18 +96,11 @@ else
 		FSB.CreateTimer(start_time, end_time, label_text)
 	end)
 
-end
 
----Manually stops the current timer.
-function FSB.StopTimer()
-	if CLIENT then
-		if timer.panel then
-			timer.panel:Remove()
-			timer.bar:Remove()
-		end
-	else
-		net.Start("on_screen_timer")
-			net.WriteBool(true) --stoptimer.
-		net.Broadcast()
+	function FSB.StopTimer()
+		if timer.panel == nil then return end
+		timer.panel:Remove()
+		timer.bar:Remove()
 	end
 end
+
