@@ -33,7 +33,7 @@ return {
 		["cant_use_yet"] = "You have to play %i more hours on this server until you can use this feature.",
 		["gcc_backdor_in_linux"] = "%s has used redhat gcc exploit on the server!",
 
-		["advert.ghostbanned"] = "You are banned util: %s",
+		["advert.ghostbanned"] = "You are banned until: %s",
 		["advert.pi_menu"] = "Press F2 to access the server menu.",
 		["advert.petitions"] = "It would be nice if you signed some petitions in the F2 menu.",
 

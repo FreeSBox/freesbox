@@ -7,12 +7,12 @@ if SERVER then
 	function PLAYER:SetGhostBanned(is_banned, unban_time)
 		self:SetNameNoSave("")
 		if is_banned then
+			self:SetUserGroup("user")
 			self:SetNameTagNoSave("<color=255,0,0>[BANNED]")
 		else
 			self:SetNameTagNoSave("")
 			unban_time = 0
 		end
-		self:SetUserGroup("user")
 		self:SetNWFloat("GhostUnBanTime", unban_time)
 	end
 end
@@ -100,7 +100,7 @@ else
 		timer.Create("notify_ghost_banned", 10, 0, function ()
 			local lp = LocalPlayer()
 			if not lp:IsGhostBanned() then return end
-	
+
 			local date = os.date("%d/%m/%Y %X", math.floor(lp:GetNWFloat("GhostUnBanTime", 0)))
 			chat.AddText(Color(255,0,0), string.format(FSB.Translate("advert.ghostbanned"), date))
 		end)
