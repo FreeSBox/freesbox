@@ -661,6 +661,7 @@ end
 ---@param id integer
 function FSB.RemovePetition(id)
 	sql.QueryTyped("DELETE FROM petitions WHERE id = ?", id)
+	sql.QueryTyped("DELETE FROM votes WHERE petition_id = ?", id)
 
 	net.Start("petition_removed")
 	net.WriteUInt(id, PETITION_ID_BITS)
