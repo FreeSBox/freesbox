@@ -96,11 +96,14 @@ if SERVER then
 		end
 	end)
 else
-	timer.Create("notify_ghost_banned", 10, 0, function ()
-		local lp = LocalPlayer()
-		if not lp:IsGhostBanned() then return end
-
-		local date = os.date("%d/%m/%Y %X", math.floor(lp:GetNWFloat("GhostUnBanTime", 0)))
-		chat.AddText(Color(255,0,0), string.format(FSB.Translate("advert.ghostbanned"), date))
+	hook.Add("CreateMove", "init_ghostban_timer", function (cmd)
+		timer.Create("notify_ghost_banned", 10, 0, function ()
+			local lp = LocalPlayer()
+			if not lp:IsGhostBanned() then return end
+	
+			local date = os.date("%d/%m/%Y %X", math.floor(lp:GetNWFloat("GhostUnBanTime", 0)))
+			chat.AddText(Color(255,0,0), string.format(FSB.Translate("advert.ghostbanned"), date))
+		end)
+		hook.Remove("CreateMove", "init_ghostban_timer")
 	end)
 end
