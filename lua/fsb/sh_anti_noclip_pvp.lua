@@ -17,6 +17,7 @@ if SERVER then
 		attacker:SetNWFloat("PVPModeEnd", CurTime()+time_until_pvp_ends)
 		if isInNoclip(attacker) then
 			attacker:SetMoveType(MOVETYPE_WALK)
+			return true
 		end
 	end)
 end
