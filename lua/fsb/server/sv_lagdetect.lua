@@ -91,13 +91,7 @@ local function handleCleanUp()
 	for i = 1, num_frames do
 		MsgN(last_frames[i])
 	end
-	FSB.BroadcastTimer(cur_time, cur_time+seconds_before_cleanup, "timer.cleanup")
-
-	timer.Simple(60, function()
-		game.CleanUpMap()
-		RunConsoleCommand("phys_timescale", "1")
-		clean_up_started = false
-	end)
+	FSB.CleanUpMap(60)
 end
 
 hook.Add("Tick", "lag_detect", function()
