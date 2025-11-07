@@ -26,23 +26,6 @@ function FSB.IsCleanUpInProgress()
 	return cleanup_in_progress
 end
 
-local function cleanupULXWrapper(calling_ply, time)
-	FSB.CleanUpMap(time)
-end
-local function cancelCleanupULXWrapper(calling_ply)
-	FSB.CancelCleanUp()
-end
-
-local cleanup = ulx.command("FreeSBox", "ulx cleanup", cleanupULXWrapper, "!cleanup")
-cleanup:addParam{ type=ULib.cmds.NumArg, min=10, max=120, default=60, hint="seconds to wait before cleaning up", ULib.cmds.round, ULib.cmds.optional }
-cleanup:defaultAccess( ULib.ACCESS_ADMIN )
-cleanup:help( "Cleans up the map with a visual timer." )
-cleanup:setOpposite("ulx stopcleanup", {true}, "!stopcleanup")
-
-local stopcleanup = ulx.command("FreeSBox", "ulx stopcleanup", cancelCleanupULXWrapper, "!stopcleanup")
-stopcleanup:defaultAccess( ULib.ACCESS_ADMIN )
-stopcleanup:help( "Cancels the cleanup if started." )
-
 -- Manages automatic server cleanup.
 -- Wiremod claims that PlayerDisconnected doesn't always run.
 hook.Add("EntityRemoved", "empty_server_map_cleanup", function(ent, fullUpdate)
