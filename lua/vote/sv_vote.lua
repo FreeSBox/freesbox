@@ -675,6 +675,10 @@ net.Receive("petition_transmit", function(len, ply)
 		ply:SendLocalizedMessage("vote.not_fully_authed_p")
 		return
 	end
+	if ply:IsGhostBanned() then
+		ply:SendLocalizedMessage("vote.ghostbanned")
+		return
+	end
 	---@type petition
 	---@diagnostic disable-next-line: missing-fields
 	local petition = {}
@@ -822,6 +826,10 @@ net.Receive("petition_vote_on", function(len, ply)
 	if not ply:IsFullyAuthenticated() then
 		-- We cannot verify this players' identity.
 		ply:SendLocalizedMessage("vote.not_fully_authed_v")
+		return
+	end
+	if ply:IsGhostBanned() then
+		ply:SendLocalizedMessage("vote.ghostbanned")
 		return
 	end
 

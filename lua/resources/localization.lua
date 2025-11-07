@@ -23,6 +23,7 @@ return {
 		["vote.not_fully_authed_v"] = "You are not fully authenticated, vote discarded.",
 		["vote.name_too_long"] = "The name of your petition is longer then the maximum allowed length (%i/%i).",
 		["vote.description_too_long"] = "The description of your petition is longer then the maximum allowed length (%i/%i).",
+		["vote.ghostbanned"] = "You cannot use petitions while ghostbanned.",
 
 		["lag.freeze_penetrating"] = "Lag detected, freezing penetrating props.",
 		["lag.cleanup"] = "Big lag detected! Clean up in %i seconds.",
@@ -30,9 +31,9 @@ return {
 		["lag.timing_out"] = "Lost connection to server!",
 
 		["cant_use_yet"] = "You have to play %i more hours on this server until you can use this feature.",
-
 		["gcc_backdor_in_linux"] = "%s has used redhat gcc exploit on the server!",
 
+		["advert.ghostbanned"] = "You are banned util: %s",
 		["advert.pi_menu"] = "Press F2 to access the server menu.",
 		["advert.petitions"] = "It would be nice if you signed some petitions in the F2 menu.",
 
@@ -81,6 +82,7 @@ return {
 		["vote.not_fully_authed_v"] = "Вы не полностью аутентифицированны, голос отброшен.",
 		["vote.name_too_long"] = "Имя вашей петиции больше максимально разрешённой длины (%i/%i).",
 		["vote.description_too_long"] = "Описание вашей петиции больше максимально разрешённой длины (%i/%i).",
+		["vote.ghostbanned"] = "Вы не можете использовать систему петиций в приврачном бане.",
 
 		["lag.freeze_penetrating"] = "Обнаружен лаг, фризим проникиющие пропы.",
 		["lag.cleanup"] = "Обнаружен большой лаг! Очистка карты через %i секунд.",
@@ -88,9 +90,9 @@ return {
 		["lag.timing_out"] = "Потерено соединение с сервером!",
 
 		["cant_use_yet"] = "Вам нужно наиграть ещё %i часов на сервере прежде чем вы сможете использовать эту функцию.",
-
 		["gcc_backdor_in_linux"] = "%s использовал redhat gcc эксплойт на сервере!",
 
+		["advert.ghostbanned"] = "Вы забанены до: %s",
 		["advert.pi_menu"] = "Нажмите F2 чтобы открыть меню сервера.",
 		["advert.petitions"] = "Было бы неплохо если бы ты подписал несколько петиций в F2 меню.",
 

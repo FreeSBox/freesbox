@@ -11,8 +11,13 @@ if SERVER then
 			attacker = attacker:CPPIGetOwner()
 		end
 		if not IsValid(attacker) then return end
-
-		if not attacker:IsPlayer() or (not target:IsPlayer() and (target:Health() == 0 or target:CPPIGetOwner() == attacker)) or attacker == target then return end
+		if not attacker:IsPlayer() then return end
+		if attacker == target then return end
+		if target:IsPlayer() and target:IsGhostBanned() then return end -- Feel free to kill ghost banned players.
+		if not target:IsPlayer() then
+			if target:Health() == 0 then return end
+			if target:CPPIGetOwner() == attacker then return end
+		end
 
 		attacker:SetNWFloat("PVPModeEnd", CurTime()+time_until_pvp_ends)
 		if isInNoclip(attacker) then

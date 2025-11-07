@@ -22,6 +22,7 @@ PLAYER.GetName = PLAYER.Name
 PLAYER.Nick = PLAYER.Name
 
 function PLAYER:SetName(name)
+	if self:IsGhostBanned() then return end
 	if SERVER then
 		if #name > 100 then return end
 		self:SetPData("nickname", name)
@@ -42,6 +43,7 @@ end
 ------ Nametags ------
 
 function PLAYER:SetNameTag(name_tag)
+	if self:IsGhostBanned() then return end
 	if SERVER then
 		if #name_tag > 256 then return end
 		self:SetPData("nametag", name_tag)

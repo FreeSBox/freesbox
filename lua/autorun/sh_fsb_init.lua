@@ -8,6 +8,7 @@ local shared_files = {
 	"fsb/sh_limit_duplicator.lua",
 	"fsb/sh_custom_name.lua",
 	"fsb/sh_dont_tool_players.lua",
+	"fsb/sh_ghostban.lua",
 	"fsb/sh_has_focus.lua",
 	"fsb/sh_localization.lua",
 	"fsb/sh_netmsg_hook.lua",
