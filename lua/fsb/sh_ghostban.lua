@@ -7,7 +7,6 @@ if SERVER then
 	function PLAYER:SetGhostBanned(is_banned, unban_time)
 		self:SetNameNoSave("")
 		if is_banned then
-			self:SetUserGroup("user")
 			self:SetNameTagNoSave("<color=255,0,0>[BANNED]")
 		else
 			self:SetNameTagNoSave("")
@@ -78,13 +77,13 @@ if SERVER then
 	end
 
 	hook.Add("PlayerInitialSpawn", "apply_ghost_ban", function (ply, transition)
-		local unban_time = ply:GetPData("ghost_unban_time", nil)
+		local unban_time = tonumber(ply:GetPData("ghost_unban_time", nil))
 		if unban_time == nil then return end
-		if os.time() > tonumber(unban_time) then
+		if os.time() > unban_time then
 			ply:RemovePData("ghost_unban_time")
 			return
 		end
-		ply:SetGhostBanned(true)
+		ply:SetGhostBanned(true, unban_time)
 	end)
 
 	timer.Create("remove_passed_bans", 10, 0, function ()
