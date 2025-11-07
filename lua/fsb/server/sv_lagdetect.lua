@@ -6,7 +6,6 @@ local num_frames = 6 -- the avarage of this number of frames is checked against 
 
 local sv_hibernate_think = GetConVar("sv_hibernate_think")
 local last_ticktime = 0
-local clean_up_started = false
 
 local function freezeAllPlayerProps()
 	for _, ent in ipairs(ents.GetAll()) do
@@ -18,13 +17,6 @@ local function freezeAllPlayerProps()
 		end
 	end
 end
-
-hook.Add("PlayerSpawnObject", "lag_detect_stop_spawn", function (ply, model, skin)
-	if clean_up_started then
-		print(ply:GetName() .. " tried to spawn: \"" .. model .. "\" while lag cleanup was in progress")
-		return false
-	end
-end)
 
 local last_frames = {}
 
@@ -99,13 +91,12 @@ hook.Add("Tick", "lag_detect", function()
 	local delta_time = sys_time-last_ticktime
 	pushFramerate(1/delta_time)
 	local not_from_hybernation = player.GetCount() > 0 -- GetCount doesn't count loading players.
-	local should_run_cleanup_logic = ( sv_hibernate_think:GetBool() or not_from_hybernation ) and last_ticktime ~= 0 and not clean_up_started and game.MaxPlayers() ~= 1
+	local should_run_cleanup_logic = ( sv_hibernate_think:GetBool() or not_from_hybernation ) and last_ticktime ~= 0 and not FSB.IsCleanUpInProgress() and game.MaxPlayers() ~= 1
 	if should_run_cleanup_logic then
 		if getAverageFramerate() < penetration_stopper_threshold then
 			handleFindPropPenetration()
 		end
 		if getAverageFramerate() < cleanup_threshold then
-			clean_up_started = true
 			handleCleanUp()
 		end
 	end
