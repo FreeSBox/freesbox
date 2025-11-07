@@ -9,8 +9,8 @@ if SERVER then
 		local attacker = dmg:GetAttacker()
 		if not attacker:IsPlayer() then
 			attacker = attacker:CPPIGetOwner()
-			if attacker == nil then return end
 		end
+		if not IsValid(attacker) then return end
 
 		if not attacker:IsPlayer() or (not target:IsPlayer() and (target:Health() == 0 or target:CPPIGetOwner() == attacker)) or attacker == target then return end
 
