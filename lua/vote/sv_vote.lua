@@ -12,6 +12,9 @@ util.AddNetworkString("petition_transmit")
 -- `server -> client`. Confirm that the petition added with `petition_transmit` was accepted on the server.
 util.AddNetworkString("petition_accepted")
 
+-- `server -> client`. Tells the client that it should delete this petition from the cache.
+util.AddNetworkString("petition_removed")
+
 -- `client -> server`. The client whats to know what petitions are available.
 util.AddNetworkString("petition_list_request")
 
@@ -651,6 +654,17 @@ function FSB.GenerateRandomPetition()
 		math.random(600000000, 999999999999),
 		math.random(1600000000, 1500000000)
 	)
+end
+
+---Removes the petition.
+---**There is no way to undo this!**
+---@param id integer
+function FSB.RemovePetition(id)
+	sql.QueryTyped("DELETE FROM petitions WHERE id = ?", id)
+
+	net.Start("petition_removed")
+	net.WriteUInt(id, PETITION_ID_BITS)
+	net.Broadcast()
 end
 
 --#region NetMsg handling

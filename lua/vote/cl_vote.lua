@@ -291,6 +291,13 @@ net.Receive("petition_transmit", function(len, ply)
 	end
 end)
 
+net.Receive("petition_removed", function (len, ply)
+	local index = net.ReadUInt(PETITION_ID_BITS)
+	petitions_available[index] = nil
+	petitions_cache[index] = nil
+	print("Server removed petition", index)
+end)
+
 net.Receive("petition_list_responce", function(len, ply)
 	local num_petitions = net.ReadUInt(PETITION_ID_BITS)
 	for i = 1, num_petitions do

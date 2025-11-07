@@ -16,6 +16,7 @@ return [[
 
 	<span style="float: right;">Автор: {{Petition.author}}</span>
 	<br>
+	<span style="float: right;">Index: {{Petition.index}}</span>
 	<br>
 
 	<span>Добавлено: {{Petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
