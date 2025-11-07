@@ -80,7 +80,7 @@ if SERVER then
 	hook.Add("PlayerInitialSpawn", "apply_ghost_ban", function (ply, transition)
 		local unban_time = ply:GetPData("ghost_unban_time", nil)
 		if unban_time == nil then return end
-		if os.time() > unban_time then
+		if os.time() > tonumber(unban_time) then
 			ply:RemovePData("ghost_unban_time")
 			return
 		end

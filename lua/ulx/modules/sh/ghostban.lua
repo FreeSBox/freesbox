@@ -1,16 +1,16 @@
 
 local function ghostBanULXWrapper(calling_ply, target_ply, minutes)
 	if target_ply:IsListenServerHost() or target_ply:IsBot() then
-		ULib.tsayError( calling_ply, "This player is immune to banning", true )
+		ULib.tsayError(calling_ply, "This player is immune to banning", true)
 		return
 	end
 
-	ulx.fancyLogAdmin( calling_ply, "#A ghostbanned #T for #s", target_ply, ULib.secondsToStringTime( minutes * 60 ))
+	ulx.fancyLogAdmin(calling_ply, "#A ghostbanned #T for #s", target_ply, ULib.secondsToStringTime( minutes * 60 ))
 
 	FSB.GhostBan(target_ply, os.time()+minutes*60)
 end
 local function ghostUnBanULXWrapper(calling_ply, target_ply)
-	ulx.fancyLogAdmin( calling_ply, "#A unghostbanned #T", target_ply)
+	ulx.fancyLogAdmin(calling_ply, "#A unghostbanned #T", target_ply)
 	FSB.GhostUnBan(target_ply)
 end
 
@@ -21,7 +21,7 @@ local function ghostUnBanIDULXWrapper(calling_ply, steamid)
 		return
 	end
 
-	ulx.fancyLogAdmin( calling_ply, "#A unghostbanned steamid #s", steamid)
+	ulx.fancyLogAdmin(calling_ply, "#A unghostbanned steamid #s", steamid)
 
 	util.RemovePData(steamid, "ghost_unban_time")
 end
