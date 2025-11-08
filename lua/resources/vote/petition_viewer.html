@@ -162,6 +162,10 @@
 
 	function updatePetitionVotes(index, likes, dislikes, our_vote_status)
 	{
+		if (gScope.Petition.index != index)
+		{
+			return
+		}
 		gScope.Petition.likes = likes;
 		gScope.Petition.dislikes = dislikes;
 		gScope.Petition.our_vote_status = our_vote_status;
