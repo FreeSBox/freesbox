@@ -29,7 +29,7 @@ return {
 		["lag.freeze_penetrating"] = "Lag detected, freezing penetrating props.",
 		["lag.cleanup"] = "Big lag detected! Clean up in %i seconds.",
 		["lag.print_penetrating"] = "%s owns %i penetrating props!",
-		["lag.too_many_props"] = "%s spawned a bunch of props in 1 tick, what the fuck is he doing?",
+		["lag.too_many_props"] = "%s spawned a shitload of props in 1 tick, what the fuck is he doing?",
 		["lag.timing_out"] = "Lost connection to server!",
 
 		["cant_use_yet"] = "You have to play %i more hours on this server until you can use this feature.",
