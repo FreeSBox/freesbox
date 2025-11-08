@@ -1,6 +1,8 @@
+---@diagnostic disable: inject-field
 local cleanup_threshold = 20 -- tps
 local penetration_stopper_threshold = 40 -- tps
 local seconds_before_cleanup = 60
+local max_entities_per_tick = 10
 
 local num_frames = 6 -- the avarage of this number of frames is checked against the threashold
 
@@ -101,6 +103,10 @@ hook.Add("Tick", "lag_detect", function()
 		end
 	end
 	last_ticktime = sys_time
+
+	for _, v in ipairs(player.GetHumans()) do
+		v.ents_this_tick = 0
+	end
 end)
 
 
@@ -111,10 +117,29 @@ local model_blacklist =
 
 
 local function handle_prop_spawn_attempt(ply, model, skin)
+	if ply.spawns_blocked then return false end
+	if ply.ents_this_tick > max_entities_per_tick then
+		ply.spawns_blocked = true
+		return false
+	end
+	ply.ents_this_tick = ply.ents_this_tick + 1
+
 	if model_blacklist[model] then
 		return false
 	end
 end
 
 hook.Add("PlayerSpawnObject", "blocked_props", handle_prop_spawn_attempt)
+hook.Add("PlayerInitialSpawn", "init_ent_counter", function (player, transition)
+	player.ents_this_tick = 0
+	player.spawns_blocked = false
+end)
 
+timer.Create("reset_spawn_blocked", 1, 0, function ()
+	for _, v in ipairs(player.GetHumans()) do
+		if v.spawns_blocked then
+			FSB.SendLocalizedMessage("lag.too_many_props", v:Nick())
+			v.spawns_blocked = false
+		end
+	end
+end)

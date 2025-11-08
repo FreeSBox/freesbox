@@ -28,6 +28,7 @@ return {
 		["lag.freeze_penetrating"] = "Lag detected, freezing penetrating props.",
 		["lag.cleanup"] = "Big lag detected! Clean up in %i seconds.",
 		["lag.print_penetrating"] = "%s owns %i penetrating props!",
+		["lag.too_many_props"] = "%s spawned a bunch of props in 1 tick, what the fuck is he doing?",
 		["lag.timing_out"] = "Lost connection to server!",
 
 		["cant_use_yet"] = "You have to play %i more hours on this server until you can use this feature.",
@@ -87,6 +88,7 @@ return {
 		["lag.freeze_penetrating"] = "Обнаружен лаг, фризим проникиющие пропы.",
 		["lag.cleanup"] = "Обнаружен большой лаг! Очистка карты через %i секунд.",
 		["lag.print_penetrating"] = "%s владеет %i проникиющими пропами!",
+		["lag.too_many_props"] = "%s заспавнил дохуя пропов за 1 тик, чё за хуйню он творит?",
 		["lag.timing_out"] = "Потерено соединение с сервером!",
 
 		["cant_use_yet"] = "Вам нужно наиграть ещё %i часов на сервере прежде чем вы сможете использовать эту функцию.",
