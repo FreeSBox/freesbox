@@ -24,6 +24,7 @@ return {
 		["vote.name_too_long"] = "The name of your petition is longer then the maximum allowed length (%i/%i).",
 		["vote.description_too_long"] = "The description of your petition is longer then the maximum allowed length (%i/%i).",
 		["vote.ghostbanned"] = "You cannot use petitions while ghostbanned.",
+		["vote.new_petitions"] = "%s has created a petition (%s).",
 
 		["lag.freeze_penetrating"] = "Lag detected, freezing penetrating props.",
 		["lag.cleanup"] = "Big lag detected! Clean up in %i seconds.",
@@ -84,6 +85,7 @@ return {
 		["vote.name_too_long"] = "Имя вашей петиции больше максимально разрешённой длины (%i/%i).",
 		["vote.description_too_long"] = "Описание вашей петиции больше максимально разрешённой длины (%i/%i).",
 		["vote.ghostbanned"] = "Вы не можете использовать систему петиций в приврачном бане.",
+		["vote.new_petitions"] = "%s создал петицию (%s).",
 
 		["lag.freeze_penetrating"] = "Обнаружен лаг, фризим проникиющие пропы.",
 		["lag.cleanup"] = "Обнаружен большой лаг! Очистка карты через %i секунд.",

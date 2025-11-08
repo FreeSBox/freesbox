@@ -760,6 +760,8 @@ net.Receive("petition_transmit", function(len, ply)
 	net.Start("petition_accepted")
 		net.WriteUInt(result[1].id, PETITION_ID_BITS)
 	net.Send(ply)
+
+	FSB.SendLocalizedMessage("vote.new_petitions", ply:Nick(), petition.name)
 end)
 
 net.Receive("petition_request", function(len, ply)
