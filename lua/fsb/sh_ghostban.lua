@@ -22,7 +22,7 @@ end
 
 local TAG = "ghost_ban_check"
 local function checkCanSpawn(ply)
-	if ply:IsGhostBanned() then
+	if IsValid(ply) and ply:IsPlayer() and ply:IsGhostBanned() then
 		return false
 	end
 end
