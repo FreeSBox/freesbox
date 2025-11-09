@@ -116,20 +116,46 @@ local model_blacklist =
 }
 
 
-local function handle_prop_spawn_attempt(ply, model, skin)
+local function handle_blacklist(ply, model, skin)
+	if model_blacklist[model] then
+		return false
+	end
+end
+
+hook.Add("PlayerSpawnObject", "blocked_props", handle_blacklist)
+
+local function handle_ratelimit(ply)
 	if ply.spawns_blocked then return false end
 	if ply.ents_this_tick > max_entities_per_tick then
 		ply.spawns_blocked = true
 		return false
 	end
 	ply.ents_this_tick = ply.ents_this_tick + 1
-
-	if model_blacklist[model] then
-		return false
-	end
 end
 
-hook.Add("PlayerSpawnObject", "blocked_props", handle_prop_spawn_attempt)
+local ignored_classes =
+{
+	["starfall_hologram"] = true,
+	["gmod_wire_hologram"] = true,
+}
+
+local function handle_ratelimit_sent(ply, class)
+	if ply.spawns_blocked then return false end
+	if ply.ignored_classes[class] then return end
+	if ply.ents_this_tick > max_entities_per_tick then
+		ply.spawns_blocked = true
+		return false
+	end
+	ply.ents_this_tick = ply.ents_this_tick + 1
+end
+
+hook.Add("PlayerSpawnProp", "blocked_props", handle_ratelimit)
+hook.Add("PlayerSpawnRagdoll", "blocked_props", handle_ratelimit)
+hook.Add("PlayerSpawnNPC", "blocked_props", handle_ratelimit)
+hook.Add("PlayerSpawnVehicle", "blocked_props", handle_ratelimit)
+
+hook.Add("PlayerSpawnSENT", "blocked_props", handle_ratelimit_sent)
+
 hook.Add("PlayerInitialSpawn", "init_ent_counter", function (player, transition)
 	player.ents_this_tick = 0
 	player.spawns_blocked = false
