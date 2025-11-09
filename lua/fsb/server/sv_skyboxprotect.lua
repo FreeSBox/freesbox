@@ -2,6 +2,7 @@ local skybox_zones =
 {
 	["gm_bigcity"] = {Vector(3072, -3072, 4416), Vector(-3072, 3072, 5632)},
 	["gm_bigcity_improved"] = {Vector(3072, -3072, 4416), Vector(-3072, 3072, 5632)},
+	["gm_bigcity_winter"] = {Vector(3072, -3072, 4416), Vector(-3072, 3072, 5632)},
 	["gm_construct"] = {Vector(-15100, -15100, 10431.25), Vector(15100, 15100, 15300)}
 }
 local current_zone = skybox_zones[game.GetMap()]
