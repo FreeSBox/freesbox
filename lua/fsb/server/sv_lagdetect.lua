@@ -2,7 +2,7 @@
 local cleanup_threshold = 20 -- tps
 local penetration_stopper_threshold = 40 -- tps
 local seconds_before_cleanup = 60
-local max_entities_per_tick = 10
+local max_entities_per_tick = 15
 
 local num_frames = 6 -- the avarage of this number of frames is checked against the threashold
 
