@@ -27,5 +27,5 @@ function FSB.SetGroupBySteamID(steamid, usergroup)
 		steamid = util.SteamIDTo64(steamid)
 	end
 
-	sql.QueryTyped("INSERT OR REPLACE INTO fsb_groups(steamid, name) VALUES(?, ?)", steamid, usergroup);
+	sql.QueryTyped("INSERT OR REPLACE INTO fsb_groups(steamid, usergroup) VALUES(?, ?)", steamid, usergroup);
 end
