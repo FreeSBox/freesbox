@@ -43,13 +43,16 @@ hook.Add("CanProperty", TAG, checkCanSpawn)
 
 hook.Add("PlayerNoClip", TAG, checkCanSpawn)
 
--- Hook this because ULX doesn't provide a better way to stop someone from running commands.
-local og_ucl_query = ULib.ucl.query
-ULib.ucl.query = function ( ply, access, hide )
-	if ply:IsGhostBanned() then return false end
+hook.Add("StartCommand", "init_ghostban", function (ply, ucmd)
+	-- Hook this because ULX doesn't provide a better way to stop someone from running commands.
+	local og_ucl_query = ULib.ucl.query
+	ULib.ucl.query = function ( ply, access, hide )
+		if ply:IsGhostBanned() then return false end
 
-	return og_ucl_query(ply, access, hide)
-end
+		return og_ucl_query(ply, access, hide)
+	end
+	hook.Remove("StartCommand", "init_ghostban")
+end)
 
 if SERVER then
 	hook.Add("CanEditVariables", TAG, checkCanSpawn)
