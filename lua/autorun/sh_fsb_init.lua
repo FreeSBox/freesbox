@@ -34,6 +34,7 @@ local server_files = {
 	"fsb/server/sv_remove_restrictions.lua",
 	"fsb/server/sv_servershutdown.lua",
 	"fsb/server/sv_skyboxprotect.lua",
+	"fsb/server/sv_usergroups.lua",
 	"fsb/server/sv_workshop_dl.lua",
 	"fsb/server/sv_weapon_drop.lua",
 }
