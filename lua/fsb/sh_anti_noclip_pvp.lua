@@ -1,5 +1,18 @@
 local time_until_pvp_ends = 100 -- seconds until we can use noclip again
 
+---@class Player
+local PLAYER = FindMetaTable("Player")
+
+---@return boolean
+function PLAYER:InPVPMode()
+	return self:GetNWFloat("PVPModeEnd") > CurTime()
+end
+
+---@return number
+function PLAYER:PVPModeEndTime()
+	return self:GetNWFloat("PVPModeEnd")
+end
+
 local function isInNoclip(player)
 	return player:GetMoveType() == MOVETYPE_NOCLIP and not player:InVehicle()
 end
@@ -13,8 +26,9 @@ if SERVER then
 		if not IsValid(attacker) then return end
 		if not attacker:IsPlayer() then return end
 		if attacker == target then return end
-		if target:IsPlayer() and target:IsGhostBanned() then return end -- Feel free to kill ghost banned players.
-		if not target:IsPlayer() then
+		if target:IsPlayer() then
+			if target:IsGhostBanned() then return end -- Feel free to kill ghost banned players.
+		else
 			if target:Health() == 0 then return end
 			if target:CPPIGetOwner() == attacker then return end
 		end
@@ -24,18 +38,21 @@ if SERVER then
 			attacker:SetMoveType(MOVETYPE_WALK)
 			return true
 		end
+
+		if target:IsPlayer() and not target:InPVPMode() then
+			return true
+		end
 	end)
 end
 
 local lastmsg = 0
 hook.Add("PlayerNoClip", "prevent_noclip_in_pvp", function (ply, enable_noclip)
 	if not SERVER and ply ~= LocalPlayer() then return end
-
-	local pvp_mode_end_time = ply:GetNWFloat("PVPModeEnd")
 	local curtime = CurTime()
-	if enable_noclip and pvp_mode_end_time > curtime then
+
+	if enable_noclip and ply:InPVPMode() then
 		if CLIENT and not math.IsNearlyEqual(lastmsg, curtime, 1) then
-			chat.AddText(string.format(FSB.Translate("no_noclip_in_pvp"), pvp_mode_end_time-curtime))
+			chat.AddText(string.format(FSB.Translate("no_noclip_in_pvp"), ply:PVPModeEndTime()-curtime))
 			lastmsg = curtime
 		end
 		return false
