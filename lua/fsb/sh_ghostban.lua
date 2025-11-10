@@ -9,7 +9,7 @@ if SERVER then
 		if is_banned then
 			self:SetNameTagNoSave("<color=255,0,0>[BANNED]")
 		else
-			self:SetNameTagNoSave("")
+			self:InitNameAndTag()
 			unban_time = 0
 		end
 		self:SetNWFloat("GhostUnBanTime", unban_time)
@@ -102,7 +102,6 @@ if SERVER then
 			local unban_time = ply:GetNWFloat("GhostUnBanTime")
 			if unban_time > 0 and unban_time < os.time() then
 				ply:SetGhostBanned(false)
-				ply:InitNameAndTag()
 			end
 		end
 	end)
