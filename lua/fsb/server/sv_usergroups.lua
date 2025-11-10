@@ -10,7 +10,7 @@ hook.Add("PlayerInitialSpawn", "give_usergroup", function (ply, transition)
 		local result = sql.QueryTyped("SELECT usergroup FROM fsb_groups WHERE steamid = ?", ply:SteamID64())
 		assert(result ~= false, "The SQL Query is broken in 'give_usergroup'")
 		if #result == 1 then
-			ply:SetUserGroup(result[1])
+			ply:SetUserGroup(result[1].usergroup)
 		end
 	end
 end)
