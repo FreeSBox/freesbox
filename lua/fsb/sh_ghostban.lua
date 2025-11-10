@@ -91,6 +91,7 @@ if SERVER then
 			local unban_time = ply:GetNWFloat("GhostUnBanTime")
 			if unban_time > 0 and unban_time < os.time() then
 				ply:SetGhostBanned(false)
+				ply:InitNameAndTag()
 			end
 		end
 	end)

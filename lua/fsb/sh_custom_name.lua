@@ -66,12 +66,16 @@ function PLAYER:GetNameTag()
 	return self:GetNWString("nametag")
 end
 
+function PLAYER:InitNameAndTag()
+	self:SetNWString("nickname", self:GetPData("nickname"))
+	self:SetNWString("nametag", self:GetPData("nametag"))
+end
+
 ------ Server code ------
 
 if SERVER then
 	hook.Add("PlayerAuthed", "apply_custom_name", function(ply, steamid, uniqueid)
-		ply:SetNWString("nickname", ply:GetPData("nickname"))
-		ply:SetNWString("nametag", ply:GetPData("nametag"))
+		ply:InitNameAndTag()
 	end)
 
 	util.AddNetworkString("change_nametag")
@@ -84,6 +88,7 @@ if SERVER then
 
 	util.AddNetworkString("change_nickname")
 	net.Receive("change_nickname", function(len, ply)
+		if ply:IsGhostBanned() then return end
 		local new_name = net.ReadString()
 		if #new_name > 100 then return end
 		ply:SetPData("nickname", new_name)
