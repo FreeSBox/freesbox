@@ -9,7 +9,9 @@ hook.Add("PlayerInitialSpawn", "give_usergroup", function (ply, transition)
 	if ply:IsFullyAuthenticated() then
 		local result = sql.QueryTyped("SELECT usergroup FROM fsb_groups WHERE steamid = ?", ply:SteamID64())
 		assert(result ~= false, "The SQL Query is broken in 'give_usergroup'")
-		ply:SetUserGroup(result[1])
+		if #result == 1 then
+			ply:SetUserGroup(result[1])
+		end
 	end
 end)
 
@@ -25,5 +27,5 @@ function FSB.SetGroupBySteamID(steamid, usergroup)
 		steamid = util.SteamIDTo64(steamid)
 	end
 
-	sql.QueryTyped("INSERT OR REPLACE INTO ulib_users(steamid, name) VALUES(?, ?)", steamid, usergroup);
+	sql.QueryTyped("INSERT OR REPLACE INTO fsb_groups(steamid, name) VALUES(?, ?)", steamid, usergroup);
 end
