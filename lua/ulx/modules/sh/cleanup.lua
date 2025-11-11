@@ -1,9 +1,13 @@
 
 local function cleanupULXWrapper(calling_ply, time)
 	FSB.CleanUpMap(time)
+
+	ulx.fancyLogAdmin( calling_ply, "#A started a map cleanup" )
 end
 local function cancelCleanupULXWrapper(calling_ply)
 	FSB.CancelCleanUp()
+
+	ulx.fancyLogAdmin( calling_ply, "#A stopped the cleanup" )
 end
 
 local cleanup = ulx.command("FSB", "ulx cleanup", cleanupULXWrapper, "!cleanup")
