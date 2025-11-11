@@ -11,9 +11,8 @@ local function stopTimerULXWrapper(calling_ply)
 end
 
 local timer = ulx.command("FSB", "ulx timer", broadcastTimerULXWrapper, "!timer")
-timer:addParam{ type=ULib.cmds.PlayerArg }
 timer:addParam{ type=ULib.cmds.NumArg, min=5, max=120, default=60, hint="seconds", ULib.cmds.round, ULib.cmds.optional }
-timer:addParam{ type=ULib.cmds.StringArg, hint="text the timer will display, input %.1f where you want the time to be. It also accepts FSB localized strings." }
+timer:addParam{ type=ULib.cmds.StringArg, hint="Dota in %.1f seconds." }
 timer:defaultAccess( ULib.ACCESS_ADMIN )
 timer:help( "Starts a timer on all players screens." )
 
