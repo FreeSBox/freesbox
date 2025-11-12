@@ -11,4 +11,5 @@ resource.AddWorkshop("2821865508") -- Simple Weapons CSS
 resource.AddWorkshop("609412954") -- Recolorable CS:S Skins
 resource.AddWorkshop("246756300") -- 3D Stream Radio
 resource.AddWorkshop("2675972006") -- Custom Loadout
+resource.AddWorkshop("3318060741") -- rRadio
 --#endregion
