@@ -12,6 +12,7 @@ local shared_files = {
 	"fsb/sh_has_focus.lua",
 	"fsb/sh_localization.lua",
 	"fsb/sh_netmsg_hook.lua",
+	"fsb/sh_player_join.lua",
 	"fsb/sh_on_screen_timer.lua",
 	"fsb/sh_playermodels.lua",
 	"fsb/sh_playtime.lua",
