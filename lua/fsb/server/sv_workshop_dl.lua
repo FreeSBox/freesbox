@@ -14,4 +14,5 @@ resource.AddWorkshop("2675972006") -- Custom Loadout
 resource.AddWorkshop("3318060741") -- rRadio
 resource.AddWorkshop("104575630") -- Ragdoll Mover
 resource.AddWorkshop("109643223") -- 3D2D Textscreens
+resource.AddWorkshop("942316885") -- Half-Life: Opposing Force Weapon Pack
 --#endregion
