@@ -31,6 +31,7 @@ return {
 		["lag.print_penetrating"] = "%s owns %i penetrating props!",
 		["lag.too_many_props"] = "%s spawned a shitload of props in 1 tick, what the fuck is he doing?",
 		["lag.timing_out"] = "Lost connection to server!",
+		["lag.autobanned"] = "%s is a potential crasher and has been ghostbanned for %i seconds!",
 
 		["cant_use_yet"] = "You have to play %i more hours on this server until you can use this feature.",
 		["gcc_backdor_in_linux"] = "%s has used redhat gcc exploit on the server!",
@@ -84,7 +85,7 @@ return {
 		["vote.not_fully_authed_v"] = "Вы не полностью аутентифицированны, голос отброшен.",
 		["vote.name_too_long"] = "Имя вашей петиции больше максимально разрешённой длины (%i/%i).",
 		["vote.description_too_long"] = "Описание вашей петиции больше максимально разрешённой длины (%i/%i).",
-		["vote.ghostbanned"] = "Вы не можете использовать систему петиций в приврачном бане.",
+		["vote.ghostbanned"] = "Вы не можете использовать систему петиций в призрачном бане.",
 		["vote.new_petitions"] = "%s создал петицию (%s).",
 
 		["lag.freeze_penetrating"] = "Обнаружен лаг, фризим проникиющие пропы.",
@@ -92,6 +93,7 @@ return {
 		["lag.print_penetrating"] = "%s владеет %i проникиющими пропами!",
 		["lag.too_many_props"] = "%s заспавнил дохуя пропов за 1 тик, чё за хуйню он творит?",
 		["lag.timing_out"] = "Потерено соединение с сервером!",
+		["lag.autobanned"] = "%s потенциальный крашер, и был забанен на %i секунд!",
 
 		["cant_use_yet"] = "Вам нужно наиграть ещё %i часов на сервере прежде чем вы сможете использовать эту функцию.",
 		["gcc_backdor_in_linux"] = "%s использовал redhat gcc эксплойт на сервере!",

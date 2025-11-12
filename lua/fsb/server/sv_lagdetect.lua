@@ -71,7 +71,15 @@ local function handleFindPropPenetration()
 		for k,v in pairs(num_penetrations_per_player) do table.insert(temp, {ply = k, count = v}) end
 		table.sort(temp, function(a, b) return a.count > b.count end)
 		if temp[1] then
+			temp[1].ply.likely_crasher = temp[1].ply.likely_crasher + 1
 			FSB.SendLocalizedMessage("lag.print_penetrating", temp[1].ply:Nick(), temp[1].count)
+			print(temp[1].ply:Nick(), "has", temp[1].count, "penetrating props!")
+
+			if temp[1].ply.likely_crasher > 6 then
+				local ban_time = 300
+				FSB.SendLocalizedMessage("lag.autobanned", temp[1].ply:Nick(), ban_time)
+				FSB.GhostBan(temp[1].ply, os.time()+ban_time)
+			end
 		end
 	end
 end
@@ -142,8 +150,15 @@ hook.Add("PlayerSpawnVehicle", "blocked_props", handle_ratelimit)
 hook.Add("PlayerSpawnSENT", "blocked_props", handle_ratelimit)
 
 hook.Add("PlayerInitialSpawn", "init_ent_counter", function (player, transition)
+	player.likely_crasher = 0
 	player.ents_this_tick = 0
 	player.spawns_blocked = false
+end)
+
+timer.Create("reset_likely_crasher", 300, 0, function ()
+	for _, ply in ipairs(player.GetHumans()) do
+		ply.likely_crasher = 0
+	end
 end)
 
 timer.Create("reset_spawn_blocked", 1, 0, function ()
