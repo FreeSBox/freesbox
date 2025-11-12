@@ -12,4 +12,6 @@ resource.AddWorkshop("609412954") -- Recolorable CS:S Skins
 resource.AddWorkshop("246756300") -- 3D Stream Radio
 resource.AddWorkshop("2675972006") -- Custom Loadout
 resource.AddWorkshop("3318060741") -- rRadio
+resource.AddWorkshop("104575630") -- Ragdoll Mover
+resource.AddWorkshop("109643223") -- 3D2D Textscreens
 --#endregion
