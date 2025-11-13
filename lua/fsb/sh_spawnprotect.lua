@@ -2,7 +2,8 @@ local spawnzone_color = Color(0, 255, 0)
 
 local spawnzones =
 {
-	["gm_construct"] = {Vector(1024, -896, -144), Vector(640, 800, 64)}
+	["gm_construct"] = {Vector(1024, -896, -144), Vector(640, 800, 64)},
+	["gm_york_remaster"] = {Vector(384, -6272, 8), Vector(2880, -7960, 820)},
 }
 
 local fsb_draw_spawnzone = CreateClientConVar("fsb_draw_spawnzone", "1", true, false)
