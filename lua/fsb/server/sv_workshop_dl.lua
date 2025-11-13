@@ -15,4 +15,6 @@ resource.AddWorkshop("3318060741") -- rRadio
 resource.AddWorkshop("104575630") -- Ragdoll Mover
 resource.AddWorkshop("109643223") -- 3D2D Textscreens
 resource.AddWorkshop("942316885") -- Half-Life: Opposing Force Weapon Pack
+resource.AddWorkshop("2840295308") -- Primitive
+resource.AddWorkshop("2458909924") -- Prop2Mesh
 --#endregion
