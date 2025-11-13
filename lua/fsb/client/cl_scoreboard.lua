@@ -286,15 +286,17 @@ hook.Add("KeyPress", "ScoreboardToggleMouse", function( ply, key )
 	end
 end)
 
-local GAMEMODE = gmod.GetGamemode()
+hook.Add("StartCommand", "init_scoreboard", function()
+	function GAMEMODE:ScoreboardShow()
+		scoreboard:Open()
+	end
 
-function GAMEMODE:ScoreboardShow()
-	scoreboard:Open()
-end
+	function GAMEMODE:ScoreboardHide()
+		scoreboard:Close()
+	end
 
-function GAMEMODE:ScoreboardHide()
-	scoreboard:Close()
-end
+	hook.Remove("StartCommand", "init_scoreboard")
+end)
 
 hook.Add("FSBPlayerJoined", "add_player", function (userid, index, networkid, name)
 	if not scoreboard:IsOpen() then return end
