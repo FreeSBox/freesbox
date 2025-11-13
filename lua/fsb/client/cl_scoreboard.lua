@@ -236,6 +236,7 @@ function scoreboard:Open()
 
 		surface.SetTextColor(255,255,255)
 		surface.SetFont("Nickname")
+		--This has nothing to do with any kind of cache, it's just how this was called on uyutniy.
 		local cache = string.format("Cache: %i/%i", FSB.GetStringTableSize(), 4096)
 		local cache_x, cache_y = surface.GetTextSize(cache)
 		surface.SetTextPos(player_padding, h/2-cache_y/2)
@@ -293,10 +294,14 @@ function GAMEMODE:ScoreboardHide()
 end
 
 hook.Add("FSBPlayerJoined", "add_player", function (userid, index, networkid, name)
+	if not scoreboard:IsOpen() then return end
+
 	scoreboard:ReloadPlayers()
 	scoreboard:ReloadPlayerList()
 end)
 hook.Add("FSBPlayerLeft", "remove_player", function (userid, index, networkid, name, reason)
+	if not scoreboard:IsOpen() then return end
+
 	scoreboard:ReloadPlayers()
 	scoreboard.player_names[userid] = nil
 	scoreboard.extended_infos[userid] = nil
