@@ -50,6 +50,7 @@ local client_files ={
 	"fsb/client/cl_rules.lua",
 	"fsb/client/cl_freecam.lua",
 	"fsb/client/cl_crash_detect.lua",
+	"fsb/client/cl_scoreboard.lua",
 }
 
 for index, value in ipairs(shared_files) do
