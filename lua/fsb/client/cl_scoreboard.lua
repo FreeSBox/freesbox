@@ -1,4 +1,5 @@
 ---@diagnostic disable: inject-field
+local T = FSB.Translate
 
 surface.CreateFont( "ScoreboardHeader", { font = "DermaLarge", extended = true, size = 35, weight = 200, antialias = true, bold = true } )
 local nickname_font_size = 20
@@ -27,7 +28,7 @@ local scoreboard =
 	player_button_right_info = {
 		function (ply, right_pad, w, h) -- ping
 			surface.SetTextColor(255,255,255)
-			local ping = ply:Ping() .. "ms"
+			local ping = string.format(T"scoreboard.ping", ply:Ping())
 			local ping_x, ping_y = surface.GetTextSize(ping)
 			surface.SetTextPos(w-right_pad-ping_x, player_padding)
 			surface.DrawText(ping)
@@ -35,7 +36,7 @@ local scoreboard =
 		end,
 		function (ply, right_pad, w, h) -- playtime
 			surface.SetTextColor(255,255,255)
-			local hours = string.format("%i h.", ply:GetUTimeTotalTime()/60/60)
+			local hours = string.format(T"scoreboard.playtime", ply:GetUTimeTotalTime()/60/60)
 			local hours_x, hours_y = surface.GetTextSize(hours)
 			surface.SetTextPos(w-right_pad-hours_x, player_padding)
 			surface.DrawText(hours)
@@ -140,7 +141,7 @@ function scoreboard:ReloadPlayerList()
 
 			if scoreboard.extended_infos[userid] then
 				surface.SetTextColor(255,255,255)
-				local group = string.format("Group: %s", self.ply:GetUserGroup())
+				local group = string.format(T"scoreboard.group", self.ply:GetUserGroup())
 				local group_x, group_y = surface.GetTextSize(group)
 				surface.SetTextPos(player_padding, player_padding*2+avatar_size)
 				surface.DrawText(group)
@@ -148,7 +149,7 @@ function scoreboard:ReloadPlayerList()
 				surface.SetTextColor(255,255,255)
 				local num_ents = scoreboard.ent_counts[self.ply:SteamID()]
 				num_ents = num_ents or 0
-				local num_entities = string.format("Num Entities: %i", num_ents)
+				local num_entities = string.format(T"scoreboard.ent_count", num_ents)
 				local num_entities_x, num_entities_y = surface.GetTextSize(num_entities)
 				surface.SetTextPos(player_padding, group_y+player_padding*2+avatar_size)
 				surface.DrawText(num_entities)
@@ -156,10 +157,10 @@ function scoreboard:ReloadPlayerList()
 		end
 		function player_btn:DoRightClick()
 			scoreboard.ctx_menu = DermaMenu()
-			scoreboard.ctx_menu:AddOption("Copy SteamID", function ()
+			scoreboard.ctx_menu:AddOption(T"scoreboard.copy_steamid", function ()
 				SetClipboardText(self.ply:SteamID())
 			end):SetIcon("icon16/tag_blue.png")
-			scoreboard.ctx_menu:AddOption("Open Profile", function ()
+			scoreboard.ctx_menu:AddOption(T"scoreboard.open_profile", function ()
 				self.ply:ShowProfile()
 			end):SetIcon("icon16/application.png")
 
@@ -173,7 +174,7 @@ function scoreboard:ReloadPlayerList()
 
 				surface.SetFont("HudSelectionText")
 				surface.SetTextColor(0,0,0)
-				local vol = "Voice volume"
+				local vol = T"scoreboard.voice_volume"
 				local size_x, size_y = surface.GetTextSize(vol)
 				surface.SetTextPos(w/2-size_x/2,h/2-size_y/2)
 				surface.DrawText(vol)
@@ -237,14 +238,14 @@ function scoreboard:Open()
 		surface.SetTextColor(255,255,255)
 		surface.SetFont("Nickname")
 		--This has nothing to do with any kind of cache, it's just how this was called on uyutniy.
-		local cache = string.format("Cache: %i/%i", FSB.GetStringTableSize(), 4096)
+		local cache = string.format(T"scoreboard.cache", FSB.GetStringTableSize(), 4096)
 		local cache_x, cache_y = surface.GetTextSize(cache)
 		surface.SetTextPos(player_padding, h/2-cache_y/2)
 		surface.DrawText(cache)
 
 		surface.SetTextColor(255,255,255)
 		surface.SetFont("Nickname")
-		local player_count = string.format("Players: %i/%i", #scoreboard.players, game.MaxPlayers())
+		local player_count = string.format(T"scoreboard.player_count", #scoreboard.players, game.MaxPlayers())
 		local player_count_x, player_count_y = surface.GetTextSize(player_count)
 		surface.SetTextPos(w-player_padding-player_count_x, h/2-player_count_y/2)
 		surface.DrawText(player_count)

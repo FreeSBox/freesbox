@@ -61,6 +61,16 @@ return {
 
 		["timer.shutdown"] = "The server will shut down in %.1f seconds!",
 		["timer.cleanup"] = "The map will be cleaned up in %.1f seconds!",
+
+		["scoreboard.ping"] = "%i ms",
+		["scoreboard.playtime"] = "%i h.",
+		["scoreboard.group"] = "Group: %s",
+		["scoreboard.ent_count"] = "Num Entities: %i",
+		["scoreboard.copy_steamid"] = "Copy SteamID",
+		["scoreboard.open_profile"] = "Open Profile",
+		["scoreboard.voice_volume"] = "Voice volume",
+		["scoreboard.cache"] = "Cache: %i/%i",
+		["scoreboard.player_count"] = "Players: %i/%i",
 	},
 	["ru"] =
 	{
@@ -124,5 +134,15 @@ return {
 
 		["timer.shutdown"] = "Сервер выключится через %.1f секунд!",
 		["timer.cleanup"] = "Карта будет очищена через %.1f секунд!",
+
+		["scoreboard.ping"] = "%i мс",
+		["scoreboard.playtime"] = "%i ч.",
+		["scoreboard.group"] = "Группа: %s",
+		["scoreboard.ent_count"] = "Кол-во энтити: %i",
+		["scoreboard.copy_steamid"] = "Копировать SteamID",
+		["scoreboard.open_profile"] = "Открыть профель",
+		["scoreboard.voice_volume"] = "Громкость",
+		["scoreboard.cache"] = "Кеш: %i/%i",
+		["scoreboard.player_count"] = "Игроки: %i/%i",
 	}
 }
