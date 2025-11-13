@@ -54,7 +54,7 @@ if SERVER then
 		end
 	end)
 else
-	hook.Add("PostDrawTranslucentRenderables", "draw_spawnzone", function(bDrawingDepth, bDrawingSkybox, isDraw3DSkybox)
+	hook.Add("PreDrawTranslucentRenderables", "draw_spawnzone", function(bDrawingDepth, bDrawingSkybox, isDraw3DSkybox)
 		if fsb_draw_spawnzone:GetBool() and not isDraw3DSkybox then
 			render.DrawWireframeBox(vector_origin, angle_zero, current_zone[1], current_zone[2], spawnzone_color, true)
 		end
