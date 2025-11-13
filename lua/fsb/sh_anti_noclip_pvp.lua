@@ -1,4 +1,4 @@
-local time_until_pvp_ends = 100 -- seconds until we can use noclip again
+local time_until_pvp_ends = 50 -- seconds until we can use noclip again
 
 ---@class Player
 local PLAYER = FindMetaTable("Player")
