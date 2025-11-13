@@ -286,6 +286,8 @@ hook.Add("KeyPress", "ScoreboardToggleMouse", function( ply, key )
 	end
 end)
 
+local GAMEMODE = gmod.GetGamemode()
+
 function GAMEMODE:ScoreboardShow()
 	scoreboard:Open()
 end
