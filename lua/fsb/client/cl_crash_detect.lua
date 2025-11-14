@@ -1,6 +1,6 @@
 
-local timout_time = 4
-local timing_out = false
+local timout_time = 0.5
+local was_timing_out = false
 
 hook.Add("StartCommand", "init_crash_detect", function (ply, ucmd)
 	-- Will only apply on the next join.
@@ -8,14 +8,15 @@ hook.Add("StartCommand", "init_crash_detect", function (ply, ucmd)
 	RunConsoleCommand("cl_timeout", "600")
 
 	timer.Create("CrashDetect", timout_time, 0, function ()
-		if FSB.LAST_NETMSG_TIME < RealTime()-timout_time then
-			if not timing_out then
+		local timing_out, last_ping = GetTimeoutInfo()
+		if timing_out then
+			if not was_timing_out then
 				FSB.EnableFreecam()
 				chat.AddText(Color(255,0,0), FSB.Translate("lag.timing_out"))
 			end
-			timing_out = true
-		elseif timing_out then
-			timing_out = false
+			was_timing_out = true
+		elseif was_timing_out then
+			was_timing_out = false
 			FSB.DisableFreecam()
 		end
 	end)
