@@ -4,11 +4,15 @@ return [[
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
-<script type="text/javascript" src="https://spec.commonmark.org/js/commonmark.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/dompurify/purify.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 	<label>Название: <input id="nameInput" type="text"></label>
@@ -63,8 +67,13 @@ return [[
 		--light-color: rgb(50, 50, 50);
 	}
 
+	:link, :visited
+	{
+		color: #58a6ff;
+	}
+
 	html {
-		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		font-family: "Inter", Tahoma, Geneva, Verdana, sans-serif;
 		background-color: rgb(21, 21, 21);
 		tab-size: 4;
 	}
@@ -299,17 +308,11 @@ return [[
 			$scope.Notifications = [];
 		});
 
-	var commonmark = window.commonmark;
-	var writer = new commonmark.HtmlRenderer({ sourcepos: true, safe: true });
-	var reader = new commonmark.Parser();
-
-	var render = function(parsed) {
-		if (parsed === undefined) {
-			return;
-		}
-		var result = writer.render(parsed);
+	var parseAndRender = function() {
+		var textarea = $("#descriptionInput");
+		var result = marked.parse(textarea.val().replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/,""));
 		var preview = $("#preview");
-		preview.get(0).innerHTML = result;
+		preview.get(0).innerHTML = DOMPurify.sanitize(result);
 
 		$('a').click(function(e) {
 			// This is not for safety, but so we don't open empty links.
@@ -319,12 +322,6 @@ return [[
 				gmod.OpenURL(e.currentTarget.href)
 			}
 		});
-	};
-
-	var parseAndRender = function() {
-		var textarea = $("#descriptionInput");
-		var parsed = reader.parse(textarea.val());
-		render(parsed);
 	};
 
 	// https://stackoverflow.com/a/75988895

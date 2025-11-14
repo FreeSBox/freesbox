@@ -5,6 +5,9 @@ return [[
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
@@ -36,6 +39,11 @@ return [[
 		--text-color: white
 	}
 
+	:link, :visited
+	{
+		color: #58a6ff;
+	}
+
 	.petition {
 		color: var(--text-color);
 		background-color: var(--main-color);
@@ -44,7 +52,7 @@ return [[
 		width: 100%;
 		box-sizing: border-box;
 		margin-top: 1mm;
-		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		font-family: "Inter", Tahoma, Geneva, Verdana, sans-serif;
 	}
 
 	#like_button {
