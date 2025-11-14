@@ -11,8 +11,24 @@
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/dompurify/purify.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+	// https://javascript.plainenglish.io/how-this-simple-method-turned-my-array-code-from-messy-to-neat-3bba8f25e991
+	// Seems AI generated, but who cares, I'm not implementing this in javascript myself.
+	if (!Array.prototype.at) {
+		Array.prototype.at = function (n) {
+			if (this == null) throw new TypeError("Called on null or undefined");
+			const len = this.length >>> 0;
+			n = Number(n);
+			if (isNaN(n)) n = 0;
+			n = n < 0 ? Math.ceil(n) : Math.floor(n); // manual truncation
+			if (n < 0) n += len;
+			if (n < 0 || n >= len) return undefined;
+			return this[n];
+		};
+	}
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/dompurify@0.6.6/purify.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
 <!-- not_in_lua --> <script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
 <!-- not_in_lua --> <script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
 <!-- not_in_lua --> <script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
