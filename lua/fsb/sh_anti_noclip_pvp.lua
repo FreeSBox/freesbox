@@ -29,7 +29,7 @@ if SERVER then
 		if target:IsPlayer() then
 			if target:IsGhostBanned() then return end -- Feel free to kill ghost banned players.
 		else
-			if target:Health() == 0 then return end
+			if target:Health() == 0 and not target.IsGlideVehicle then return end
 			if target:CPPIGetOwner() == attacker then return end
 		end
 
