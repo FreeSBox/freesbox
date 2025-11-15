@@ -27,7 +27,6 @@ local server_files = {
 	"fsb/server/sv_anti_net_msg_spam.lua",
 	"fsb/server/sv_block_spawn_when_dead.lua",
 	"fsb/server/sv_cleanup.lua",
-	"fsb/server/sv_crash_detect.lua",
 	"fsb/server/sv_gcc_exploit_radhat.lua",
 	"fsb/server/sv_infammo.lua",
 	"fsb/server/sv_lagdetect.lua",
