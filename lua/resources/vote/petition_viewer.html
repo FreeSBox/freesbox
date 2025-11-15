@@ -46,8 +46,8 @@
 	<span>Открыто до: {{Petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
 
 	<div id="vote_menu">
-		<button ng-disabled="Petition.expired" ng-click="likeClicked()" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{Petition.likes}}</button>
-		<button ng-disabled="Petition.expired" ng-click="dislikeClicked()" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{Petition.dislikes}}</button>
+		<button ng-disabled="Petition.expired" ng-click="likeClicked()" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 1, btn_won: Petition.expired && Petition.likes > Petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{Petition.likes}}</button>
+		<button ng-disabled="Petition.expired" ng-click="dislikeClicked()" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 2, btn_lost: Petition.expired && Petition.dislikes >= Petition.likes}"><i class="fa fa-thumbs-down"></i> {{Petition.dislikes}}</button>
 	</div>
 
 	<hr>
@@ -98,6 +98,12 @@
 	}
 	#like_button:not(.btn_active) {
 		color: darkgrey;
+	}
+	#like_button:disabled.btn_won {
+		background-color:rgb(69, 85, 56);
+	}
+	#like_button:disabled.btn_lost {
+		background-color:rgb(85, 56, 56);
 	}
 	.btn_active {
 		color: var(--text-color);
