@@ -19,4 +19,5 @@ resource.AddWorkshop("2840295308") -- Primitive
 resource.AddWorkshop("2458909924") -- Prop2Mesh
 resource.AddWorkshop("254077907") -- Half-Life 2 Beta Weapons Pack V2
 resource.AddWorkshop("1212795975") -- Underhell SWEPs and items
+resource.AddWorkshop("501387322") -- Half-Life 2 Entities +PLUS+
 --#endregion
