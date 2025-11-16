@@ -39,7 +39,6 @@ return [[
 		<pane title="Писать">
 			<textarea id="descriptionInput" placeholder="Опишите здесь свою петицию.
 Не пишите более одного(1) запроса за петицию.
-Если enter не работает, вам придётся скопировать новые строки из другого редактора...
 
 # Заголовок
 ## Заголовок но меньше
@@ -250,9 +249,14 @@ return [[
 	// Sorry for using javascript.
 	// Sorry for using angular.
 
-	function InGMod()
+	function IsGMod()
 	{
 		return typeof gmod !== "undefined"
+	}
+
+	function IsLinux()
+	{
+		return navigator.appVersion.indexOf("Linux") != -1
 	}
 
 	function UpdateDigest(scope, timeout) {
@@ -335,7 +339,7 @@ return [[
 		var preview = $("#preview");
 		preview.get(0).innerHTML = DOMPurify.sanitize(result);
 		
-		if (InGMod())
+		if (IsGMod())
 		{
 			var nameinput = $("#nameInput")
 			gmod.SetDraftText(nameinput.val(), textarea.val())
@@ -373,7 +377,7 @@ return [[
 		}
 
 		$('#createButton').attr('disabled','disabled');
-		if (InGMod())
+		if (IsGMod())
 		{
 			gmod.CreatePetition(name, description_text);
 		}
@@ -395,6 +399,15 @@ return [[
 		};
 	}
 
+	// Dirty hack for text input ignoring enter on linux.
+	function keydown(event)
+	{
+		if (event.keyCode === 13 && IsGMod() && IsLinux())
+		{
+			document.execCommand('insertText', false /*no UI*/, "\n");
+		}
+	}
+
 	angular.element(document).ready(function () {
 		// Manually bootstrap angularjs because otherwise it will complain about document.location.origin
 		angular.bootstrap(document.body, ['petitionCreator']);
@@ -405,7 +418,9 @@ return [[
 			debounce(parseAndRender, 200)
 		);
 
-		if (InGMod())
+		textarea.keydown(keydown)
+
+		if (IsGMod())
 		{
 			gmod.GetDraftText(function(name, desc)
 			{
