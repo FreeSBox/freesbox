@@ -23,4 +23,5 @@ resource.AddWorkshop("501387322") -- Half-Life 2 Entities +PLUS+
 resource.AddWorkshop("2910505837") -- ARC-9
 resource.AddWorkshop("3098824960") -- [ARC9] PolyArms Project
 resource.AddWorkshop("287012681") -- Track Assembly Tool
+resource.AddWorkshop("2447774443") -- StormFox 2
 --#endregion
