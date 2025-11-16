@@ -129,6 +129,18 @@ local function requestMorePetitions()
 end
 
 
+
+local draft_name = ""
+local draft_desc = ""
+local function setDraftText(name, desc)
+	draft_name = name
+	draft_desc = desc
+end
+local function getDraftText()
+	return draft_name, draft_desc
+end
+
+
 local function closeWindow()
 	VoteWindow:Remove();
 	VoteWindow=nil
@@ -223,6 +235,8 @@ concommand.Add("vote", function()
 		html:AddFunction("gmod", "VoteOnPetition", voteOnPetition)
 		html:AddFunction("gmod", "OpenPetition", openPetition)
 		html:AddFunction("gmod", "RequestMorePetitions", requestMorePetitions)
+		html:AddFunction("gmod", "SetDraftText", setDraftText)
+		html:AddFunction("gmod", "GetDraftText", getDraftText)
 		html:AddFunction("gmod", "OpenURL", gui.OpenURL)
 		html:AddFunction("language", "Update", FSB.Translate)
 	end

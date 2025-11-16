@@ -252,6 +252,11 @@
 	// Sorry for using javascript.
 	// Sorry for using angular.
 
+	function InGMod()
+	{
+		return typeof gmod !== "undefined"
+	}
+
 	function UpdateDigest(scope, timeout) {
 		if (!scope) return;
 		if (scope.DigestUpdate) return;
@@ -331,16 +336,55 @@
 		var result = marked.parse(textarea.val().replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/,""));
 		var preview = $("#preview");
 		preview.get(0).innerHTML = DOMPurify.sanitize(result);
+		
+		if (InGMod())
+		{
+			var nameinput = $("#nameInput")
+			gmod.SetDraftText(nameinput.val(), textarea.val())
 
-		$('a').click(function(e) {
-			// This is not for safety, but so we don't open empty links.
-			if (e.currentTarget.href.startsWith("http"))
-			{
-				e.preventDefault();
-				gmod.OpenURL(e.currentTarget.href)
-			}
-		});
+			// In GMod, we don't want to open links directly, instead, open the steam overlay and open the link there.
+			$('a').click(function(e) {
+				// This is not for safety, but so we don't open empty links.
+				if (e.currentTarget.href.startsWith("http"))
+				{
+					e.preventDefault();
+					gmod.OpenURL(e.currentTarget.href)
+				}
+			});
+		}
 	};
+
+
+	function submit_petition()
+	{
+		var name = ($("#nameInput").val());
+
+		if (isWhitespaceString(name))
+		{
+			gScope.Notifications.push({text: "Название не может быть пустым"})
+			UpdateDigest(gScope, 50);
+			return;
+		}
+		
+		var description_text = $("#descriptionInput").val();
+		if (isWhitespaceString(description_text))
+		{
+			gScope.Notifications.push({text: "Описание не может быть пустым"})
+			UpdateDigest(gScope, 50);
+			return;
+		}
+
+		$('#createButton').attr('disabled','disabled');
+		if (InGMod())
+		{
+			gmod.CreatePetition(name, description_text);
+		}
+		else
+		{
+			console.log("Imagine that a new petition was created", name, description_text)
+		}
+	}
+
 
 	// https://stackoverflow.com/a/75988895
 	const debounce = (callback, wait) => {
@@ -360,32 +404,24 @@
 		var textarea = $("#descriptionInput");
 		textarea.bind(
 			"input propertychange",
-			debounce(parseAndRender, 50)
+			debounce(parseAndRender, 200)
 		);
+
+		if (InGMod())
+		{
+			gmod.GetDraftText(function(name, desc)
+			{
+				$("#descriptionInput").val(desc);
+				$("#nameInput").val(name);
+
+				if (!isWhitespaceString(desc))
+				{
+					parseAndRender()
+				}
+			});
+		}
 	});
 
-	function submit_petition()
-	{
-		name = ($("#nameInput").val());
-
-		if (isWhitespaceString(name))
-		{
-			gScope.Notifications.push({text: "Название не может быть пустым"})
-			UpdateDigest(gScope, 50);
-			return;
-		}
-		
-		var description_text = $("#descriptionInput").val();
-		if (isWhitespaceString(description_text))
-		{
-			gScope.Notifications.push({text: "Описание не может быть пустым"})
-			UpdateDigest(gScope, 50);
-			return;
-		}
-
-		$('#createButton').attr('disabled','disabled');
-		gmod.CreatePetition(name, description_text);
-	}
 
 </script>
 </html>
