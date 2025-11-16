@@ -5,7 +5,11 @@ local MAX_TAG_LENGTH = 150
 
 ---@class Player
 local PLAYER = FindMetaTable("Player")
-local orig_name = PLAYER.Name
+
+--Store the original function between file reloads.
+FSB.HOOKS = FSB.HOOKS or {}
+FSB.HOOKS.Name = FSB.HOOKS.Name or PLAYER.Name
+local orig_name = FSB.HOOKS.Name
 
 function PLAYER:GetOriginalName()
 	return orig_name(self)
