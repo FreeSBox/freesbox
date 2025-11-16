@@ -135,7 +135,7 @@ end
 concommand.Add("setnamegui", function()
 	local local_player = LocalPlayer()
 	createNameChangeUI(FSB.Translate("player_name"), FSB.Translate("new_name"), local_player:GetRichName(), function (text)
-		local_player:SetName(text)
+		local_player:SetPlayerName(text)
 	end)
 end)
 concommand.Add("setnametaggui", function()

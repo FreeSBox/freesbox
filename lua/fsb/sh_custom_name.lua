@@ -21,7 +21,7 @@ end
 PLAYER.GetName = PLAYER.Name
 PLAYER.Nick = PLAYER.Name
 
-function PLAYER:SetName(name)
+function PLAYER:SetPlayerName(name)
 	if self:IsGhostBanned() then return end
 	if SERVER then
 		if #name > 100 then return end
@@ -36,7 +36,7 @@ end
 
 ---comment
 ---@param name string
-function PLAYER:SetNameNoSave(name)
+function PLAYER:SetPlayerNameNoSave(name)
 	self:SetNWString("nickname", name)
 end
 

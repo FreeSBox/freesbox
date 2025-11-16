@@ -5,7 +5,7 @@ local PLAYER = FindMetaTable("Player")
 
 if SERVER then
 	function PLAYER:SetGhostBanned(is_banned, unban_time)
-		self:SetNameNoSave("")
+		self:SetPlayerNameNoSave("")
 		if is_banned then
 			self:SetNameTagNoSave("<color=255,0,0>[BANNED]")
 		else
