@@ -20,4 +20,7 @@ resource.AddWorkshop("2458909924") -- Prop2Mesh
 resource.AddWorkshop("254077907") -- Half-Life 2 Beta Weapons Pack V2
 resource.AddWorkshop("1212795975") -- Underhell SWEPs and items
 resource.AddWorkshop("501387322") -- Half-Life 2 Entities +PLUS+
+resource.AddWorkshop("2910505837") -- ARC-9
+resource.AddWorkshop("3098824960") -- [ARC9] PolyArms Project
+resource.AddWorkshop("287012681") -- Track Assembly Tool
 --#endregion
