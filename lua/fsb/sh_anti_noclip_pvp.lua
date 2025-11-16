@@ -43,6 +43,13 @@ if SERVER then
 			return true
 		end
 	end)
+
+	-- Malicious compliance with #143
+	hook.Add("PlayerButtonDown", "buildmode_button", function (ply, button)
+		if button == KEY_XBUTTON_DOWN then
+			ply:SetNWFloat("PVPModeEnd", CurTime())
+		end
+	end)
 end
 
 local lastmsg = 0
