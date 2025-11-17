@@ -318,7 +318,9 @@ net.Receive("petition_list_responce", function(len, ply)
 		petitions_available[net.ReadUInt(PETITION_ID_BITS)] = true
 	end
 
-	requestMorePetitions()
+	if table.Count(petitions_cache) < PETITION_MAX_PETITIONS_PER_REQUEST then
+		requestMorePetitions()
+	end
 end)
 
 
