@@ -14,6 +14,10 @@ return [[
 </head>
 <body>
 	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
+		<!--
+			If there is a bug where there aren't enough petitions to fill the screen, so we never request more - remove infinite-scroll-immediate-check
+			But this should never happen, since we are using a 800x600 window for petitions with 16 petitions per request.
+		-->
 		<div infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check="false">
 			<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
 				<a id="petitionName" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
@@ -129,7 +133,6 @@ return [[
 
 
 			$scope.loadMore = debounce(() => {
-				console.log("More!")
 				gmod.RequestMorePetitions()
 			}, 300);
 
