@@ -4,6 +4,7 @@ local spawnzones =
 {
 	["gm_construct"] = {Vector(1024, -896, -144), Vector(640, 800, 64)},
 	["gm_york_remaster"] = {Vector(384, -6272, 8), Vector(2880, -7960, 820)},
+	["gm_mobenix_v3_final"] = {Vector(-9900, -1064, 10760), Vector(-8900, -2779, 10370)},
 }
 
 local fsb_draw_spawnzone = CreateClientConVar("fsb_draw_spawnzone", "1", true, false)
