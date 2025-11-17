@@ -9,7 +9,8 @@ local num_frames = 6 -- the avarage of this number of frames is checked against 
 local sv_hibernate_think = GetConVar("sv_hibernate_think")
 local last_ticktime = 0
 
-local function freezeAllPlayerProps()
+---This will freeze all props that are owned by players.
+function FSB.FreezeAllProps()
 	for _, ent in ipairs(ents.GetAll()) do
 		if IsValid(ent) and ent:CPPIGetOwner() then
 			local phys_object = ent:GetPhysicsObject()
@@ -85,7 +86,7 @@ local function handleFindPropPenetration()
 end
 
 local function handleCleanUp()
-	freezeAllPlayerProps()
+	FSB.FreezeAllProps()
 	RunConsoleCommand("phys_timescale", "0")
 	FSB.SendLocalizedMessage("lag.cleanup", seconds_before_cleanup)
 	local cur_time = CurTime()
