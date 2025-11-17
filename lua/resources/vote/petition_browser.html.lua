@@ -14,7 +14,7 @@ return [[
 </head>
 <body>
 	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
-		<div infinite-scroll='loadMore()' infinite-scroll-distance='1'>
+		<div infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check="false">
 			<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
 				<a id="petitionName" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
 				<span style="float: right;">Автор: {{petition.author}}</span>
@@ -129,6 +129,7 @@ return [[
 
 
 			$scope.loadMore = debounce(() => {
+				console.log("More!")
 				gmod.RequestMorePetitions()
 			}, 300);
 

@@ -67,59 +67,112 @@ sql.Query([[CREATE TABLE IF NOT EXISTS votes (
 --#endregion SQL
 
 ---@param petition_id integer
+---@param steamid64 string?
 ---@return integer num_likes
 ---@return integer num_dislikes
-local function getVotesFromIndex(petition_id)
+---@return integer vote_status eVoteStatus for the steamid64 given, will return eVoteStatus.NOT_VOTED if steamid64 is not given
+local function getVotesFromIndex(petition_id, steamid64)
 	local num_likes = 0
 	local num_dislikes = 0
 
-	local results = sql.QueryTyped("SELECT * FROM votes WHERE petition_id = ?", petition_id)
-	assert(results ~= false, "The SQL Query is broken in 'countSQLVotes'")
+	local results = sql.QueryTyped("SELECT vote_status, author_steamid FROM votes WHERE petition_id = ?", petition_id)
+	assert(results ~= false, "The SQL Query is broken in 'getVotesFromIndex'")
+
+	local our_vote_status = eVoteStatus.NOT_VOTED
 
 	---@diagnostic disable-next-line: param-type-mismatch
-	for index, value in ipairs(results) do
-		if value.vote_status == eVoteStatus.LIKE then
+	for index, vote in ipairs(results) do
+		if vote.vote_status == eVoteStatus.LIKE then
 			num_likes = num_likes + 1
-		elseif value.vote_status == eVoteStatus.DISLIKE then
+		elseif vote.vote_status == eVoteStatus.DISLIKE then
 			num_dislikes = num_dislikes + 1
 		end
-	end
 
-	return num_likes, num_dislikes
-end
-
----@param petition_id integer
----@param ply Player?
----@return petition? -- nil if the petiotion doesn't exist.
-local function getPetitionFromIndex(petition_id, ply)
-	local results = sql.QueryTyped("SELECT * FROM petitions WHERE id = ?", petition_id)
-	assert(results ~= false, "The SQL Query is broken in 'getPetitionFromIndex'")
-	if #results ~= 1 then return nil end
-	local result = results[1]
-
-	local num_likes, num_dislikes = getVotesFromIndex(petition_id)
-
-	local vote_status = eVoteStatus.NOT_VOTED
-	if ply then
-		local results = sql.QueryTyped("SELECT vote_status FROM votes WHERE petition_id = ? AND author_steamid = ?", petition_id, ply:OwnerSteamID64())
-		assert(results ~= false, "The SQL Query is broken in 'getPetitionFromIndex'")
-		if #results == 1 then
-			vote_status = results[1].vote_status
+		if steamid64 ~= nil and vote.author_steamid == steamid64 then
+			our_vote_status = vote.vote_status
 		end
 	end
 
+	return num_likes, num_dislikes, our_vote_status
+end
+
+---@param petitions table<integer, petition> Array of petitions that will have their vote info updated.
+---@param steamid64 string? SteamID is used to set the vote status.
+local function addVoteInfoToPetitions(petitions, steamid64)
+	local num_petitions = #petitions
+	assert(num_petitions <= PETITION_MAX_PETITIONS_PER_REQUEST, "Too many petitions requested")
+
+	local petition_ids = {}
+	for _, petition in ipairs(petitions) do
+		petition_ids[#petition_ids+1] = petition.index
+	end
+
+	local placeholders = string.rep("?,", num_petitions-1) .. "?"
+	local query = string.format("SELECT vote_status, author_steamid, petition_id FROM votes WHERE petition_id IN (%s)", placeholders)
+	local results = sql.QueryTyped(query, unpack(petition_ids))
+	assert(results ~= false, "The SQL Query is broken in 'addVoteInfoToPetitions'")
+
+	local petition_map = {}
+	for _, petition in ipairs(petitions) do
+		petition_map[petition.index] = petition
+	end
+	---@diagnostic disable-next-line: param-type-mismatch
+	for _, vote in ipairs(results) do
+		local petition =  petition_map[vote.petition_id]
+		petition.num_likes = petition.num_likes or 0
+		petition.num_dislikes = petition.num_dislikes or 0
+
+		if vote.vote_status == eVoteStatus.LIKE then
+			petition.num_likes = petition.num_likes + 1
+		elseif vote.vote_status == eVoteStatus.DISLIKE then
+			petition.num_dislikes = petition.num_dislikes + 1
+		end
+
+		if steamid64 ~= nil and vote.author_steamid == steamid64 then
+			petition.our_vote_status = vote.vote_status
+		end
+		if petition.our_vote_status == nil then
+			petition.our_vote_status = eVoteStatus.NOT_VOTED
+		end
+	end
+end
+
+---Converts the data you get from sql queries into the petition class
+---@param data table
+---@return petition
+local function sqlDataToPetition(data)
 	return {
-		index = petition_id,
-		name = result.name,
-		description = result.description,
-		num_likes = num_likes,
-		num_dislikes = num_dislikes,
-		author_name = result.author_name,
-		author_steamid = result.author_steamid,
-		creation_time = result.creation_time,
-		expire_time = result.expire_time,
-		our_vote_status = vote_status
+		index = data.id,
+		name = data.name,
+		description = data.description,
+		author_name = data.author_name,
+		author_steamid = data.author_steamid,
+		creation_time = data.creation_time,
+		expire_time = data.expire_time
 	}
+end
+
+---@param petition_ids table Array of petition IDs
+---@param ply Player?
+---@return table<integer, petition> petitions Will be empty if no petitions were found.
+local function getPetitionsFromIndexes(petition_ids, ply)
+	local num_ids = #petition_ids
+	assert(num_ids <= PETITION_MAX_PETITIONS_PER_REQUEST, "Too many petitions requested")
+
+	local placeholders = string.rep("?,", num_ids-1) .. "?"
+	local query = string.format("SELECT * FROM petitions WHERE id IN (%s)", placeholders)
+	local results = sql.QueryTyped(query, unpack(petition_ids))
+	assert(results ~= false, "The SQL Query is broken in 'getPetitionsFromIndexes'")
+
+	local result = {}
+	---@diagnostic disable-next-line: param-type-mismatch
+	for _, sql_petition in ipairs(results) do
+		result[#result+1] = sqlDataToPetition(sql_petition)
+	end
+
+	addVoteInfoToPetitions(result, ply and ply:OwnerSteamID64())
+
+	return result
 end
 
 local words =
@@ -771,16 +824,15 @@ net.Receive("petition_request", function(len, ply)
 		return
 	end
 
+	local petition_ids = {}
 	for i = 1, num_petitions do
 		local petition_id = net.ReadUInt(PETITION_ID_BITS)
-		local petition = getPetitionFromIndex(petition_id, ply)
-		if petition == nil then
-			ply:SendLocalizedMessage("vote.invalid_petition_requested", petition_id)
-			goto CONTINUE
-		end
-		FSB.SendPetition(petition, ply)
+		petition_ids[i] = petition_id
+	end
 
-		::CONTINUE::
+	local petitions = getPetitionsFromIndexes(petition_ids, ply)
+	for _, petition in ipairs(petitions) do
+		FSB.SendPetition(petition, ply)
 	end
 end)
 
