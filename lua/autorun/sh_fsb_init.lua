@@ -3,6 +3,9 @@
 ---@class FSB
 FSB = FSB or {}
 
+--Store the original functions between file reloads.
+FSB.HOOKS = FSB.HOOKS or {}
+
 local shared_files = {
 	"fsb/sh_anti_noclip_pvp.lua",
 	"fsb/sh_limit_duplicator.lua",
