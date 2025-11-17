@@ -35,6 +35,7 @@ return {
 
 		["cant_use_yet"] = "You have to play %i more hours on this server until you can use this feature.",
 		["gcc_backdor_in_linux"] = "%s has used redhat gcc exploit on the server!",
+		["owner_joined"] = "Warning! The OWNER has joined the game!",
 
 		["advert.ghostbanned"] = "You are banned until: %s",
 		["advert.pi_menu"] = "Press F2 to access the server menu.",
@@ -107,6 +108,7 @@ return {
 
 		["cant_use_yet"] = "Вам нужно наиграть ещё %i часов на сервере прежде чем вы сможете использовать эту функцию.",
 		["gcc_backdor_in_linux"] = "%s использовал redhat gcc эксплойт на сервере!",
+		["owner_joined"] = "Внимание! На сервер зашёл СОЗДАТЕЛЬ!",
 
 		["advert.ghostbanned"] = "Вы забанены до: %s",
 		["advert.pi_menu"] = "Нажмите F2 чтобы открыть меню сервера.",

@@ -22,6 +22,7 @@ local shared_files = {
 	"fsb/sh_resources.lua",
 	"fsb/sh_rules.lua",
 	"fsb/sh_spawnprotect.lua",
+	"fsb/sh_streaming.lua",
 	"fsb/sh_timing_out.lua",
 	"vote/sh_vote.lua",
 }
@@ -48,6 +49,7 @@ local client_files ={
 	"fsb/client/cl_concommands_v2.lua",
 	"fsb/client/cl_gcc_exploit_radhat.lua",
 	"fsb/client/cl_nametags.lua",
+	"fsb/client/cl_owner_joined.lua",
 	"fsb/client/cl_player_menu_v2.lua",
 	"fsb/client/cl_rules.lua",
 	"fsb/client/cl_freecam.lua",
