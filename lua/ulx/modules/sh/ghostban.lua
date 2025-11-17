@@ -14,6 +14,24 @@ local function ghostUnBanULXWrapper(calling_ply, target_ply)
 	FSB.GhostUnBan(target_ply)
 end
 
+local function ghostBanIDULXWrapper(calling_ply, steamid, minutes)
+	steamid = steamid:upper()
+	if not ULib.isValidSteamID( steamid ) then
+		ULib.tsayError( calling_ply, "Invalid steamid." )
+		return
+	end
+
+	local target_ply = player.GetBySteamID(steamid)
+	if IsValid(target_ply) then
+		ghostBanULXWrapper(calling_ply, target_ply, minutes)
+		return
+	end
+
+	ulx.fancyLogAdmin(calling_ply, "#A ghostbanned steamid #s for #s", steamid, ULib.secondsToStringTime( minutes * 60 ))
+
+	util.SetPData(steamid, "ghost_unban_time", os.time()+minutes*60)
+end
+
 local function ghostUnBanIDULXWrapper(calling_ply, steamid)
 	steamid = steamid:upper()
 	if not ULib.isValidSteamID( steamid ) then
@@ -41,4 +59,10 @@ local ghostunbanid = ulx.command("FSB", "ulx unghostbanid", ghostUnBanIDULXWrapp
 ghostunbanid:addParam{ type=ULib.cmds.StringArg, hint="steamid" }
 ghostunbanid:defaultAccess( ULib.ACCESS_ADMIN )
 ghostunbanid:help( "Removes the ghost ban effect from player. Uses steamid in the STEAM_0:0:0 format." )
+
+local ghostbanid = ulx.command("FSB", "ulx ghostbanid", ghostBanIDULXWrapper, "!ghostbanid")
+ghostbanid:addParam{ type=ULib.cmds.StringArg, hint="steamid" }
+ghostbanid:addParam{ type=ULib.cmds.NumArg, hint="minutes", ULib.cmds.optional, ULib.cmds.allowTimeString, min=1 }
+ghostbanid:defaultAccess( ULib.ACCESS_ADMIN )
+ghostbanid:help( "Ghost bans target (Can still walk around, but can't do almost anything). Uses steamid in the STEAM_0:0:0 format." )
 
