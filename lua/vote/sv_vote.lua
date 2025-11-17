@@ -67,25 +67,33 @@ sql.Query([[CREATE TABLE IF NOT EXISTS votes (
 --#endregion SQL
 
 ---@param petition_id integer
+---@param steamid64 string?
 ---@return integer num_likes
 ---@return integer num_dislikes
-local function getVotesFromIndex(petition_id)
+---@return integer vote_status eVoteStatus for the steamid64 given, will return eVoteStatus.NOT_VOTED if steamid64 is not given
+local function getVotesFromIndex(petition_id, steamid64)
 	local num_likes = 0
 	local num_dislikes = 0
 
-	local results = sql.QueryTyped("SELECT * FROM votes WHERE petition_id = ?", petition_id)
+	local results = sql.QueryTyped("SELECT vote_status, author_steamid FROM votes WHERE petition_id = ?", petition_id)
 	assert(results ~= false, "The SQL Query is broken in 'countSQLVotes'")
 
+	local our_vote_status = eVoteStatus.NOT_VOTED
+
 	---@diagnostic disable-next-line: param-type-mismatch
-	for index, value in ipairs(results) do
-		if value.vote_status == eVoteStatus.LIKE then
+	for index, vote in ipairs(results) do
+		if vote.vote_status == eVoteStatus.LIKE then
 			num_likes = num_likes + 1
-		elseif value.vote_status == eVoteStatus.DISLIKE then
+		elseif vote.vote_status == eVoteStatus.DISLIKE then
 			num_dislikes = num_dislikes + 1
+		end
+
+		if steamid64 ~= nil and vote.author_steamid == steamid64 then
+			our_vote_status = vote.vote_status
 		end
 	end
 
-	return num_likes, num_dislikes
+	return num_likes, num_dislikes, our_vote_status
 end
 
 ---@param petition_id integer
@@ -97,16 +105,7 @@ local function getPetitionFromIndex(petition_id, ply)
 	if #results ~= 1 then return nil end
 	local result = results[1]
 
-	local num_likes, num_dislikes = getVotesFromIndex(petition_id)
-
-	local vote_status = eVoteStatus.NOT_VOTED
-	if ply then
-		local results = sql.QueryTyped("SELECT vote_status FROM votes WHERE petition_id = ? AND author_steamid = ?", petition_id, ply:OwnerSteamID64())
-		assert(results ~= false, "The SQL Query is broken in 'getPetitionFromIndex'")
-		if #results == 1 then
-			vote_status = results[1].vote_status
-		end
-	end
+	local num_likes, num_dislikes, vote_status = getVotesFromIndex(petition_id, ply and ply:OwnerSteamID64())
 
 	return {
 		index = petition_id,
