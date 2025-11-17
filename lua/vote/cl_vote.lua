@@ -280,6 +280,11 @@ net.Receive("petition_transmit", function(len, ply)
 		petition.num_likes       = net.ReadUInt(PETITION_VOTE_BITS)
 		petition.num_dislikes    = net.ReadUInt(PETITION_VOTE_BITS)
 		petition.our_vote_status = net.ReadUInt(2)
+	else
+		-- This must exist on the client, if it wasn't transmitted, fill it with default values.
+		petition.num_likes = 0
+		petition.num_dislikes = 0
+		petition.our_vote_status = eVoteStatus.NOT_VOTED
 	end
 	if net.ReadBool() then -- include_author_info
 		petition.author_name    = net.ReadString()

@@ -115,12 +115,14 @@ local function addVoteInfoToPetitions(petitions, steamid64)
 	local petition_map = {}
 	for _, petition in ipairs(petitions) do
 		petition_map[petition.index] = petition
+
+		petition.num_likes = petition.num_likes or 0
+		petition.num_dislikes = petition.num_dislikes or 0
+		petition.our_vote_status = eVoteStatus.NOT_VOTED
 	end
 	---@diagnostic disable-next-line: param-type-mismatch
 	for _, vote in ipairs(results) do
 		local petition =  petition_map[vote.petition_id]
-		petition.num_likes = petition.num_likes or 0
-		petition.num_dislikes = petition.num_dislikes or 0
 
 		if vote.vote_status == eVoteStatus.LIKE then
 			petition.num_likes = petition.num_likes + 1
@@ -130,9 +132,6 @@ local function addVoteInfoToPetitions(petitions, steamid64)
 
 		if steamid64 ~= nil and vote.author_steamid == steamid64 then
 			petition.our_vote_status = vote.vote_status
-		end
-		if petition.our_vote_status == nil then
-			petition.our_vote_status = eVoteStatus.NOT_VOTED
 		end
 	end
 end
