@@ -2,9 +2,21 @@ local spawnzone_color = Color(0, 255, 0)
 
 local spawnzones =
 {
-	["gm_construct"] = {Vector(1024, -896, -144), Vector(640, 800, 64)},
-	["gm_york_remaster"] = {Vector(384, -6272, 8), Vector(2880, -7960, 820)},
-	["gm_mobenix_v3_final"] = {Vector(-9900, -1064, 10760), Vector(-8900, -2779, 10370)},
+	["gm_construct"] = {
+		min = Vector(1024, -896, -144),
+		max = Vector(640, 800, 64),
+		shoud_draw = true
+	},
+	["gm_york_remaster"] = {
+		min = Vector(384, -6272, 8),
+		max = Vector(2880, -7960, 820),
+		shoud_draw = true
+	},
+	["gm_mobenix_v3_final"] = {
+		min = Vector(-9900, -1064, 10760),
+		max = Vector(-8900, -2779, 10370),
+		shoud_draw = false
+	},
 }
 
 local fsb_draw_spawnzone = CreateClientConVar("fsb_draw_spawnzone", "1", true, false)
@@ -31,7 +43,7 @@ if SERVER then
 	end
 
 	hook.Add("Think", "check_spawnzone_ents", function()
-		for _, ent in ipairs(ents.FindInBox(current_zone[1], current_zone[2])) do
+		for _, ent in ipairs(ents.FindInBox(current_zone.min, current_zone.max)) do
 			if isEntityDisallowedAtSpawn(ent) then
 				print("Bad entity at spawn, removing:", ent)
 				ent:Remove()
@@ -40,24 +52,24 @@ if SERVER then
 	end)
 
 	hook.Add("PlayerSpawnObject", "block_spawn_in_spawnzone", function(ply, model, skin)
-		if ply:GetPos():WithinAABox(current_zone[1], current_zone[2]) then
+		if ply:GetPos():WithinAABox(current_zone.min, current_zone.max) then
 			return false
 		end
 	end)
 
 	hook.Add("EntityTakeDamage", "block_spawn_in_spawnzone", function(target, dmg)
 		local attacker = dmg:GetAttacker()
-		if attacker:IsPlayer() and attacker:GetPos():WithinAABox(current_zone[1], current_zone[2]) then
+		if attacker:IsPlayer() and attacker:GetPos():WithinAABox(current_zone.min, current_zone.max) then
 			return true
 		end
-		if target:GetPos():WithinAABox(current_zone[1], current_zone[2]) then
+		if target:GetPos():WithinAABox(current_zone.min, current_zone.max) then
 			return true
 		end
 	end)
 else
 	hook.Add("PreDrawTranslucentRenderables", "draw_spawnzone", function(bDrawingDepth, bDrawingSkybox, isDraw3DSkybox)
-		if fsb_draw_spawnzone:GetBool() and not isDraw3DSkybox then
-			render.DrawWireframeBox(vector_origin, angle_zero, current_zone[1], current_zone[2], spawnzone_color, true)
+		if current_zone.shoud_draw and fsb_draw_spawnzone:GetBool() and not isDraw3DSkybox then
+			render.DrawWireframeBox(vector_origin, angle_zero, current_zone.min, current_zone.max, spawnzone_color, true)
 		end
 	end)
 end
