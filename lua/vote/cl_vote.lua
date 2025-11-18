@@ -319,11 +319,17 @@ end)
 
 net.Receive("petition_list_responce", function(len, ply)
 	local num_petitions = net.ReadUInt(PETITION_ID_BITS)
+	local petitions_added = false
 	for i = 1, num_petitions do
+		local petition_id = net.ReadUInt(PETITION_ID_BITS)
+		if not petitions_available[petition_id] then
+			petitions_added = true
+		end
+
 		petitions_available[net.ReadUInt(PETITION_ID_BITS)] = true
 	end
 
-	if table.Count(petitions_cache) < PETITION_MAX_PETITIONS_PER_REQUEST then
+	if petitions_added then
 		requestMorePetitions()
 	end
 end)
