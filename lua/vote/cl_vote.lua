@@ -326,7 +326,7 @@ net.Receive("petition_list_responce", function(len, ply)
 			petitions_added = true
 		end
 
-		petitions_available[net.ReadUInt(PETITION_ID_BITS)] = true
+		petitions_available[petition_id] = true
 	end
 
 	if petitions_added then
