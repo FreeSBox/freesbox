@@ -20,4 +20,5 @@ resource.AddWorkshop("2458909924") -- Prop2Mesh
 resource.AddWorkshop("287012681") -- Track Assembly Tool
 resource.AddWorkshop("2447979470") -- StormFox 2
 resource.AddWorkshop("108024198") -- Food and Household items
+resource.AddWorkshop("2639959090") -- Manable Emplacements
 --#endregion
