@@ -1,54 +1,102 @@
-local time_until_pvp_ends = 50 -- seconds until we can use noclip again
+local PVP_TIMER = 50 -- seconds until we can use noclip again
+
+local BUILD_WEAPONS =
+{
+	["gmod_tool"] = true,
+	["gmod_camera"] = true,
+	["weapon_medkit"] = true,
+	["weapon_armorkit"] = true,
+	["weapon_physgun"] = true,
+	["weapon_hands"] = true,
+	["weapon_lookathands"] = true,
+}
+
+local IN_PVP_MAGIC_VALUE = 0xFFAAAC -- Don't push this value too far, it's transmited as a 32bit float.
+local PVP_NET_FLOAT = "PVPModeEnd"
+
+local T = FSB.Translate
 
 ---@class Player
 local PLAYER = FindMetaTable("Player")
 
 ---@return boolean
 function PLAYER:InPVPMode()
-	return self:GetNWFloat("PVPModeEnd") > CurTime()
+	return self:GetNWFloat(PVP_NET_FLOAT) > CurTime()
 end
 
 ---@return number
 function PLAYER:PVPModeEndTime()
-	return self:GetNWFloat("PVPModeEnd")
+	return self:GetNWFloat(PVP_NET_FLOAT)
 end
 
 local function isInNoclip(player)
 	return player:GetMoveType() == MOVETYPE_NOCLIP and not player:InVehicle()
 end
 
+---This will throw the player into the PVP mode, it will not deactivate until the player drops a PVP weapon,
+---or abuses the backdoor(buildmode_button)
+function PLAYER:PutIntoPVP()
+	local old_value = self:GetNWFloat(PVP_NET_FLOAT)
+	if old_value == IN_PVP_MAGIC_VALUE then return end
+
+	self:SetNWFloat(PVP_NET_FLOAT, IN_PVP_MAGIC_VALUE)
+	if isInNoclip(self) then
+		self:SetMoveType(MOVETYPE_WALK)
+	end
+
+	FSB.SendLocalizedMessage("pvp.entered_pvp")
+end
+
+---This will set the PVP timer to 50 seconds in the future.
+function PLAYER:MarkAsReadyForBuild()
+	self:SetNWFloat(PVP_NET_FLOAT, CurTime()+PVP_TIMER)
+end
+
 if SERVER then
-	hook.Add("EntityTakeDamage", "set_pvp_mode", function (target, dmg)
+	---@param target Player
+	hook.Add("EntityTakeDamage", "block_damage_to_build", function (target, dmg)
+		if not target:IsPlayer() then return end
+
 		local attacker = dmg:GetAttacker()
 		if not attacker:IsPlayer() then
 			attacker = attacker:CPPIGetOwner()
 		end
 		if not IsValid(attacker) then return end
-		if not attacker:IsPlayer() then return end
 		if attacker == target then return end
-		if target:IsPlayer() then
-			if target:IsGhostBanned() then return end -- Feel free to kill ghost banned players.
-		else
-			if target:Health() == 0 and not target.IsGlideVehicle then return end
-			if target:CPPIGetOwner() == attacker then return end
-		end
+		if attacker == game.GetWorld() then return end
 
-		attacker:SetNWFloat("PVPModeEnd", CurTime()+time_until_pvp_ends)
-		if isInNoclip(attacker) then
-			attacker:SetMoveType(MOVETYPE_WALK)
-			return true
-		end
-
-		if target:IsPlayer() and not target:InPVPMode() then
-			return true
+		if not target:InPVPMode() then
+			return false
 		end
 	end)
 
 	-- Malicious compliance with #143
 	hook.Add("PlayerButtonDown", "buildmode_button", function (ply, button)
 		if button == KEY_XBUTTON_DOWN then
-			ply:SetNWFloat("PVPModeEnd", CurTime())
+			ply:SetNWFloat(PVP_NET_FLOAT, CurTime())
 		end
+	end)
+
+	hook.Add("WeaponEquip", "activate_pvp", function (weapon, owner)
+		if BUILD_WEAPONS[weapon:GetClass()] then return end
+
+		owner:PutIntoPVP()
+	end)
+
+	---@param owner Player
+	hook.Add("PlayerDroppedWeapon", "deactivate_pvp", function (owner, dropped_weapon)
+		if not owner:IsPlayer() then return end
+
+		local dropped_class = dropped_weapon:GetClass()
+
+		for _, weapon in ipairs(owner:GetWeapons()) do
+			local class = weapon:GetClass()
+			if not BUILD_WEAPONS[class] and not class == dropped_class then
+				return
+			end
+		end
+
+		owner:MarkAsReadyForBuild()
 	end)
 end
 
@@ -59,7 +107,12 @@ hook.Add("PlayerNoClip", "prevent_noclip_in_pvp", function (ply, enable_noclip)
 
 	if enable_noclip and ply:InPVPMode() then
 		if CLIENT and not math.IsNearlyEqual(lastmsg, curtime, 1) then
-			chat.AddText(string.format(FSB.Translate("no_noclip_in_pvp"), ply:PVPModeEndTime()-curtime))
+			local end_time = ply:PVPModeEndTime()
+			if end_time == IN_PVP_MAGIC_VALUE then
+				chat.AddText(T"pvp.no_noclip")
+			else
+				chat.AddText(string.format(T"pvp.no_noclip_time", ply:PVPModeEndTime()-curtime))
+			end
 			lastmsg = curtime
 		end
 		return false

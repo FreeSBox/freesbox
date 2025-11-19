@@ -58,7 +58,9 @@ return {
 		["new_name"] = "New name",
 		["new_nametag"] = "New Name Tag",
 
-		["no_noclip_in_pvp"] = "In PVP, can't use noclip for %i seconds.",
+		["pvp.entered_pvp"] = "You have entered PVP mode!",
+		["pvp.no_noclip_time"] = "Switching to build mode, can't use noclip for %i seconds.",
+		["pvp.no_noclip"] = "In PVP, drop your weapons (+drop) or die to enter enable noclip.",
 
 		["timer.shutdown"] = "The server will shut down in %.1f seconds!",
 		["timer.cleanup"] = "The map will be cleaned up in %.1f seconds!",
@@ -132,7 +134,9 @@ return {
 		["new_name"] = "Новый ник",
 		["new_nametag"] = "Новый тег",
 
-		["no_noclip_in_pvp"] = "В PVP, нельзя использовать noclip ещё %i секунд.",
+		["pvp.entered_pvp"] = "Вы вошли в PVP режим!",
+		["pvp.no_noclip_time"] = "Переходим в режим строительства, нельзя использовать noclip ещё %i секунд.",
+		["pvp.no_noclip"] = "В PVP, бросайте оружие (+drop) или умрите чтобы включить noclip.",
 
 		["timer.shutdown"] = "Сервер выключится через %.1f секунд!",
 		["timer.cleanup"] = "Карта будет очищена через %.1f секунд!",
