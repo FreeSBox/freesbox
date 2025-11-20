@@ -19,4 +19,5 @@ resource.AddWorkshop("2639959090") -- Manable Emplacements
 resource.AddWorkshop("3457996478") -- Glide // Conscript APC
 resource.AddWorkshop("3436601554") -- Glide // Hunter-Chopper
 resource.AddWorkshop("3448521354") -- Glide // Combine Gunship
+resource.AddWorkshop("3001397905") -- Media Player (Updated Edition)
 --#endregion
