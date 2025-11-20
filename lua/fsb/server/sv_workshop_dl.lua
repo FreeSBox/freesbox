@@ -15,6 +15,8 @@ resource.AddWorkshop("2840295308") -- Primitive
 resource.AddWorkshop("2458909924") -- Prop2Mesh
 resource.AddWorkshop("287012681") -- Track Assembly Tool
 resource.AddWorkshop("2447979470") -- StormFox 2
-resource.AddWorkshop("108024198") -- Food and Household items
 resource.AddWorkshop("2639959090") -- Manable Emplacements
+resource.AddWorkshop("3457996478") -- Glide // Conscript APC
+resource.AddWorkshop("3436601554") -- Glide // Hunter-Chopper
+resource.AddWorkshop("3448521354") -- Glide // Combine Gunship
 --#endregion
