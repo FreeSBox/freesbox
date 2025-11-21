@@ -64,6 +64,7 @@ if SERVER then
 			target = target:CPPIGetOwner()
 		end
 		if not IsValid( target ) then return end
+		if target:IsGhostBanned() then return end
 
 		local attacker = dmg:GetAttacker()
 		if attacker == target then return end
@@ -85,6 +86,7 @@ if SERVER then
 		end
 		if not IsValid( attacker ) then return end
 		if attacker == target then return end
+		if target:IsPlayer() and target:IsGhostBanned() then return end
 		if attacker:IsPlayer() and not attacker:InPVPMode() then
 			return true
 		end
