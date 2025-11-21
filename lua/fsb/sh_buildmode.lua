@@ -95,7 +95,7 @@ if SERVER then
 
 		for _, weapon in ipairs(owner:GetWeapons()) do
 			local class = weapon:GetClass()
-			if not BUILD_WEAPONS[class] and not class == dropped_class then
+			if not BUILD_WEAPONS[class] and class ~= dropped_class then
 				return
 			end
 		end
