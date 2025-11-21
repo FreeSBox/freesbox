@@ -69,7 +69,7 @@ if SERVER then
 		if dmg:IsFallDamage() then return end
 
 		if not target:InPVPMode() then
-			return false
+			return true
 		end
 	end)
 
