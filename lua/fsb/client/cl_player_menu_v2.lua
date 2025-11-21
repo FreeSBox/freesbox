@@ -15,6 +15,7 @@ local checkboxes = {
 	{Text=FSB.Translate("pi_menu.nametag_toggle"), ConVar="cl_nametags_enable" },
 	{Text=FSB.Translate("pi_menu.nametags_localplayer"), ConVar="cl_nametags_localplayer" },
 	{Text=FSB.Translate("pi_menu.enable_adverts"), ConVar="fsb_enable_adverts" },
+	{Text=FSB.Translate("pi_menu.enable_censorship"), ConVar="fsb_enable_censorship" },
 }
 
 local clr_hover = Color(60, 60, 60, 255)

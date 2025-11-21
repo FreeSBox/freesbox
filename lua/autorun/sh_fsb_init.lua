@@ -49,6 +49,7 @@ local client_files ={
 	"fsb/client/cl_concommands_v2.lua",
 	"fsb/client/cl_gcc_exploit_radhat.lua",
 	"fsb/client/cl_nametags.lua",
+	"fsb/client/cl_nocensor.lua",
 	"fsb/client/cl_owner_joined.lua",
 	"fsb/client/cl_player_menu_v2.lua",
 	"fsb/client/cl_rules.lua",
