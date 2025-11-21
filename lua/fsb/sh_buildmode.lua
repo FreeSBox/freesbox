@@ -44,11 +44,15 @@ function PLAYER:PutIntoPVP()
 		self:SetMoveType(MOVETYPE_WALK)
 	end
 
-	FSB.SendLocalizedMessage("pvp.entered_pvp")
+	self:SendLocalizedMessage("pvp.entered_pvp")
 end
 
 ---This will set the PVP timer to 50 seconds in the future.
 function PLAYER:MarkAsReadyForBuild()
+	if self:GetNWFloat(PVP_NET_FLOAT) ~= IN_PVP_MAGIC_VALUE then
+		return
+	end
+
 	self:SetNWFloat(PVP_NET_FLOAT, CurTime()+PVP_TIMER)
 end
 
