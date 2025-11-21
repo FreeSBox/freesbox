@@ -78,6 +78,7 @@ if SERVER then
 		if not attacker:IsPlayer() then
 			attacker = attacker:CPPIGetOwner()
 		end
+		if not IsValid( attacker ) then return end
 		if attacker == target then return end
 		if attacker:IsPlayer() and not attacker:InPVPMode() then
 			return true
