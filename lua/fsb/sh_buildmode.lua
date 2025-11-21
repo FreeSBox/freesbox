@@ -59,9 +59,14 @@ end
 if SERVER then
 	---@param target Player
 	hook.Add("EntityTakeDamage", "block_damage_to_build", function (target, dmg)
-		if not target:IsPlayer() then return end
+		local is_player = target:IsPlayer()
+		if not is_player then
+			target = target:CPPIGetOwner()
+		end
+		if not IsValid( target ) then return end
 
 		local attacker = dmg:GetAttacker()
+		if attacker == target then return end
 		if not attacker:IsPlayer() then
 			attacker = attacker:CPPIGetOwner()
 		end
