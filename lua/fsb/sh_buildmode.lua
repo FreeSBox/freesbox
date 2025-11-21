@@ -73,6 +73,17 @@ if SERVER then
 		end
 	end)
 
+	hook.Add("EntityTakeDamage", "block_damage_to_pvp", function (target, dmg)
+		local attacker = dmg:GetAttacker()
+		if not attacker:IsPlayer() then
+			attacker = attacker:CPPIGetOwner()
+		end
+		if attacker == target then return end
+		if not attacker:InPVPMode() then
+			return true
+		end
+	end)
+
 	-- Malicious compliance with #143
 	hook.Add("PlayerButtonDown", "buildmode_button", function (ply, button)
 		if button == KEY_XBUTTON_DOWN then
