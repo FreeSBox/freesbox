@@ -7,14 +7,14 @@ local BUILD_WEAPONS =
 	["weapon_medkit"] = true,
 	["weapon_armorkit"] = true,
 	["weapon_physgun"] = true,
+	["weapon_physcannon"] = true,
 	["weapon_hands"] = true,
 	["weapon_lookathands"] = true,
+	["none"] = true,
 }
 
 local IN_PVP_MAGIC_VALUE = 0xFFAAAC -- Don't push this value too far, it's transmited as a 32bit float.
 local PVP_NET_FLOAT = "PVPModeEnd"
-
-local T = FSB.Translate
 
 ---@class Player
 local PLAYER = FindMetaTable("Player")
@@ -98,11 +98,30 @@ if SERVER then
 
 		owner:MarkAsReadyForBuild()
 	end)
+
+	hook.Add("PlayerCanPickupWeapon", "block_build_pickups", function (ply, weapon)
+		if ply:InPVPMode() then return end
+		if not weapon.SpawnedOnGround then return end
+
+		return false
+	end)
+
+	hook.Add("PlayerSpawnedSWEP", "mark_weapon_as_given", function (ply, weapon)
+		weapon.SpawnedOnGround = true
+	end)
+
+	hook.Add("AllowPlayerPickup", "pickup_weapon_in_build", function (ply, ent)
+		if ply:InPVPMode() then return end
+		if not ent:IsWeapon() then return end
+
+		return false
+	end)
 end
 
 local lastmsg = 0
 hook.Add("PlayerNoClip", "prevent_noclip_in_pvp", function (ply, enable_noclip)
 	if not SERVER and ply ~= LocalPlayer() then return end
+	local T = FSB.Translate
 	local curtime = CurTime()
 
 	if enable_noclip and ply:InPVPMode() then
