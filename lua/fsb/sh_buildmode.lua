@@ -120,6 +120,17 @@ if SERVER then
 
 		return false
 	end)
+
+	concommand.Add("build", function (ply, cmd, args, argStr)
+		local player_weapons = ply:GetWeapons()
+		for _, weapon in ipairs(player_weapons) do
+			if not BUILD_WEAPONS[weapon:GetClass()] then
+				weapon:Remove()
+			end
+		end
+
+		ply:MarkAsReadyForBuild()
+	end)
 end
 
 local lastmsg = 0

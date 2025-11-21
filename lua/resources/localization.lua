@@ -59,9 +59,12 @@ return {
 		["new_name"] = "New name",
 		["new_nametag"] = "New Name Tag",
 
+		["chatcmd.use_console_dumbass"] = "Type this in the console, not in the chat.",
+		["chatcmd.custom_build_on_server"] = "The build mode is automatic on this server. If you want to remove your weapons type 'build' in the console.",
+
 		["pvp.entered_pvp"] = "You have entered PVP mode!",
 		["pvp.no_noclip_time"] = "Switching to build mode, can't use noclip for %i seconds.",
-		["pvp.no_noclip"] = "In PVP, drop your weapons (+drop) or die to enter enable noclip.",
+		["pvp.no_noclip"] = "In PVP, drop your weapons (+drop) or type build in the console to remove them and enable noclip.",
 
 		["timer.shutdown"] = "The server will shut down in %.1f seconds!",
 		["timer.cleanup"] = "The map will be cleaned up in %.1f seconds!",
@@ -136,9 +139,12 @@ return {
 		["new_name"] = "Новый ник",
 		["new_nametag"] = "Новый тег",
 
+		["chatcmd.use_console_dumbass"] = "В консоль пиши, не в чат.",
+		["chatcmd.custom_build_on_server"] = "На этом сервере автоматический build режим. Если вы хотите удалить оружие напишите 'build' в консоль.",
+
 		["pvp.entered_pvp"] = "Вы вошли в PVP режим!",
 		["pvp.no_noclip_time"] = "Переходим в режим строительства, нельзя использовать noclip ещё %i секунд.",
-		["pvp.no_noclip"] = "В PVP, бросайте оружие (+drop) или умрите чтобы включить noclip.",
+		["pvp.no_noclip"] = "В PVP, бросайте оружие (+drop) или напишите build в консоль чтобы включить noclip.",
 
 		["timer.shutdown"] = "Сервер выключится через %.1f секунд!",
 		["timer.cleanup"] = "Карта будет очищена через %.1f секунд!",
