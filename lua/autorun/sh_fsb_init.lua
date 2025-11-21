@@ -7,7 +7,7 @@ FSB = FSB or {}
 FSB.HOOKS = FSB.HOOKS or {}
 
 local shared_files = {
-	"fsb/sh_anti_noclip_pvp.lua",
+	"fsb/sh_buildmode.lua",
 	"fsb/sh_limit_duplicator.lua",
 	"fsb/sh_custom_name.lua",
 	"fsb/sh_dont_tool_players.lua",
