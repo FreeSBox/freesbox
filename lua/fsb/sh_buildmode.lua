@@ -132,6 +132,10 @@ if SERVER then
 		return false
 	end)
 
+	hook.Add("PostPlayerDeath", "reset_pvp_on_death", function (ply)
+		ply:MarkAsReadyForBuild()
+	end)
+
 	concommand.Add("build", function (ply, cmd, args, argStr)
 		local player_weapons = ply:GetWeapons()
 		for _, weapon in ipairs(player_weapons) do
