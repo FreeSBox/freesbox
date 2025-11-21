@@ -73,7 +73,7 @@ if SERVER then
 		end
 	end)
 
-	hook.Add("EntityTakeDamage", "block_damage_to_pvp", function (target, dmg)
+	hook.Add("EntityTakeDamage", "block_damage_from_build", function (target, dmg)
 		local attacker = dmg:GetAttacker()
 		if not attacker:IsPlayer() then
 			attacker = attacker:CPPIGetOwner()
