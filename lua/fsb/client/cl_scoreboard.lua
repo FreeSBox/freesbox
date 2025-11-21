@@ -206,6 +206,7 @@ end
 
 function scoreboard:Open()
 	if self.open then return end
+	if vgui.CursorVisible() then return end
 
 	self.open = true
 	self.size = { w = ScrW() / 2.5, h = ScrH() / 1.5 }
@@ -280,9 +281,11 @@ function scoreboard:IsOpen()
 	return self.open
 end
 
-hook.Add("KeyPress", "ScoreboardToggleMouse", function( ply, key )
-	if key == IN_ATTACK2 and scoreboard:IsOpen() then
+hook.Add("PlayerBindPress", "block_alt_fire_in_tab", function (ply, bind, pressed, code)
+	if ply ~= LocalPlayer() then return end
+	if string.find(bind, "attack2") and scoreboard:IsOpen() then
 		gui.EnableScreenClicker(true)
+		return true
 	end
 end)
 
