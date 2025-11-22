@@ -115,9 +115,10 @@ end
 ---@param veh Vehicle
 ---@return Vehicle vehicle Glide vehicle if this is a seat, otherwise the veh passed in.
 function FSB.GetGlideVehicleFromSeat(veh)
-	if veh:GetClass() == "prop_vehicle_prisoner_pod" and veh.GlideSeatIndex then
+	if veh:GetClass() == "prop_vehicle_prisoner_pod" and veh.GlideSeatIndex ~= nil then
 		---@diagnostic disable-next-line: return-type-mismatch
-		return veh:GetParent()
+		local parent = veh:GetParent()
+		return IsValid(parent) and parent or veh
 	end
 
 	return veh
