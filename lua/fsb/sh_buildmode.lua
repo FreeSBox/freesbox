@@ -173,7 +173,7 @@ if SERVER then
 	end)
 
 	hook.Add("PlayerLeaveVehicle", "deactivate_glide_pvp", function (ply, veh)
-		if BUILD_VEHICLES[veh:GetClass()] then return end
+		if BUILD_VEHICLES[FSB.GetGlideVehicleFromSeat(veh):GetClass()] then return end
 		if ply:HasPVPWeapons() then return end
 
 		ply:MarkAsReadyForBuild()
