@@ -26,7 +26,7 @@ local function freezePlayerProps(calling_ply, target_ply)
 		end
 	end
 
-	ulx.fancyLogAdmin( calling_ply, "#A froze #A's props" )
+	ulx.fancyLogAdmin( calling_ply, "#A froze #T's props", target_ply )
 end
 
 local cleanup = ulx.command("FSB", "ulx cleanup", cleanupULXWrapper, "!cleanup")
