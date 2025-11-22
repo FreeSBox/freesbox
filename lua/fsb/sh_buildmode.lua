@@ -90,7 +90,7 @@ function PLAYER:PutIntoPVP()
 		self:SetMoveType(MOVETYPE_WALK)
 	end
 
-	self:SendLocalizedMessage("pvp.entered_pvp")
+	self:SendLocalizedHint("pvp.entered_pvp", NOTIFY_GENERIC, 3)
 end
 
 ---This will set the PVP timer to 50 seconds in the future.
@@ -241,9 +241,9 @@ hook.Add("PlayerNoClip", "prevent_noclip_in_pvp", function (ply, enable_noclip)
 		if CLIENT and not math.IsNearlyEqual(lastmsg, curtime, 1) then
 			local end_time = ply:PVPModeEndTime()
 			if end_time == IN_PVP_MAGIC_VALUE then
-				chat.AddText(T"pvp.no_noclip")
+				FSB.Notify("pvp.no_noclip", NOTIFY_GENERIC, 5)
 			else
-				chat.AddText(string.format(T"pvp.no_noclip_time", ply:PVPModeEndTime()-curtime))
+				FSB.Notify("pvp.no_noclip_time", NOTIFY_GENERIC, 5, ply:PVPModeEndTime()-curtime)
 			end
 			lastmsg = curtime
 		end
