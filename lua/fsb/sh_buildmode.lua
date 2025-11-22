@@ -112,6 +112,17 @@ function PLAYER:HasPVPWeapons(excluded_class)
 	return false
 end
 
+---@param veh Vehicle
+---@return Vehicle vehicle Glide vehicle if this is a seat, otherwise the veh passed in.
+function FSB.GetGlideVehicleFromSeat(veh)
+	if veh:GetClass() == "prop_vehicle_prisoner_pod" and veh.GlideSeatIndex then
+		---@diagnostic disable-next-line: return-type-mismatch
+		return veh:GetParent()
+	end
+
+	return veh
+end
+
 if SERVER then
 	---@param target Player
 	hook.Add("EntityTakeDamage", "block_damage_to_build", function (target, dmg)
@@ -169,7 +180,7 @@ if SERVER then
 	end)
 
 	hook.Add("PlayerEnteredVehicle", "activate_glide_pvp", function (ply, veh, role)
-		if BUILD_VEHICLES[veh:GetClass()] then return end
+		if BUILD_VEHICLES[FSB.GetGlideVehicleFromSeat(veh):GetClass()] then return end
 
 		ply:PutIntoPVP()
 	end)
