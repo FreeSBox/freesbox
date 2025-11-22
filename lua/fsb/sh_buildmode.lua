@@ -1,4 +1,4 @@
-local PVP_TIMER = 50 -- seconds until we can use noclip again
+local PVP_TIMER = 20 -- seconds until we can use noclip again
 
 local BUILD_WEAPONS =
 {
@@ -34,7 +34,7 @@ local BUILD_VEHICLES =
 	["gtav_seashark"] = true,
 	["gtav_speedo"] = true,
 	["gtav_wolfsbane"] = true,
-	
+
 	--GTAV Helicopters
 	["glide_gtav_blimp"] = true,
 	["glide_gtav_blimp2"] = true,
