@@ -238,10 +238,10 @@ hook.Add("PlayerNoClip", "prevent_noclip_in_pvp", function (ply, enable_noclip)
 	local curtime = CurTime()
 
 	if enable_noclip and ply:InPVPMode() then
-		if CLIENT and not math.IsNearlyEqual(lastmsg, curtime, 1) then
+		if CLIENT and not math.IsNearlyEqual(lastmsg, curtime, 4) then
 			local end_time = ply:PVPModeEndTime()
 			if end_time == IN_PVP_MAGIC_VALUE then
-				FSB.Notify("pvp.no_noclip", NOTIFY_GENERIC, 5)
+				FSB.Notify("pvp.no_noclip", NOTIFY_ERROR, 10)
 			else
 				FSB.Notify("pvp.no_noclip_time", NOTIFY_GENERIC, 5, ply:PVPModeEndTime()-curtime)
 			end
