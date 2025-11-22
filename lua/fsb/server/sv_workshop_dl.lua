@@ -20,4 +20,6 @@ resource.AddWorkshop("3457996478") -- Glide // Conscript APC
 resource.AddWorkshop("3436601554") -- Glide // Hunter-Chopper
 resource.AddWorkshop("3448521354") -- Glide // Combine Gunship
 resource.AddWorkshop("3001397905") -- Media Player (Updated Edition)
+resource.AddWorkshop("2821862386") -- Simple Weapons: Base
+resource.AddWorkshop("2821865508") -- Simple Weapons: CS:S
 --#endregion
