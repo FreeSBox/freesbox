@@ -14,6 +14,49 @@ local BUILD_WEAPONS =
 	["none"] = true,
 }
 
+local BUILD_VEHICLES =
+{
+	--Glide
+	["gtav_airbus"] = true,
+	["gtav_bati801"] = true,
+	["gtav_blazer"] = true,
+	["gtav_dinghyq"] = true,
+	["gtav_dukes"] = true,
+	["gtav_trailer_flat"] = true,
+	["gtav_gauntlet_classic"] = true,
+	["gtav_hauler"] = true,
+	["gtav_infernus"] = true,
+	["gtav_stunt"] = true,
+	["gtav_police_cruiser"] = true,
+	["gtav_sanchez"] = true,
+	["gtav_seashark"] = true,
+	["gtav_speedo"] = true,
+	["gtav_wolfsbane"] = true,
+	
+	--GTAV Helicopters
+	["glide_gtav_blimp"] = true,
+	["glide_gtav_blimp2"] = true,
+	["glide_gtav_buzzard"] = true,
+	["glide_gtav_cargobob"] = true,
+	["glide_gtav_frogger"] = true,
+	["glide_gtav_havok"] = true,
+	["glide_gtav_maverick"] = true,
+	["glide_gtav_polmav2"] = true,
+	["glide_gtav_polmav"] = true,
+	["glide_gtav_skylift"] = true,
+	["glide_gtav_skylift2"] = true,
+	["glide_gtav_supervol"] = true,
+	["glide_gtav_swift"] = true,
+	["glide_gtav_swiftdeluxe"] = true,
+	["glide_gtav_thruster"] = true,
+
+	--Vanilla
+	["prop_vehicle_prisoner_pod"] = true,
+	["prop_vehicle_airboat"] = true,
+	["prop_vehicle_jeep"] = true,
+
+}
+
 local IN_PVP_MAGIC_VALUE = 0xFFAAAC -- Don't push this value too far, it's transmited as a 32bit float.
 local PVP_NET_FLOAT = "PVPModeEnd"
 
@@ -55,6 +98,18 @@ function PLAYER:MarkAsReadyForBuild()
 	end
 
 	self:SetNWFloat(PVP_NET_FLOAT, CurTime()+PVP_TIMER)
+end
+
+
+function PLAYER:HasPVPWeapons(excluded_class)
+	for _, weapon in ipairs(self:GetWeapons()) do
+		local class = weapon:GetClass()
+		if not BUILD_WEAPONS[class] and class ~= excluded_class then
+			return true
+		end
+	end
+
+	return false
 end
 
 if SERVER then
@@ -106,18 +161,25 @@ if SERVER then
 		owner:PutIntoPVP()
 	end)
 
+	hook.Add("PlayerLeaveVehicle", "deactivate_glide_pvp", function (ply, veh)
+		if BUILD_VEHICLES[veh:GetClass()] then return end
+		if ply:HasPVPWeapons() then return end
+
+		ply:MarkAsReadyForBuild()
+	end)
+
+	hook.Add("PlayerEnteredVehicle", "activate_glide_pvp", function (ply, veh, role)
+		if BUILD_VEHICLES[veh:GetClass()] then return end
+
+		ply:PutIntoPVP()
+	end)
+
 	---@param owner Player
 	hook.Add("PlayerDroppedWeapon", "deactivate_pvp", function (owner, dropped_weapon)
 		if not owner:IsPlayer() then return end
 
 		local dropped_class = dropped_weapon:GetClass()
-
-		for _, weapon in ipairs(owner:GetWeapons()) do
-			local class = weapon:GetClass()
-			if not BUILD_WEAPONS[class] and class ~= dropped_class then
-				return
-			end
-		end
+		if owner:HasPVPWeapons(dropped_class) then return end
 
 		owner:MarkAsReadyForBuild()
 	end)
