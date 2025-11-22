@@ -52,7 +52,13 @@ else
 		assert(isnumber(length))
 
 		notification.AddLegacy(string.format(FSB.Translate(text), ...), type , length)
-		surface.PlaySound("ambient/water/drip" .. math.random( 1, 4 ) .. ".wav")
+		if type == NOTIFY_ERROR then
+			surface.PlaySound( "buttons/button10.wav" )
+		elseif type == NOTIFY_UNDO or type == NOTIFY_CLEANUP then
+			surface.PlaySound( "buttons/button15.wav" )
+		else
+			surface.PlaySound("ambient/water/drip" .. math.random( 1, 4 ) .. ".wav")
+		end
 	end
 
 	net.Receive("SendLocalizedHint", function (len, ply)
