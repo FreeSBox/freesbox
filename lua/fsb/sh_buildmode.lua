@@ -8,6 +8,7 @@ local BUILD_WEAPONS =
 	["weapon_armorkit"] = true,
 	["weapon_physgun"] = true,
 	["weapon_physcannon"] = true,
+	["weapon_bugbait"] = true,
 	["weapon_hands"] = true,
 	["weapon_lookathands"] = true,
 	["none"] = true,
