@@ -6,6 +6,7 @@ local skybox_zones =
 	["gm_york_remaster"] = {Vector(15690, 15690, -9240), Vector(-15690, -15690, -7008)},
 	["gm_mobenix_v3_final"] = {Vector(-10218, -2890, 12042), Vector(-15272, 458, 11062)},
 	["gm_construct"] = {Vector(-15100, -15100, 10431.25), Vector(15100, 15100, 15300)},
+	["gm_construct_in_flatgrass"] = {Vector(8192, -8192, -11263), Vector(-8192, 8192, -15360)},
 }
 local current_zone = skybox_zones[game.GetMap()]
 if current_zone == nil then
