@@ -7,6 +7,11 @@ local spawnzones =
 		max = Vector(640, 800, 64),
 		shoud_draw = true
 	},
+	["gm_construct_in_flatgrass"] = {
+		min = Vector(1664, -224, -8600),
+		max = Vector(2048, -1920, -8380),
+		shoud_draw = true
+	},
 	["gm_york_remaster"] = {
 		min = Vector(384, -6272, 8),
 		max = Vector(2880, -7960, 820),
