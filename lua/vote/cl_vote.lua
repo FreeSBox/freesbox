@@ -79,11 +79,22 @@ local function addPetitionToHTML(html, petition)
 	)
 end
 
+local draft_name = ""
+local draft_desc = ""
+local function setDraftText(name, desc)
+	draft_name = name
+	draft_desc = desc
+end
+local function getDraftText()
+	return draft_name, draft_desc
+end
+
 local function createPetition(name, description)
 	FSB.SendPetition({
 		name=name,
 		description=description
 	})
+	setDraftText("", "")
 	print("Sent new petition to server")
 end
 
@@ -127,19 +138,6 @@ local function requestMorePetitions()
 		end
 	net.SendToServer()
 end
-
-
-
-local draft_name = ""
-local draft_desc = ""
-local function setDraftText(name, desc)
-	draft_name = name
-	draft_desc = desc
-end
-local function getDraftText()
-	return draft_name, draft_desc
-end
-
 
 local function closeWindow()
 	VoteWindow:Remove();
