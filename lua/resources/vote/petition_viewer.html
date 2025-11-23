@@ -90,6 +90,36 @@
 		word-wrap: break-word;
 	}
 
+	code {
+		background-color: var(--main-color);
+		color: var(--text-color);
+		border-radius: 0.3rem;
+		padding: 4px 5px 5px;
+		white-space: nowrap;
+	}
+
+	pre code {
+		white-space: inherit;
+	}
+
+	pre {
+		background-color: var(--main-color);
+		padding: 5px;
+		border-radius: 0.3em;
+	}
+
+	blockquote {
+		margin-left: 2em;
+		border-left: 4px var(--light-color) solid;
+		background-color: var(--main-color);
+	}
+
+	blockquote > p {
+		margin-left: 1em;
+		text-indent: 0;
+		color: var(--text-darker-color)
+	}
+
 	#like_button {
 		background-color: black;
 	}
