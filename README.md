@@ -17,16 +17,16 @@ Included in this addon are:
 
 ## Dependencies
 
-| Dependency | Requered | Reason |
+| Dependency | Required | Reason |
 |------------------------------------------|----------|--------------------------|
 | [Wire](https://github.com/wiremod/wire/) | No       | Adds new functions to E2 |
 | [StarfallEx](https://github.com/thegrb93/StarfallEx) | No       | Adds new functions to Starfall |
 | [ULX](https://github.com/TeamUlysses/ulx) | No       | Adds new functions to ULX |
-| [EasyChat](https://github.com/Earu/EasyChat) | Yes       | Used to parse names in tab and nametags |
+| [EasyChat](https://github.com/Earu/EasyChat) | Yes       | Used to parse names in tab and name tags |
 | [NadmodPP](https://github.com/Nebual/NadmodPP) | Yes       | Used to count entities owned by a player (CPPI doesn't have an API for this) |
 | [gmsv_remove_restrictions](https://github.com/FreeSBox/gmsv_remove_restrictions) | Yes       | Allow running all console commands on the server, allow players using a steam emulator. |
 
-*Requered* means this addon will couse lua errors without this dependency.
+*Required* means this addon will couse lua errors without this dependency.
 
 ### Random notes
 
