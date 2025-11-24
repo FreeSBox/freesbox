@@ -5,7 +5,6 @@ resource.AddWorkshop("160250458") -- Wiremod
 --#region Petitioned addons
 resource.AddWorkshop("3389728250") -- Glide
 resource.AddWorkshop("3389795738") -- Glide // GTAV: Helicopters
-resource.AddWorkshop("609412954") -- Recolorable CS:S Skins
 resource.AddWorkshop("246756300") -- 3D Stream Radio
 resource.AddWorkshop("2675972006") -- Custom Loadout
 resource.AddWorkshop("3318060741") -- rRadio
