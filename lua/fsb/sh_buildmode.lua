@@ -131,6 +131,9 @@ if SERVER then
 	hook.Add("EntityTakeDamage", "block_damage_to_build", function (target, dmg)
 		local is_player = target:IsPlayer()
 		if not is_player then
+			if target.IsGlideVehicle and not BUILD_VEHICLES[target:GetClass()] then
+				return
+			end
 			target = target:CPPIGetOwner()
 		end
 		if not IsValid( target ) then return end
