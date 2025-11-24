@@ -157,9 +157,13 @@ if SERVER then
 		if not attacker:IsPlayer() then
 			attacker = attacker:CPPIGetOwner()
 		end
+		if not target:IsPlayer() then
+			target = target:CPPIGetOwner()
+		end
 		if not IsValid( attacker ) then return end
+		if not IsValid( target ) then return end
 		if attacker == target then return end
-		if target:IsPlayer() and target:IsGhostBanned() then return end
+		if target:IsGhostBanned() then return end
 		if attacker:IsPlayer() and not attacker:InPVPMode() then
 			return true
 		end
