@@ -18,7 +18,6 @@ local shared_files = {
 	"fsb/sh_notify.lua",
 	"fsb/sh_player_join.lua",
 	"fsb/sh_on_screen_timer.lua",
-	"fsb/sh_playermodels.lua",
 	"fsb/sh_playtime.lua",
 	"fsb/sh_resources.lua",
 	"fsb/sh_rules.lua",
