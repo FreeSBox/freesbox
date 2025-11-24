@@ -15,6 +15,17 @@ Included in this addon are:
 - Custom player names and tags.
 - Detect known exploit netmessages and run GCC exploit on them.
 
+## Dependencies
+
+| Dependency | Requered | Reason |
+|------------------------------------------|----------|--------------------------|
+| [Wire](https://github.com/wiremod/wire/) | No       | Adds new functions to E2 |
+| [StarfallEx](https://github.com/thegrb93/StarfallEx) | No       | Adds new functions to Starfall |
+| [ULX](https://github.com/TeamUlysses/ulx) | No       | Adds new functions to ULX |
+| [EasyChat](https://github.com/Earu/EasyChat) | Yes       | Used to parse names in tab and nametags |
+| [NadmodPP](https://github.com/Nebual/NadmodPP) | Yes       | Used to count entities owned by a player (CPPI doesn't have an API for this) |
+
+*Requered* means this addon will couse lua errors without this dependency.
 
 ### Random notes
 
