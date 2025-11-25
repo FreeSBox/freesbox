@@ -14,8 +14,9 @@ local DEFAULT_RADIUS = 600
 local MAX_RADIUS = 2000
 
 function ENT:SetupDataTables()
-	self:NetworkVar("Bool", 0, "Active")
+	self:NetworkVar("Bool",  0, "Active")
 	self:NetworkVar("Float", 0, "Radius")
+	self:NetworkVar("Bool",  1, "ForcePVP")
 	self:NetworkVar("Float", 1, "SizeX")
 	self:NetworkVar("Float", 2, "SizeY")
 	self:NetworkVar("Float", 3, "SizeZ")
@@ -34,9 +35,10 @@ function ENT:Initialize()
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
-		self.Inputs = Wire_CreateInputs(self, {"Active", "Radius", "SizeX", "SizeY", "SizeZ"})
-		self:SetRadius(DEFAULT_RADIUS) -- Default radius.
+		self.Inputs = Wire_CreateInputs(self, {"Active", "ForcePVP", "Radius", "SizeX", "SizeY", "SizeZ"})
+		self:SetRadius(DEFAULT_RADIUS)
 		self:SetActive(true)
+		self:SetForcePVP(false)
 		self:SetSizeX(0)
 		self:SetSizeY(0)
 		self:SetSizeZ(0)
@@ -86,8 +88,12 @@ if SERVER then
 	function ENT:Think()
 		if self:GetActive() then
 			for _, ply in ipairs(player.GetHumans()) do
-				if isInNoclip(ply) and self:IsPosAffected(ply) then
-					ply:SetMoveType(MOVETYPE_WALK)
+				if self:IsPosAffected(ply) then
+					if self:GetForcePVP() and not ply:InPVPMode() then
+						ply:Give("weapon_pistol")
+					elseif isInNoclip(ply) then
+						ply:SetMoveType(MOVETYPE_WALK)
+					end
 				end
 			end
 		end
@@ -118,6 +124,8 @@ function ENT:TriggerInput(iname, value)
 		self:SetSizeZ(math.Clamp(value, 0, MAX_RADIUS))
 	elseif iname == "Active" then
 		self:SetActive(tobool(value))
+	elseif iname == "ForcePVP" then
+		self:SetForcePVP(tobool(value))
 	end
 end
 
