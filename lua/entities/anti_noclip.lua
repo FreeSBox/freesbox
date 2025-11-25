@@ -14,6 +14,7 @@ local DEFAULT_RADIUS = 600
 local MAX_RADIUS = 2000
 
 function ENT:SetupDataTables()
+	self:NetworkVar("Bool", 0, "Active")
 	self:NetworkVar("Float", 0, "Radius")
 	self:NetworkVar("Float", 1, "SizeX")
 	self:NetworkVar("Float", 2, "SizeY")
@@ -33,8 +34,9 @@ function ENT:Initialize()
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
-		self.Inputs = Wire_CreateInputs(self, {"Radius", "SizeX", "SizeY", "SizeZ"})
+		self.Inputs = Wire_CreateInputs(self, {"Active", "Radius", "SizeX", "SizeY", "SizeZ"})
 		self:SetRadius(DEFAULT_RADIUS) -- Default radius.
+		self:SetActive(true)
 		self:SetSizeX(0)
 		self:SetSizeY(0)
 		self:SetSizeZ(0)
@@ -82,9 +84,11 @@ end
 
 if SERVER then
 	function ENT:Think()
-		for _, ply in ipairs(player.GetHumans()) do
-			if isInNoclip(ply) and self:IsPosAffected(ply) then
-				ply:SetMoveType(MOVETYPE_WALK)
+		if self:GetActive() then
+			for _, ply in ipairs(player.GetHumans()) do
+				if isInNoclip(ply) and self:IsPosAffected(ply) then
+					ply:SetMoveType(MOVETYPE_WALK)
+				end
 			end
 		end
 
@@ -96,7 +100,7 @@ end
 hook.Add("PlayerNoClip", "block_noclip_enter", function (ply, desiredState)
 	local ents = ents.FindByClass("anti_noclip")
 	for _, ent in ipairs(ents) do
-		if ent:IsPosAffected(ply) then
+		if ent:GetActive() and ent:IsPosAffected(ply) then
 			return false
 		end
 	end
@@ -112,6 +116,8 @@ function ENT:TriggerInput(iname, value)
 		self:SetSizeY(math.Clamp(value, 0, MAX_RADIUS))
 	elseif iname == "SizeZ" then
 		self:SetSizeZ(math.Clamp(value, 0, MAX_RADIUS))
+	elseif iname == "Active" then
+		self:SetActive(tobool(value))
 	end
 end
 
@@ -120,6 +126,8 @@ if not CLIENT then return end
 
 function ENT:Draw(flags)
 	self:DrawModel(flags)
+
+	if not self:GetActive() then return end
 
 	local size_x, size_y, size_z = self:GetSizeX(), self:GetSizeY(), self:GetSizeZ()
 	if size_x ~= 0 and size_y ~= 0 and size_z ~= 0 then
