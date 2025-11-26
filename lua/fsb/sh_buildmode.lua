@@ -85,6 +85,8 @@ function PLAYER:PutIntoPVP()
 	local old_value = self:GetNWFloat(PVP_NET_FLOAT)
 	if old_value == IN_PVP_MAGIC_VALUE then return end
 
+	if hook.Run("FSBEnterPVP", self) == false then return end
+
 	self:SetNWFloat(PVP_NET_FLOAT, IN_PVP_MAGIC_VALUE)
 	if isInNoclip(self) then
 		self:SetMoveType(MOVETYPE_WALK)
@@ -98,6 +100,8 @@ function PLAYER:MarkAsReadyForBuild()
 	if self:GetNWFloat(PVP_NET_FLOAT) ~= IN_PVP_MAGIC_VALUE then
 		return
 	end
+
+	if hook.Run("FSBReadyForBuild", self) == false then return end
 
 	self:SetNWFloat(PVP_NET_FLOAT, CurTime()+PVP_TIMER)
 end
