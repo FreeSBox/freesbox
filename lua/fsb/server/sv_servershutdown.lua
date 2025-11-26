@@ -13,7 +13,7 @@ function FSB.StopServer()
 		local reps_left = timer.RepsLeft("server_shutdown")
 		if reps_left == 0 then
 			--We can run this command because of the [remove_restrictions](https://github.com/FreeSBox/gmsv_remove_restrictions) binary module.
-			RunConsoleCommand("exit")
+			RunConsoleCommand("quit", "keep_players")
 		end
 	end)
 end
