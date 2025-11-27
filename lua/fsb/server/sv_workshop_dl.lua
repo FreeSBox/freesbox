@@ -22,6 +22,7 @@ resource.AddWorkshop("3001397905") -- Media Player (Updated Edition)
 resource.AddWorkshop("2821862386") -- Simple Weapons: Base
 resource.AddWorkshop("2821865508") -- Simple Weapons: CS:S
 resource.AddWorkshop("2832566843") -- Simple Weapons: Half-Life 2 Extended
+resource.AddWorkshop("3081978414") -- Profiteers Parachute
 resource.AddWorkshop("2825347854") -- GPoker - Poker in Garry's Mod
 resource.AddWorkshop("2718789320") -- QCardWars - Card Game in GMod!
 resource.AddWorkshop("3542961565") -- Liberty City // GLIDE
