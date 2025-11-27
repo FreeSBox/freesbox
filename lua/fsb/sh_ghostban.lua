@@ -74,6 +74,12 @@ if SERVER then
 		end
 	end)
 
+	hook.Add("PlayerSay", TAG, function (ply, text, is_team, is_local)
+		if ply:IsGhostBanned() and not is_local then
+			return ""
+		end
+	end)
+
 	function FSB.GhostBan(ply, unban_time)
 		assert(IsValid(ply), "Ply is invalid.")
 		unban_time = unban_time or 0
