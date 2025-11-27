@@ -1,5 +1,6 @@
 -- Add workshop content for the clients.
 
+resource.AddWorkshop("737640184") -- Tank track
 resource.AddWorkshop("160250458") -- Wiremod
 
 --#region Petitioned addons
