@@ -23,6 +23,23 @@ MAX_PETITIONS_PER_DAY = 2
 ---@field expire_time number? When can we no longer vote on the petition.
 ---@field our_vote_status number? Client side eVoteStatus.
 
+---@param index integer
+---@return petition
+function FSB.GetInvalidPetition(index)
+	return {
+		index = index,
+		name = "invalid",
+		description = "invalid petition",
+		num_likes = 0,
+		num_dislikes = 0,
+		author_name = "invalid",
+		author_steamid = "STEAM_0:0:0",
+		creation_time = 0,
+		expire_time = 0,
+		our_vote_status = eVoteStatus.NOT_VOTED
+	}
+end
+
 ---@param petition petition
 ---@param target_player Player? Only available on the server side.
 ---The server will discard all the data it can obtain itself, so don't bother trying to send it.

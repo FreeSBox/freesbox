@@ -7,6 +7,10 @@ local petitions_cache = {}
 ---@type table<integer, boolean?>
 local petitions_available = {}
 
+--- index, true or nil
+---@type table<integer, boolean?>
+local petitions_requested = {}
+
 --#region vgui2
 
 ---@return DFrame
@@ -107,6 +111,32 @@ local function voteOnPetition(petition_id, dislike)
 	net.SendToServer()
 end
 
+---@param petitions table<integer, integer> Array of petition ids
+local function requestPetitions(petitions)
+	assert(#petitions <= PETITION_MAX_PETITIONS_PER_REQUEST, "Too many petitions requested.")
+
+	local request = {}
+
+	-- This is not optimal, but should be fine.
+	for _, index in pairs(petitions) do
+		if not petitions_requested[index] then
+			request[#request+1] = index
+		end
+	end
+
+	if #request == 0 then
+		return
+	end
+
+	net.Start("petition_request")
+		net.WriteUInt(#request, 8)
+		for i = 1, #request do
+			petitions_requested[request[i]] = true
+			net.WriteUInt(request[i], PETITION_ID_BITS)
+		end
+	net.SendToServer()
+end
+
 local function requestMorePetitions()
 	local tmp_available = {}
 	local i = 1
@@ -131,12 +161,7 @@ local function requestMorePetitions()
 
 	if #request == 0 then return end
 
-	net.Start("petition_request")
-		net.WriteUInt(#request, 8)
-		for i = 1, #request do
-			net.WriteUInt(request[i], PETITION_ID_BITS)
-		end
-	net.SendToServer()
+	requestPetitions(request)
 end
 
 local function closeWindow()
@@ -359,10 +384,40 @@ net.Receive("petition_accepted", function(len, ply)
 		loadPetitionBrowserPage(html)
 	end
 
-	net.Start("petition_request")
-	net.WriteUInt(1, 8)
-	net.WriteUInt(petition_id, PETITION_ID_BITS)
-	net.SendToServer()
+	requestPetitions{petition_id}
 end)
 
 --#endregion Networking
+
+
+--#region Public functions
+
+---Checks if a petition with this index exists, it will return false if you don't have the petition list loaded
+---@param index integer
+---@return boolean
+function FSB.IsPetitionValid(index)
+	return petitions_available[index] and true or false
+end
+
+---Gets a petition if it's cached, if the petition isn't cached it will request it and return nil.
+---You can keep calling this until the petition is recieved.
+---@param index integer petition index
+---@return petition? | petition or nil if we are waiting for it to arrive to the client.
+function FSB.GetPetition(index)
+	if #petitions_available == 0 then
+		net.Start("petition_list_request")
+		net.SendToServer()
+		return
+	end
+	if not petitions_available[index] then
+		return FSB.GetInvalidPetition(index)
+	end
+
+	local cached_petition = petitions_cache[index]
+	if cached_petition then
+		return cached_petition
+	end
+
+	requestPetitions{index}
+end
+--#endregion
