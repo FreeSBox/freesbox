@@ -111,45 +111,43 @@ local function createNewNametag(ply)
 	ply.Nametag = nt
 end
 
-hook.Add("PostDrawTranslucentRenderables", "player_name_tags", function()
+hook.Add("PrePlayerDraw", "player_name_tags", function(ply, flags)
 	if not cl_nametags_enable:GetBool() then return end
 	local lp = LocalPlayer()
 	local local_pos = lp:GetPos()
-	for _, ply in ipairs(player_GetAll()) do
-		if not shouldRender(lp, local_pos, ply) then continue end
-		local pos = getOverheadPos(ply)
-		if pos then
-			local ang = EyeAngles()
-			ang:RotateAroundAxis(ang:Right(), 90)
-			ang:RotateAroundAxis(ang:Up(), -90)
-			local scale = ply:GetModelScale() * 0.03
-			scale = scale < 0.01 and 0.01 or scale > 5 and 5 or scale
-			cam_Start3D2D(pos + Vector(0, 0, 18), ang, scale)
-				-- create a nametag object for each player
-				if not ply.Nametag then
-					createNewNametag(ply)
-				end
+	if not shouldRender(lp, local_pos, ply) then return end
+	local pos = getOverheadPos(ply)
+	if pos then
+		local ang = EyeAngles()
+		ang:RotateAroundAxis(ang:Right(), 90)
+		ang:RotateAroundAxis(ang:Up(), -90)
+		local scale = ply:GetModelScale() * 0.03
+		scale = scale < 0.01 and 0.01 or scale > 5 and 5 or scale
+		cam_Start3D2D(pos + Vector(0, 0, 18), ang, scale)
+			-- create a nametag object for each player
+			if not ply.Nametag then
+				createNewNametag(ply)
+			end
 
-				ply.Nametag:Draw(ply)
+			ply.Nametag:Draw(ply)
 
-				local cur_time = CurTime()
-				local timing_out = ply:IsTimingOut()
-				if timing_out then
-					draw_SimpleText("[ Timing Out ]", "AFKFont", 6, -100, Color(255,0,0), TEXT_ALIGN_CENTER)
+			local cur_time = CurTime()
+			local timing_out = ply:IsTimingOut()
+			if timing_out then
+				draw_SimpleText("[ Timing Out ]", "AFKFont", 6, -100, Color(255,0,0), TEXT_ALIGN_CENTER)
+			end
+			local focus_loss_time = ply:GetFocusLossTime()
+			if not timing_out and focus_loss_time ~= 0 then
+				local afk_time = cur_time-focus_loss_time
+				local afk_time_table = string.FormattedTime(afk_time)
+				local text = ""
+				if afk_time_table.h == 0 then
+					text = string.format("[ AFK: %02i:%02i ]", afk_time_table.m, afk_time_table.s)
+				else
+					text = string.format("[ AFK: %02i:%02i:%02i ]", afk_time_table.h, afk_time_table.m, afk_time_table.s)
 				end
-				local focus_loss_time = ply:GetFocusLossTime()
-				if not timing_out and focus_loss_time ~= 0 then
-					local afk_time = cur_time-focus_loss_time
-					local afk_time_table = string.FormattedTime(afk_time)
-					local text = ""
-					if afk_time_table.h == 0 then
-						text = string.format("[ AFK: %02i:%02i ]", afk_time_table.m, afk_time_table.s)
-					else
-						text = string.format("[ AFK: %02i:%02i:%02i ]", afk_time_table.h, afk_time_table.m, afk_time_table.s)
-					end
-					draw_SimpleText(text, "AFKFont", 6, -100, HSVToColor(cur_time*16, 1, 1), TEXT_ALIGN_CENTER)
-				end
-			cam_End3D2D()
-		end
+				draw_SimpleText(text, "AFKFont", 6, -100, HSVToColor(cur_time*16, 1, 1), TEXT_ALIGN_CENTER)
+			end
+		cam_End3D2D()
 	end
 end)
