@@ -11,28 +11,6 @@ local petitions_available = {}
 ---@type table<integer, boolean?>
 local petitions_requested = {}
 
---#region vgui2
-
----@return DFrame
-local function createWindow(name, size_x, size_y, is_popup)
-	local menu = vgui.Create("DFrame")
-	menu:SetSize(size_x, size_y)
-	menu:SetSizable(true)
-	menu:SetTitle("")
-	menu:SetKeyboardInputEnabled(true)
-	menu:ShowCloseButton(true)
-	menu:Center()
-	if is_popup then menu:MakePopup() end
-	function menu:Paint(w,h)
-		draw.RoundedBox(4, 0, 0, w - 2, h - 2, Color(26, 26, 26))
-		draw.DrawText(name, "player_menu_title", size_x/2, 5, Color(219, 219, 219), TEXT_ALIGN_CENTER)
-	end
-
-	return menu
-end
-
---#endregion vgui2
-
 --#region HTML Window
 
 local eWindowMode = {
@@ -246,7 +224,7 @@ concommand.Add("vote", function()
 	if VoteWindowState ~= eWindowMode.Closed then return end
 	VoteWindowState = eWindowMode.Browse
 
-	VoteWindow = createWindow(FSB.Translate("vote.petitions"), 800, 600, true)
+	VoteWindow = FSB.CreateWindow(FSB.Translate("vote.petitions"), 800, 600, true)
 
 	local html = VoteWindow:Add("DHTML")
 	html:Dock(FILL)
