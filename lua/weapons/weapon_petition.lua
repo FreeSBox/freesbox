@@ -1,3 +1,5 @@
+---@diagnostic disable: inject-field
+
 AddCSLuaFile()
 
 SWEP.PrintName = "Petition"
@@ -29,15 +31,19 @@ SWEP.UseHands = true
 SWEP.HoldType = "slam"
 
 
-SWEP.PetitionIndex = 229
+function SWEP:SetupDataTables()
+	self:NetworkVar("Int",  0, "PetitionIndex")
+end
 
 function SWEP:Initialize()
-	self:SetWeaponHoldType(self.HoldType)
+	self:SetHoldType(self.HoldType)
+	self:SetPetitionIndex(0)
 end
 
 function SWEP:Deploy()
-	self:GetOwner():SetAnimation( PLAYER_IDLE );
-	self:SendWeaponAnim( ACT_VM_IDLE );
+	--self:GetOwner():SetAnimation( PLAYER_IDLE );
+	--self:SendWeaponAnim( ACT_VM_IDLE );
+	self:SetHoldType(self.HoldType)
 end
 
 function SWEP:PrimaryAttack()
@@ -48,8 +54,58 @@ function SWEP:SecondaryAttack()
 end
 
 
+if SERVER then
+	util.AddNetworkString("select_petition_for_swep")
+end
+
+net.Receive("select_petition_for_swep", function (len, ply)
+	local petition = ply:GetActiveWeapon()
+	if petition:GetClass() ~= "weapon_petition" then
+		return
+	end
+
+	petition:SetPetitionIndex(net.ReadUInt(PETITION_ID_BITS))
+end)
+
+local function updatePetition(self, index)
+	index = tonumber(index)
+	if not index then return end
+	net.Start("select_petition_for_swep")
+	net.WriteUInt(index, PETITION_ID_BITS)
+	net.SendToServer()
+end
+
 function SWEP:Reload()
 	-- Run petition select code here.
+	if SERVER then return end
+
+	if self.SelectionOpen then return end
+
+	self.SelectionOpen = true
+
+	local window = FSB.CreateWindow("Set petition index", 200, 60, true)
+	function window.OnClose()
+		self.SelectionOpen = false
+	end
+
+	local panel = window:Add("DPanel")
+	panel:Dock(FILL)
+	function panel:Paint(w,h)
+		draw.RoundedBox(2, 0, 0, w, h, Color(30, 30, 30))
+	end
+
+	local input = panel:Add("DNumberWang")
+	input:Dock(FILL)
+	input:SetMin(1)
+	input:SetMax(FSB.GetLastPetition())
+	input.OnEnter = updatePetition
+
+	local submit = panel:Add("DButton")
+	submit:Dock(RIGHT)
+	function submit.DoClick()
+		updatePetition(self, input:GetValue())
+	end
+	submit:SetText("Submit")
 end
 
 --#region CLIENT
@@ -70,7 +126,7 @@ if SERVER then return end
 --]]
 local function toLines(text, font, mWidth)
 	surface.SetFont(font)
-	
+
 	local buffer = { }
 	local nLines = { }
 
@@ -82,11 +138,11 @@ local function toLines(text, font, mWidth)
 		end
 		table.insert(buffer, word)
 	end
-		
+
 	if #buffer > 0 then -- If still words to add.
 		table.insert(nLines, table.concat(buffer, " "))
 	end
-	
+
 	return nLines
 end
 
@@ -120,15 +176,32 @@ local function drawMultiLine(text, font, mWidth, spacing, x, y, color, alignX, a
 end
 --#endregion
 
-local offset_vec = Vector(4, -6, -3.4)
-local cam_offset_vec = Vector(7, 2, -11)
-local cam_offset_ang = Angle(162, 91.5, 100)
-local cam_size_x = 150
-local cam_size_y = 196
-local offset_ang = Angle(160, 90, 90)
-local worldModel = ClientsideModel(SWEP.WorldModel)
-if worldModel then
-	worldModel:SetNoDraw(true)
+local PETITION_SIZE_X = 75
+local PETITION_SIZE_Y = 98
+
+surface.CreateFont("PetitionViewmodelFont", { font = "Roboto Bold", extended = true, size = 14, weight = 500, blursize = 0.5, additive = false })
+surface.CreateFont("PetitionWorldmodelFont", { font = "Roboto Bold", extended = true, size = 20, weight = 500, blursize = 0.5, additive = false })
+local function draw3DPetition(petition, new_pos, new_ang, scale, font, draw_fineprint)
+	local size_x = PETITION_SIZE_X*scale
+	local size_y = PETITION_SIZE_Y*scale
+	cam.Start3D2D( new_pos, new_ang, 0.05*scale )
+		draw.RoundedBox(0, 0, 0, size_x, size_y, color_white)
+		--draw.DrawText( , "Default", cam_size_x/2, 30, color_black, TEXT_ALIGN_CENTER )
+		local y_len = drawMultiLine(petition.name, font, size_x, size_y/14, size_x/2, size_y/16, color_black, TEXT_ALIGN_CENTER)
+		if draw_fineprint then
+			draw.DrawText("Press E to open this petition", "Default", size_x/2, size_y-32, color_black, TEXT_ALIGN_CENTER)
+		end
+	cam.End3D2D()
+end
+
+local OFFSET_VEC = Vector(3.4, -5.8, -3.6)
+local OFFSET_ANG = Angle(160, 90, 90)
+local CAM_OFFSET_VEC = Vector(OFFSET_VEC.x+3, OFFSET_VEC.y+8, OFFSET_VEC.z-7.6)
+local CAM_OFFSET_ANG = Angle(OFFSET_ANG.x+2, OFFSET_ANG.y+1.5, OFFSET_ANG.z+10)
+
+local world_model = ClientsideModel(SWEP.WorldModel)
+if world_model then
+	world_model:SetNoDraw(true)
 	function SWEP:DrawWorldModel()
 		local owner = self:GetOwner()
 		if (IsValid(owner)) then
@@ -138,29 +211,42 @@ if worldModel then
 			local matrix = owner:GetBoneMatrix(boneid)
 			if !matrix then return end
 
-			local new_pos, new_ang = LocalToWorld(offset_vec, offset_ang, matrix:GetTranslation(), matrix:GetAngles())
-			worldModel:SetPos(new_pos)
-			worldModel:SetAngles(new_ang)
-			worldModel:SetModelScale(2)
+			local new_pos, new_ang = LocalToWorld(OFFSET_VEC, OFFSET_ANG, matrix:GetTranslation(), matrix:GetAngles())
+			world_model:SetPos(new_pos)
+			world_model:SetAngles(new_ang)
+			world_model:SetModelScale(2)
 
-			worldModel:SetupBones()
-			worldModel:DrawModel()
-			local new_pos, new_ang = LocalToWorld(cam_offset_vec, cam_offset_ang, matrix:GetTranslation(), matrix:GetAngles())
-			local petition = FSB.GetPetition(self.PetitionIndex)
+			world_model:SetupBones()
+			world_model:DrawModel()
+			local new_pos, new_ang = LocalToWorld(CAM_OFFSET_VEC, CAM_OFFSET_ANG, matrix:GetTranslation(), matrix:GetAngles())
+			local petition = FSB.GetPetition(self:GetPetitionIndex())
 			if petition then
-				cam.Start3D2D( new_pos, new_ang, 0.1 )
-					draw.RoundedBox(0, 0, 0, cam_size_x, cam_size_y, color_white)
-					--draw.DrawText( , "Default", cam_size_x/2, 30, color_black, TEXT_ALIGN_CENTER )
-					local y_len = drawMultiLine(petition.name, "HudDefault", cam_size_x, 16, cam_size_x/2, 30, color_black, TEXT_ALIGN_CENTER)
-					draw.DrawText( "Press E to open this petition", "Default", cam_size_x/2, 50+y_len, color_black, TEXT_ALIGN_CENTER )
-				cam.End3D2D()
+				draw3DPetition(petition, new_pos, new_ang, 2, "PetitionWorldmodelFont", true)
 			end
 		else
-			worldModel:SetPos(self:GetPos())
-			worldModel:SetAngles(self:GetAngles())
-			worldModel:DrawModel()
+			world_model:SetPos(self:GetPos())
+			world_model:SetAngles(self:GetAngles())
+			world_model:SetModelScale(1)
+			world_model:DrawModel()
 		end
 
+	end
+end
+
+local CAM_OFFSET_VEC = Vector(3.4, 3.95, 2.69)
+local CAM_OFFSET_ANG = Angle(-20.7, -115, 67.8)
+function SWEP:PostDrawViewModel(vm, weapon, ply)
+	local boneid = vm:LookupBone("Petition")
+	if !boneid then return end
+
+	local matrix = vm:GetBoneMatrix(boneid)
+	if !matrix then return end
+
+	local new_pos, new_ang = LocalToWorld(CAM_OFFSET_VEC, CAM_OFFSET_ANG, matrix:GetTranslation(), matrix:GetAngles())
+
+	local petition = FSB.GetPetition(self:GetPetitionIndex())
+	if petition then
+		draw3DPetition(petition, new_pos, new_ang, 1.43, "PetitionViewmodelFont")
 	end
 end
 --#endregion

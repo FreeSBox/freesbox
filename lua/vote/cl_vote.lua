@@ -382,7 +382,7 @@ end
 ---@param index integer petition index
 ---@return petition? | petition or nil if we are waiting for it to arrive to the client.
 function FSB.GetPetition(index)
-	if #petitions_available == 0 then
+	if table.IsEmpty(petitions_available) then
 		net.Start("petition_list_request")
 		net.SendToServer()
 		return
@@ -397,5 +397,18 @@ function FSB.GetPetition(index)
 	end
 
 	requestPetitions{index}
+end
+
+---Returns the petition with the highest index.
+---Doesn't have to be the latest petition, but I don't see a situation when it wouldn't be.
+---@return integer petition_index
+function FSB.GetLastPetition()
+	local largest_index = 0
+	for index, _ in pairs(petitions_available) do
+		if largest_index < index then
+			largest_index = index
+		end
+	end
+	return largest_index
 end
 --#endregion
