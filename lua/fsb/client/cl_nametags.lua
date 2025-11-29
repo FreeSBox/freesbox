@@ -111,7 +111,7 @@ local function createNewNametag(ply)
 	ply.Nametag = nt
 end
 
-hook.Add("PostDrawTranslucentRenderables", "player_name_tags", function()
+hook.Add("PreDrawTranslucentRenderables", "player_name_tags", function()
 	if not cl_nametags_enable:GetBool() then return end
 	local lp = LocalPlayer()
 	local local_pos = lp:GetPos()
