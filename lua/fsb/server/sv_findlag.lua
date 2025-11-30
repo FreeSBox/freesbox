@@ -17,20 +17,23 @@ concommand.Add("findlag", function (ply, cmd, args, arg_str)
 			continue
 		end
 
-		if entity:IsConstrained() then
-			ent_score = ent_score + 0.5
-		end
-
+		local frozen = true
 		for i = 0, entity:GetPhysicsObjectCount()-1 do
 			local phys_obj = entity:GetPhysicsObjectNum(i)
 
 			if phys_obj:IsMotionEnabled() then
+				frozen = false
 				ent_score = ent_score + 0.5
 
 				if phys_obj:IsPenetrating() then
-					ent_score = ent_score + 4
+					ent_score = ent_score + 16
 				end
 			end
+		end
+
+		-- The entity.Constraints table is undocumented magic.
+		if not frozen and entity.Constraints then
+			ent_score = ent_score + #entity.Constraints * 0.5
 		end
 
 		if entity:GetClass() == "gmod_wire_gate" then
