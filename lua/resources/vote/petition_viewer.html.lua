@@ -94,10 +94,14 @@ return [[
 		border-radius: 0.3rem;
 		padding: 4px 5px 5px;
 		white-space: nowrap;
+		font-family: monospace;
 	}
 
 	pre code {
-		white-space: inherit;
+		white-space: pre;
+		display: block;
+		overflow-x: auto;
+		padding: 0;
 	}
 
 	pre {
