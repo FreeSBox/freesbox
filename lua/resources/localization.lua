@@ -37,6 +37,9 @@ return {
 		["gcc_backdor_in_linux"] = "%s has used Redhat GCC exploit on the server!",
 		["owner_joined"] = "Warning! The OWNER has joined the game!",
 
+		["ratelimit"] = "This function can only be used once every %f seconds.",
+		["findlag.note"] = "Please note that this is not an objective metric, players with high values here may not necessarily be the cause of the lag!",
+
 		["advert.ghostbanned"] = "You are banned until: %s",
 		["advert.pi_menu"] = "Press F2 to access the server menu.",
 		["advert.petitions"] = "It would be nice if you signed some petitions in the F2 menu.",
@@ -116,6 +119,9 @@ return {
 		["cant_use_yet"] = "Вам нужно наиграть ещё %i часов на сервере прежде чем вы сможете использовать эту функцию.",
 		["gcc_backdor_in_linux"] = "%s использовал Redhat GCC эксплойт на сервере!",
 		["owner_joined"] = "Внимание! На сервер зашёл СОЗДАТЕЛЬ!",
+
+		["ratelimit"] = "Эту функцию можно использовать только раз в %f секунд.",
+		["findlag.note"] = "Значения указанны в попугаях, не факт что игроки с большими значениями вызывают лаги!",
 
 		["advert.ghostbanned"] = "Вы забанены до: %s",
 		["advert.pi_menu"] = "Нажмите F2 чтобы открыть меню сервера.",
