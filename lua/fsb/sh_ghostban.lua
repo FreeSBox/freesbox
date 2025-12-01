@@ -1,4 +1,23 @@
 
+if SERVER then
+	sql.Query([[CREATE TABLE IF NOT EXISTS fsb_ghostbans (
+		steamid TEXT PRIMARY KEY,
+		description TEXT,
+		creation_time BIGINT,
+		expire_time BIGINT
+	)]])
+end
+
+local whitelisted_nets = {
+	["WireLib.SyncBinds"] = true,
+	["EASY_CHAT_SEND_SERVER_CONFIG"] = true,
+	["EASY_CHAT_SYNC_BLOCKED"] = true,
+	["EASY_CHAT_START_CHAT"] = true,
+	["EASY_CHAT_RECEIVE_MSG"] = true,
+	["set_has_focus"] = true,
+	["petition_list_request"] = true,
+	["petition_request"] = true,
+}
 
 ---@class Player
 local PLAYER = FindMetaTable("Player")
@@ -80,28 +99,88 @@ if SERVER then
 		end
 	end)
 
-	function FSB.GhostBan(ply, unban_time)
-		assert(IsValid(ply), "Ply is invalid.")
+
+	---@param ply Player|string Player or steamid or steamid64.
+	---@param unban_time number
+	---@param description string
+	function FSB.GhostBan(ply, unban_time, description)
+		local steamid64
+		if isentity(ply) then
+			assert(IsValid(ply), "Player is invalid")
+			assert(ply:IsPlayer(), "Player is not a player?")
+
+			steamid64 = ply:SteamID64()
+			ply:SetGhostBanned(true, unban_time)
+		elseif isstring(ply) then
+			if string.StartsWith(ply, "STEAM_") then
+				steamid64 = util.SteamIDTo64(ply)
+			else
+				steamid64 = ply
+			end
+		end
+
+		description = description or "not specified"
 		unban_time = unban_time or 0
 
-		ply:SetPData("ghost_unban_time", unban_time)
-		ply:SetGhostBanned(true, unban_time)
+		sql.QueryTyped([[INSERT INTO fsb_ghostbans(
+			steamid,
+			description,
+			creation_time,
+			expire_time
+		) VALUES (?, ?, ?, ?)
+		]], steamid64, description, os.time(), unban_time)
+
 	end
 
+	---@param ply Player|string Player or steamid or steamid64.
 	function FSB.GhostUnBan(ply)
-		assert(IsValid(ply), "Ply is invalid.")
-		ply:RemovePData("ghost_unban_time")
-		ply:SetGhostBanned(false)
+		local steamid64
+		if isentity(ply) then
+			assert(IsValid(ply), "Player is invalid")
+			assert(ply:IsPlayer(), "Player is not a player?")
+
+			steamid64 = ply:SteamID64()
+			ply:SetGhostBanned(false)
+		elseif isstring(ply) then
+			if string.StartsWith(ply, "STEAM_") then
+				steamid64 = util.SteamIDTo64(ply)
+			else
+				steamid64 = ply
+			end
+		end
+
+		sql.QueryTyped("DELETE FROM fsb_ghostbans WHERE steamid = ?", steamid64)
 	end
 
 	hook.Add("PlayerInitialSpawn", "apply_ghost_ban", function (ply, transition)
-		local unban_time = tonumber(ply:GetPData("ghost_unban_time", nil))
+		local results = sql.QueryTyped("SELECT expire_time FROM fsb_ghostbans WHERE steamid = ?", ply:SteamID64())
+		assert(results ~= false, "The SQL Query is broken in 'apply_ghost_ban'")
+
+		local result = results[1]
+		if result == nil then return end
+
+		local unban_time = result["expire_time"]
 		if unban_time == nil then return end
+
 		if os.time() > unban_time then
-			ply:RemovePData("ghost_unban_time")
+			sql.QueryTyped("DELETE FROM fsb_ghostbans WHERE steamid = ?", ply:SteamID64())
 			return
 		end
+
 		ply:SetGhostBanned(true, unban_time)
+	end)
+
+	local net_ratelimit = {}
+	hook.Add("NetIncoming", "block_ghostbanned_nets", function (net_index, name, len, ply)
+		if not ply:IsGhostBanned() then return end
+
+		if whitelisted_nets[name] then
+			if FSB.Ratelimit(net_ratelimit, ply, 1) then
+				return
+			end
+		end
+
+		return false
 	end)
 
 	timer.Create("remove_passed_bans", 10, 0, function ()

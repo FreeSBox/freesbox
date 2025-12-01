@@ -104,8 +104,8 @@ function PLAYER:GetNameTag()
 end
 
 function PLAYER:InitNameAndTag()
-	self:SetNWString("nickname", self:GetPData("nickname"))
-	self:SetNWString("nametag", self:GetPData("nametag"))
+	self:SetNWString("nickname", self:GetPData("nickname", ""))
+	self:SetNWString("nametag", self:GetPData("nametag", ""))
 end
 
 ------ Server code ------
