@@ -221,7 +221,7 @@ local function openPetition(petition_id)
 end
 
 ---Opens the for petitions, you must call loadPetition*Page(html) after this.
----@return DHTML
+---@return DHTML?
 local function openPetitionWindow()
 	if VoteWindowState ~= eWindowMode.Closed then return end
 	VoteWindowState = eWindowMode.Browse
@@ -269,7 +269,9 @@ end
 
 concommand.Add("vote", function()
 	local html = openPetitionWindow()
-	loadPetitionBrowserPage(html)
+	if html then
+		loadPetitionBrowserPage(html)
+	end
 end)
 
 --#endregion HTML Window
@@ -424,6 +426,8 @@ end
 ---@param petition_id integer petition index
 function FSB.OpenPetition(petition_id)
 	local html = openPetitionWindow()
-	loadPetitionViewPage(html, petition_id)
+	if html then
+		loadPetitionViewPage(html, petition_id)
+	end
 end
 --#endregion

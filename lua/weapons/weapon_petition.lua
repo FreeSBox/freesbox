@@ -255,8 +255,8 @@ hook.Add("KeyPress", "open_petition", function (ply, key)
 	if key ~= IN_USE then return end
 
 	local tr = util.TraceLine({
-		start = ply:EyePos(),
-		endpos = ply:GetForward()*80,
+		start = ply:GetShootPos(),
+		endpos = ply:GetShootPos()+ply:GetAimVector()*80,
 		filter = ply
 	})
 
