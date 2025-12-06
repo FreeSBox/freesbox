@@ -220,7 +220,9 @@ local function openPetition(petition_id)
 	loadPetitionViewPage(html, petition_id)
 end
 
-concommand.Add("vote", function()
+---Opens the for petitions, you must call loadPetition*Page(html) after this.
+---@return DHTML
+local function openPetitionWindow()
 	if VoteWindowState ~= eWindowMode.Closed then return end
 	VoteWindowState = eWindowMode.Browse
 
@@ -242,8 +244,6 @@ concommand.Add("vote", function()
 		html:AddFunction("language", "Update", FSB.Translate)
 	end
 
-	loadPetitionBrowserPage(html)
-
 	VoteWindow.OnClose = function (self)
 		gui.EnableScreenClicker(false)
 		VoteWindowState = eWindowMode.Closed
@@ -263,6 +263,13 @@ concommand.Add("vote", function()
 			loadPetitionBrowserPage(html)
 		end
 	end
+
+	return html
+end
+
+concommand.Add("vote", function()
+	local html = openPetitionWindow()
+	loadPetitionBrowserPage(html)
 end)
 
 --#endregion HTML Window
@@ -410,5 +417,13 @@ function FSB.GetLastPetition()
 		end
 	end
 	return largest_index
+end
+
+---Opens the petition view window.
+---The petition must be loaded when you call this function.
+---@param petition_id integer petition index
+function FSB.OpenPetition(petition_id)
+	local html = openPetitionWindow()
+	loadPetitionViewPage(html, petition_id)
 end
 --#endregion

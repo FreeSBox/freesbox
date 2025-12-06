@@ -249,4 +249,25 @@ function SWEP:PostDrawViewModel(vm, weapon, ply)
 		draw3DPetition(petition, new_pos, new_ang, 1.43, "PetitionViewmodelFont")
 	end
 end
+
+hook.Add("KeyPress", "open_petition", function (ply, key)
+	if ply ~= LocalPlayer() then return end
+	if key ~= IN_USE then return end
+
+	local tr = util.TraceLine({
+		start = ply:EyePos(),
+		endpos = ply:GetForward()*80,
+		filter = ply
+	})
+
+	---@type Player
+	---@diagnostic disable-next-line: assign-type-mismatch
+	local target_ply = tr.Entity
+	if not target_ply:IsPlayer() then return end
+
+	local petition = target_ply:GetActiveWeapon()
+	if petition:GetClass() ~= "weapon_petition" then return end
+
+	FSB.OpenPetition(petition:GetPetitionIndex())
+end)
 --#endregion
