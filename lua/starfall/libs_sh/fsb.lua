@@ -33,7 +33,7 @@ end
 
 --- Gets the time when the player will leave PVP mode.
 -- Do Player:getPVPModeEndTime()-timer.curtime() to get time until we switch to build mode.
--- This will return 0xFFAAAC if we won't switch to PVP yet.
+-- This will return 0xFFAAAC if we won't switch to build yet.
 -- @shared
 -- @return number Time of PVP mode end.
 function player_methods:getPVPModeEndTime()

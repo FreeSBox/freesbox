@@ -1,5 +1,5 @@
 E2Helper.Descriptions["isBUILD(e:)"] = "Returns if the player is in build mode"
 E2Helper.Descriptions["isPVP(e:)"] = "Returns if the player is in pvp mode"
-E2Helper.Descriptions["pvpModeEndTime(e:)"] = "Gets the time when the player will leave PVP mode.\nDo entity:pvpModeEndTime()-curtime() to get time until we switch to build mode.\nThis will return 0xFFAAAC if we won't switch to PVP yet."
+E2Helper.Descriptions["pvpModeEndTime(e:)"] = "Gets the time when the player will leave PVP mode.\nDo entity:pvpModeEndTime()-curtime() to get time until we switch to build mode.\nThis will return 0xFFAAAC if we won't switch to build yet."
 E2Helper.Descriptions["originalName(e:)"] = "Returns the original name of the player"
 E2Helper.Descriptions["nameTag(e:)"] = "Returns the nametag of the player"
