@@ -4,7 +4,7 @@ AddCSLuaFile()
 
 SWEP.PrintName = "Petition"
 SWEP.Author = "Me"
-SWEP.Purpose = "A weapon that can show others your petition"
+SWEP.Purpose = "A weapon that can show others your petition, press R to set the petition index"
 SWEP.Spawnable = true
 SWEP.AdminOnly = false
 
@@ -83,7 +83,7 @@ function SWEP:Reload()
 
 	self.SelectionOpen = true
 
-	local window = FSB.CreateWindow("Set petition index", 200, 60, true)
+	local window = FSB.CreateWindow(FSB.Translate("petition.set_index"), 200, 60, true)
 	function window.OnClose()
 		self.SelectionOpen = false
 	end
@@ -105,7 +105,7 @@ function SWEP:Reload()
 	function submit.DoClick()
 		updatePetition(self, input:GetValue())
 	end
-	submit:SetText("Submit")
+	submit:SetText(FSB.Translate("set"))
 end
 
 --#region CLIENT
@@ -189,7 +189,7 @@ local function draw3DPetition(petition, new_pos, new_ang, scale, font, draw_fine
 		--draw.DrawText( , "Default", cam_size_x/2, 30, color_black, TEXT_ALIGN_CENTER )
 		local y_len = drawMultiLine(petition.name, font, size_x, size_y/14, size_x/2, size_y/16, color_black, TEXT_ALIGN_CENTER)
 		if draw_fineprint then
-			draw.DrawText("Press E to open this petition", "Default", size_x/2, size_y-32, color_black, TEXT_ALIGN_CENTER)
+			draw.DrawText(FSB.Translate("petition.open_hint"), "Default", size_x/2, size_y-32, color_black, TEXT_ALIGN_CENTER)
 		end
 	cam.End3D2D()
 end
