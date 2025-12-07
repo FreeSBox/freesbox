@@ -7,27 +7,9 @@ local petitions_cache = {}
 ---@type table<integer, boolean?>
 local petitions_available = {}
 
---#region vgui2
-
----@return DFrame
-local function createWindow(name, size_x, size_y, is_popup)
-	local menu = vgui.Create("DFrame")
-	menu:SetSize(size_x, size_y)
-	menu:SetSizable(true)
-	menu:SetTitle("")
-	menu:SetKeyboardInputEnabled(true)
-	menu:ShowCloseButton(true)
-	menu:Center()
-	if is_popup then menu:MakePopup() end
-	function menu:Paint(w,h)
-		draw.RoundedBox(4, 0, 0, w - 2, h - 2, Color(26, 26, 26))
-		draw.DrawText(name, "player_menu_title", size_x/2, 5, Color(219, 219, 219), TEXT_ALIGN_CENTER)
-	end
-
-	return menu
-end
-
---#endregion vgui2
+--- index, true or nil
+---@type table<integer, boolean?>
+local petitions_requested = {}
 
 --#region HTML Window
 
@@ -107,6 +89,32 @@ local function voteOnPetition(petition_id, dislike)
 	net.SendToServer()
 end
 
+---@param petitions table<integer, integer> Array of petition ids
+local function requestPetitions(petitions)
+	assert(#petitions <= PETITION_MAX_PETITIONS_PER_REQUEST, "Too many petitions requested.")
+
+	local request = {}
+
+	-- This is not optimal, but should be fine.
+	for _, index in pairs(petitions) do
+		if not petitions_requested[index] then
+			request[#request+1] = index
+		end
+	end
+
+	if #request == 0 then
+		return
+	end
+
+	net.Start("petition_request")
+		net.WriteUInt(#request, 8)
+		for i = 1, #request do
+			petitions_requested[request[i]] = true
+			net.WriteUInt(request[i], PETITION_ID_BITS)
+		end
+	net.SendToServer()
+end
+
 local function requestMorePetitions()
 	local tmp_available = {}
 	local i = 1
@@ -131,12 +139,7 @@ local function requestMorePetitions()
 
 	if #request == 0 then return end
 
-	net.Start("petition_request")
-		net.WriteUInt(#request, 8)
-		for i = 1, #request do
-			net.WriteUInt(request[i], PETITION_ID_BITS)
-		end
-	net.SendToServer()
+	requestPetitions(request)
 end
 
 local function closeWindow()
@@ -217,11 +220,13 @@ local function openPetition(petition_id)
 	loadPetitionViewPage(html, petition_id)
 end
 
-concommand.Add("vote", function()
+---Opens the for petitions, you must call loadPetition*Page(html) after this.
+---@return DHTML?
+local function openPetitionWindow()
 	if VoteWindowState ~= eWindowMode.Closed then return end
 	VoteWindowState = eWindowMode.Browse
 
-	VoteWindow = createWindow(FSB.Translate("vote.petitions"), 800, 600, true)
+	VoteWindow = FSB.CreateWindow(FSB.Translate("vote.petitions"), 800, 600, true)
 
 	local html = VoteWindow:Add("DHTML")
 	html:Dock(FILL)
@@ -238,8 +243,6 @@ concommand.Add("vote", function()
 		html:AddFunction("gmod", "OpenURL", gui.OpenURL)
 		html:AddFunction("language", "Update", FSB.Translate)
 	end
-
-	loadPetitionBrowserPage(html)
 
 	VoteWindow.OnClose = function (self)
 		gui.EnableScreenClicker(false)
@@ -259,6 +262,15 @@ concommand.Add("vote", function()
 		else
 			loadPetitionBrowserPage(html)
 		end
+	end
+
+	return html
+end
+
+concommand.Add("vote", function()
+	local html = openPetitionWindow()
+	if html then
+		loadPetitionBrowserPage(html)
 	end
 end)
 
@@ -359,10 +371,63 @@ net.Receive("petition_accepted", function(len, ply)
 		loadPetitionBrowserPage(html)
 	end
 
-	net.Start("petition_request")
-	net.WriteUInt(1, 8)
-	net.WriteUInt(petition_id, PETITION_ID_BITS)
-	net.SendToServer()
+	requestPetitions{petition_id}
 end)
 
 --#endregion Networking
+
+
+--#region Public functions
+
+---Checks if a petition with this index exists, it will return false if you don't have the petition list loaded
+---@param index integer
+---@return boolean
+function FSB.IsPetitionValid(index)
+	return petitions_available[index] and true or false
+end
+
+---Gets a petition if it's cached, if the petition isn't cached it will request it and return nil.
+---You can keep calling this until the petition is recieved.
+---@param index integer petition index
+---@return petition? | petition or nil if we are waiting for it to arrive to the client.
+function FSB.GetPetition(index)
+	if table.IsEmpty(petitions_available) then
+		net.Start("petition_list_request")
+		net.SendToServer()
+		return
+	end
+	if not petitions_available[index] then
+		return FSB.GetInvalidPetition(index)
+	end
+
+	local cached_petition = petitions_cache[index]
+	if cached_petition then
+		return cached_petition
+	end
+
+	requestPetitions{index}
+end
+
+---Returns the petition with the highest index.
+---Doesn't have to be the latest petition, but I don't see a situation when it wouldn't be.
+---@return integer petition_index
+function FSB.GetLastPetition()
+	local largest_index = 0
+	for index, _ in pairs(petitions_available) do
+		if largest_index < index then
+			largest_index = index
+		end
+	end
+	return largest_index
+end
+
+---Opens the petition view window.
+---The petition must be loaded when you call this function.
+---@param petition_id integer petition index
+function FSB.OpenPetition(petition_id)
+	local html = openPetitionWindow()
+	if html then
+		loadPetitionViewPage(html, petition_id)
+	end
+end
+--#endregion

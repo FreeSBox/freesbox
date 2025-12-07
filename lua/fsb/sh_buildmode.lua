@@ -14,6 +14,7 @@ local BUILD_WEAPONS =
 	["weapon_hands"] = true,
 	["weapon_lookathands"] = true,
 	["none"] = true,
+	["weapon_petition"] = true,
 }
 
 local BUILD_VEHICLES =

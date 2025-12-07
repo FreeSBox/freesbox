@@ -2,6 +2,7 @@
 
 resource.AddWorkshop("737640184") -- Tank track
 resource.AddWorkshop("160250458") -- Wiremod
+resource.AddWorkshop("2802133674") -- Petition swep content
 
 --#region Petitioned addons
 resource.AddWorkshop("3389728250") -- Glide

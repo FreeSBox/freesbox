@@ -26,6 +26,9 @@ return {
 		["vote.ghostbanned"] = "You cannot use petitions while ghostbanned.",
 		["vote.new_petitions"] = "%s has created a petition (%s).",
 
+		["petition.set_index"] = "Set petition index",
+		["petition.open_hint"] = "Press E to open this petition",
+
 		["lag.freeze_penetrating"] = "Lag detected, freezing penetrating props.",
 		["lag.cleanup"] = "Big lag detected! Clean up in %i seconds.",
 		["lag.print_penetrating"] = "%s owns %i penetrating props!",
@@ -108,6 +111,9 @@ return {
 		["vote.description_too_long"] = "Описание вашей петиции больше максимально разрешённой длины (%i/%i).",
 		["vote.ghostbanned"] = "Вы не можете использовать систему петиций в призрачном бане.",
 		["vote.new_petitions"] = "%s создал петицию (%s).",
+
+		["petition.set_index"] = "Устанавить index петиции",
+		["petition.open_hint"] = "Нажмите E чтобы открыть",
 
 		["lag.freeze_penetrating"] = "Обнаружен лаг, фризим проникающие пропы.",
 		["lag.cleanup"] = "Обнаружен большой лаг! Очистка карты через %i секунд.",
