@@ -385,6 +385,13 @@ return [[
 			return;
 		}
 
+		if (name == description_text)
+		{
+			gScope.Notifications.push({text: "Читай серый текст"})
+			UpdateDigest(gScope, 50);
+			return;
+		}
+
 		$('#createButton').attr('disabled','disabled');
 		if (IsGMod())
 		{
