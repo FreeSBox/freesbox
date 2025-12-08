@@ -28,4 +28,5 @@ resource.AddWorkshop("3081978414") -- Profiteers Parachute
 resource.AddWorkshop("2825347854") -- GPoker - Poker in Garry's Mod
 resource.AddWorkshop("2718789320") -- QCardWars - Card Game in GMod!
 resource.AddWorkshop("3542961565") -- Liberty City // GLIDE
+resource.AddWorkshop("104691717") -- PAC3
 --#endregion
