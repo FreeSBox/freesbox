@@ -265,6 +265,9 @@ hook.Add("KeyPress", "open_petition", function (ply, key)
 	local petition = target_ply:GetActiveWeapon()
 	if petition:GetClass() ~= "weapon_petition" then return end
 
-	FSB.OpenPetition(petition:GetPetitionIndex())
+	local petition_id = petition:GetPetitionIndex()
+	if FSB.IsPetitionValid(petition_id) then
+		FSB.OpenPetition(petition_id)
+	end
 end)
 --#endregion
