@@ -326,6 +326,10 @@ if SERVER then
 
 	---@param owner Player
 	hook.Add("PlayerDroppedWeapon", "deactivate_pvp", function (owner, dropped_weapon)
+		if not BUILD_WEAPONS[dropped_weapon:GetClass()] then
+			dropped_weapon.SpawnedOnGround = true
+		end
+
 		if not owner:IsPlayer() then return end
 
 		local dropped_class = dropped_weapon:GetClass()
