@@ -9,7 +9,6 @@ concommand.Add("+drop", function(ply)
 	if not IsValid(weapon) then return end
 
 	ply:DropWeapon(weapon)
-	weapon.SpawnedOnGround = true
 
 	timer.Simple(DESPAWN_DELAY, function ()
 		if IsValid(weapon) and not IsValid(weapon:GetParent()) then
