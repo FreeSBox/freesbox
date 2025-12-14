@@ -1,11 +1,13 @@
 ---@diagnostic disable: inject-field
-local cleanup_threshold = 20 -- tps
-local penetration_stopper_threshold = 40 -- tps
+local cleanup_threshold = 0.3 -- tps%
+local penetration_stopper_threshold = 0.6 -- tps%
 local seconds_before_cleanup = 60
-local max_entities_per_tick = 15
-
+local max_entities_per_tick = 15 -- How many entities can a player spawn in 1 tick.
+local autoban_time = 300 -- For how many seconds do we automatically ban a suspected crasher?
 local num_frames = 6 -- the avarage of this number of frames is checked against the threashold
 
+
+local tickrate = 1/engine.TickInterval()
 local sv_hibernate_think = GetConVar("sv_hibernate_think")
 local last_ticktime = 0
 
@@ -77,9 +79,9 @@ local function handleFindPropPenetration()
 			print(temp[1].ply:Nick(), "has", temp[1].count, "penetrating props!")
 
 			if temp[1].ply.likely_crasher > 6 then
-				local ban_time = 300
-				FSB.SendLocalizedMessage("lag.autobanned", temp[1].ply:Nick(), ban_time)
-				FSB.GhostBan(temp[1].ply, os.time()+ban_time)
+				FSB.GhostBan(temp[1].ply, os.time()+autoban_time, "lag autoban")
+				FSB.SendLocalizedMessage("lag.autobanned", temp[1].ply:Nick(), autoban_time)
+				MsgN("Anticrash automatically banned " .. temp[1].ply:Nick() .. " for " .. autoban_time .. " seconds")
 			end
 		end
 	end
@@ -104,10 +106,10 @@ hook.Add("Tick", "lag_detect", function()
 	local not_from_hybernation = player.GetCount() > 0 -- GetCount doesn't count loading players.
 	local should_run_cleanup_logic = ( sv_hibernate_think:GetBool() or not_from_hybernation ) and last_ticktime ~= 0 and not FSB.IsCleanUpInProgress() and game.MaxPlayers() ~= 1
 	if should_run_cleanup_logic then
-		if getAverageFramerate() < penetration_stopper_threshold then
+		if getAverageFramerate() < penetration_stopper_threshold*tickrate then
 			handleFindPropPenetration()
 		end
-		if getAverageFramerate() < cleanup_threshold then
+		if getAverageFramerate() < cleanup_threshold*tickrate then
 			handleCleanUp()
 		end
 	end
