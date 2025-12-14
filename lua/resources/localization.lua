@@ -83,7 +83,6 @@ return {
 		["scoreboard.copy_steamid"] = "Copy SteamID",
 		["scoreboard.open_profile"] = "Open Profile",
 		["scoreboard.voice_volume"] = "Voice volume",
-		["scoreboard.cache"] = "Cache: %i/%i",
 		["scoreboard.player_count"] = "Players: %i/%i",
 	},
 	["ru"] =
@@ -170,7 +169,6 @@ return {
 		["scoreboard.copy_steamid"] = "Копировать SteamID",
 		["scoreboard.open_profile"] = "Открыть профиль",
 		["scoreboard.voice_volume"] = "Громкость",
-		["scoreboard.cache"] = "Кэш: %i/%i",
 		["scoreboard.player_count"] = "Игроки: %i/%i",
 	}
 }
