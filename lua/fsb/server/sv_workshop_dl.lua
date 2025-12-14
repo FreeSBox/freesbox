@@ -29,4 +29,8 @@ resource.AddWorkshop("2825347854") -- GPoker - Poker in Garry's Mod
 resource.AddWorkshop("2718789320") -- QCardWars - Card Game in GMod!
 resource.AddWorkshop("3542961565") -- Liberty City // GLIDE
 resource.AddWorkshop("104691717") -- PAC3
+resource.AddWorkshop("3561915009") -- Glide Handheld Weapons
+resource.AddWorkshop("950845673") -- Parakeet's Pill Pack
+resource.AddWorkshop("872114763") -- Fazbear's Ultimate Pill Pack Remaster
+resource.AddWorkshop("2989564194") -- Simple Weapons: by Doge
 --#endregion
