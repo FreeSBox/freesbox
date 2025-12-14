@@ -163,6 +163,13 @@ return [[
 		color: var(--text-darker-color)
 	}
 
+	table, th, td {
+		border: 1px solid;
+	}
+	table {
+		border-collapse: collapse;
+	}
+
 	#createButton {
 		background-color:green;
 		border-radius: 5px;
