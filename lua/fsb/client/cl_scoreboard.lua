@@ -238,11 +238,10 @@ function scoreboard:Open()
 
 		surface.SetTextColor(255,255,255)
 		surface.SetFont("Nickname")
-		--This has nothing to do with any kind of cache, it's just how this was called on uyutniy.
-		local cache = string.format(T"scoreboard.cache", FSB.GetStringTableSize(), 4096)
-		local cache_x, cache_y = surface.GetTextSize(cache)
-		surface.SetTextPos(player_padding, h/2-cache_y/2)
-		surface.DrawText(cache)
+		local tps = string.format("TPS: %.1f", 1/engine.ServerFrameTime())
+		local tps_x, tps_y = surface.GetTextSize(tps)
+		surface.SetTextPos(player_padding, h/2-tps_y/2)
+		surface.DrawText(tps)
 
 		surface.SetTextColor(255,255,255)
 		surface.SetFont("Nickname")
