@@ -28,7 +28,7 @@ return [[
 		};
 	}
 </script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/dompurify@0.6.6/purify.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/dompurify@3.3.1/dist/purify.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
 </head>
 <body ng-controller="petitionViewerController as petitionViewer">
