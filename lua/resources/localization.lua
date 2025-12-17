@@ -84,6 +84,8 @@ return {
 		["scoreboard.open_profile"] = "Open Profile",
 		["scoreboard.voice_volume"] = "Voice volume",
 		["scoreboard.player_count"] = "Players: %i/%i",
+		["scoreboard.kill_count"] = "Kills: %i",
+		["scoreboard.death_count"] = "Deaths: %i",
 	},
 	["ru"] =
 	{
@@ -170,5 +172,7 @@ return {
 		["scoreboard.open_profile"] = "Открыть профиль",
 		["scoreboard.voice_volume"] = "Громкость",
 		["scoreboard.player_count"] = "Игроки: %i/%i",
+		["scoreboard.kill_count"] = "Убийств: %i",
+		["scoreboard.death_count"] = "Смертей: %i",
 	}
 }
