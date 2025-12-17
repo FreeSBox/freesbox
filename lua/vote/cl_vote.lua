@@ -47,11 +47,12 @@ end
 ---@param petition petition
 local function addPetitionToHTML(html, petition)
 	html:QueueJavascript(string.format(
-			"addOrUpdatePetition(%u, '%s', '%s', '%s', %u, %u, %u, %u, %u)",
+			"addOrUpdatePetition(%u, '%s', '%s', '%s', '%s', %u, %u, %u, %u, %u)",
 			petition.index,
 			string.JavascriptSafe(petition.name),
 			string.JavascriptSafe(petition.description),
 			string.JavascriptSafe(petition.author_name),
+			string.JavascriptSafe(petition.author_steamid),
 			petition.num_likes,
 			petition.num_dislikes,
 			petition.our_vote_status,

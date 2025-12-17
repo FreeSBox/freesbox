@@ -35,8 +35,7 @@
 </head>
 <body ng-controller="petitionViewerController as petitionViewer">
 	<label>{{Petition.name}}</label>
-
-	<span style="float: right;">Автор: {{Petition.author}}</span>
+	<span style="float: right;">Автор: <a class="clickable" ng-click='authorClicked()'>{{Petition.author_name}}</a></span>
 	<br>
 	<span style="float: right;">Index: {{Petition.index}}</span>
 	<br>
@@ -150,6 +149,10 @@
 		color: var(--text-color);
 	}
 
+	.clickable {
+		cursor: pointer;
+	}
+
 	#vote_menu {
 		float: right;
 	}
@@ -180,6 +183,10 @@
 
 			$scope.Petition = {};
 
+			$scope.authorClicked = function () {
+				gmod.OpenURL("https://steamcommunity.com/profiles/" + gScope.Petition.author_steamid)
+			}
+
 			$scope.likeClicked = function () {
 				gmod.VoteOnPetition(gScope.Petition.index, false)
 			}
@@ -207,14 +214,15 @@
 		});
 	};
 
-	function addOrUpdatePetition(index, name, description, author, likes, dislikes, our_vote_status, creation_time, expire_time) {
+	function addOrUpdatePetition(index, name, description, author_name, author_steamid, likes, dislikes, our_vote_status, creation_time, expire_time) {
 		parseAndRender(description);
 
 		var expired = expire_time*1000 <= Date.now();
 
 		gScope.Petition.index = index
 		gScope.Petition.name = name;
-		gScope.Petition.author = author;
+		gScope.Petition.author_name = author_name;
+		gScope.Petition.author_steamid = author_steamid;
 		gScope.Petition.likes = likes;
 		gScope.Petition.dislikes = dislikes;
 		gScope.Petition.our_vote_status = our_vote_status;

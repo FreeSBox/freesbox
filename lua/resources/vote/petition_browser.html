@@ -22,8 +22,8 @@
 		-->
 		<div infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check="false">
 			<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
-				<a id="petitionName" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
-				<span style="float: right;">Автор: {{petition.author}}</span>
+				<a class="clickable" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
+				<span style="float: right;">Автор: <a class="clickable" ng-click='authorClicked(petition)'>{{petition.author_name}}</a></span>
 				<br>
 				<br>
 				<span>Добавлено: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
@@ -80,7 +80,7 @@
 		color: var(--text-color);
 	}
 
-	#petitionName {
+	.clickable {
 		cursor: pointer;
 	}
 
@@ -141,6 +141,9 @@
 			$scope.petitionClicked = function (petition) {
 				gmod.OpenPetition(petition.index)
 			}
+			$scope.authorClicked = function (petition) {
+				gmod.OpenURL("https://steamcommunity.com/profiles/" + petition.author_steamid)
+			}
 
 			$scope.likeClicked = function (petition) {
 				gmod.VoteOnPetition(petition.index, false)
@@ -154,19 +157,31 @@
 		angular.bootstrap(document.body, ['petitionBrowser']);
 	});
 
-	function addPetition(index, name, author, likes, dislikes, our_vote_status, creation_time, expire_time) {
+	function addPetition(index, name, author_name, author_steamid, likes, dislikes, our_vote_status, creation_time, expire_time) {
 		var expired = expire_time*1000 <= Date.now()
-		gScope.Petitions.push({ index: index, name: name, author: author, likes: likes, dislikes: dislikes, our_vote_status: our_vote_status, creation_time: creation_time, expire_time: expire_time, expired: expired });
+		gScope.Petitions.push({
+			index: index,
+			name: name,
+			author_name: author_name,
+			author_steamid: author_steamid,
+			likes: likes,
+			dislikes: dislikes,
+			our_vote_status: our_vote_status,
+			creation_time: creation_time,
+			expire_time: expire_time,
+			expired: expired
+		});
 		UpdateDigest(gScope, 50);
 	};
-	function updatePetition(index, name, author, likes, dislikes, our_vote_status, creation_time, expire_time) {
+	function updatePetition(index, name, author_name, author_steamid, likes, dislikes, our_vote_status, creation_time, expire_time) {
 		var petitions = gScope.Petitions;
 		var petitions_length = petitions.length;
 		var expired = expire_time*1000 <= Date.now()
 		for (var i = 0; i < petitions_length; i++) {
 			if (petitions[i].index == index) {
 				petitions[i].name = name;
-				petitions[i].author = author;
+				petitions[i].author_name = author_name;
+				petitions[i].author_steamid = author_steamid;
 				petitions[i].likes = likes;
 				petitions[i].dislikes = dislikes;
 				petitions[i].our_vote_status = our_vote_status;
@@ -179,9 +194,9 @@
 		}
 		return false;
 	};
-	function addOrUpdatePetition(index, name, description, author, likes, dislikes, our_vote_status, creation_time, expire_time) {
-		if (!updatePetition(index, name, author, likes, dislikes, our_vote_status, creation_time, expire_time)) {
-			addPetition(index, name, author, likes, dislikes, our_vote_status, creation_time, expire_time);
+	function addOrUpdatePetition(index, name, description, author_name, author_steamid, likes, dislikes, our_vote_status, creation_time, expire_time) {
+		if (!updatePetition(index, name, author_name, author_steamid, likes, dislikes, our_vote_status, creation_time, expire_time)) {
+			addPetition(index, name, author_name, author_steamid, likes, dislikes, our_vote_status, creation_time, expire_time);
 		}
 	};
 	function updatePetitionVotes(index, likes, dislikes, our_vote_status) {
