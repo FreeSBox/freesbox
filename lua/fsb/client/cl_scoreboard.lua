@@ -11,6 +11,7 @@ local avatar_size = 32
 local player_padding = 4
 local player_height = 32 + player_padding*2
 local right_info_padding = 10
+local collumn_padding = 32
 
 -- Keep it local for now, but we may want to make it global at some point.
 local scoreboard =
@@ -153,6 +154,22 @@ function scoreboard:ReloadPlayerList()
 				local num_entities_x, num_entities_y = surface.GetTextSize(num_entities)
 				surface.SetTextPos(player_padding, group_y+player_padding*2+avatar_size)
 				surface.DrawText(num_entities)
+
+				local second_collumn_x = math.max(group_x, num_entities_x) + collumn_padding
+
+				surface.SetTextColor(255,255,255)
+				local frags = self.ply:Frags()
+				local frags_text = string.format(T"scoreboard.kill_count", frags)
+				local frags_text_x, frags_text_y = surface.GetTextSize(frags_text)
+				surface.SetTextPos(player_padding+second_collumn_x, player_padding*2+avatar_size)
+				surface.DrawText(frags_text)
+
+				surface.SetTextColor(255,255,255)
+				local deaths = self.ply:Deaths()
+				local deaths_text = string.format(T"scoreboard.death_count", deaths)
+				local deaths_text_x, deaths_text_y = surface.GetTextSize(deaths_text)
+				surface.SetTextPos(player_padding+second_collumn_x, frags_text_y+player_padding*2+avatar_size)
+				surface.DrawText(deaths_text)
 			end
 		end
 		function player_btn:DoRightClick()
