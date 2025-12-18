@@ -30,6 +30,5 @@ resource.AddWorkshop("2718789320") -- QCardWars - Card Game in GMod!
 resource.AddWorkshop("3542961565") -- Liberty City // GLIDE
 resource.AddWorkshop("104691717") -- PAC3
 resource.AddWorkshop("3561915009") -- Glide Handheld Weapons
-resource.AddWorkshop("2989564194") -- Simple Weapons: by Doge
-resource.AddWorkshop("3504688674") -- [DELTARUNE] The Roaring Knight Abilities
+resource.AddWorkshop("3015971627") -- Simple Weapons: L4D2 [Improved]
 --#endregion
