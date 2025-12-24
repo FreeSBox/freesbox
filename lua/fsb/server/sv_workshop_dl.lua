@@ -21,14 +21,10 @@ resource.AddWorkshop("3457996478") -- Glide // Conscript APC
 resource.AddWorkshop("3436601554") -- Glide // Hunter-Chopper
 resource.AddWorkshop("3448521354") -- Glide // Combine Gunship
 resource.AddWorkshop("3001397905") -- Media Player (Updated Edition)
-resource.AddWorkshop("2821862386") -- Simple Weapons: Base
-resource.AddWorkshop("2821865508") -- Simple Weapons: CS:S
-resource.AddWorkshop("2832566843") -- Simple Weapons: Half-Life 2 Extended
 resource.AddWorkshop("3081978414") -- Profiteers Parachute
 resource.AddWorkshop("2825347854") -- GPoker - Poker in Garry's Mod
 resource.AddWorkshop("2718789320") -- QCardWars - Card Game in GMod!
 resource.AddWorkshop("3542961565") -- Liberty City // GLIDE
 resource.AddWorkshop("104691717") -- PAC3
-resource.AddWorkshop("3561915009") -- Glide Handheld Weapons
-resource.AddWorkshop("3015971627") -- Simple Weapons: L4D2 [Improved]
+resource.AddWorkshop("3559560605") -- Poopmadness Arsenal
 --#endregion
