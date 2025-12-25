@@ -27,4 +27,5 @@ resource.AddWorkshop("2718789320") -- QCardWars - Card Game in GMod!
 resource.AddWorkshop("3542961565") -- Liberty City // GLIDE
 resource.AddWorkshop("104691717") -- PAC3
 resource.AddWorkshop("3559560605") -- Poopmadness Arsenal
+resource.AddWorkshop("2340992735") -- GWS Inventory System
 --#endregion
