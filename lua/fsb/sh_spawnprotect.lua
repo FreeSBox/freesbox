@@ -22,6 +22,11 @@ local spawnzones =
 		max = Vector(-8900, -2779, 10370),
 		shoud_draw = false
 	},
+	["gm_mobenix_winter"] = {
+		min = Vector(-9900, -1064, 10760),
+		max = Vector(-8900, -2779, 10370),
+		shoud_draw = false
+	},
 	["gm_genesis"] = {
 		min = Vector(2640, -10352, -8832),
 		max = Vector(432, -7856, -8321),
