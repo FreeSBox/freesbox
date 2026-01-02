@@ -258,7 +258,7 @@ function scoreboard:Open()
 
 		surface.SetTextColor(255,255,255)
 		surface.SetFont("Nickname")
-		local tps = string.format("TPS: %.1f", 1/engine.ServerFrameTime())
+		local tps = string.format("TPS: %.1f", GetGlobalFloat("serverTPS"))
 		local tps_x, tps_y = surface.GetTextSize(tps)
 		surface.SetTextPos(player_padding, h/2-tps_y/2)
 		surface.DrawText(tps)
