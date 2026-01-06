@@ -23,10 +23,11 @@ local whitelisted_nets = {
 local PLAYER = FindMetaTable("Player")
 
 if SERVER then
-	function PLAYER:SetGhostBanned(is_banned, unban_time)
+	function PLAYER:SetGhostBanned(is_banned, unban_time, description)
 		self:SetPlayerNameNoSave("")
 		if is_banned then
-			self:SetNameTagNoSave("<color=255,0,0>[BANNED]")
+			description = description and "\n" .. description or ""
+			self:SetNameTagNoSave("<color=255,0,0>[BANNED]<stop>" .. description)
 		else
 			self:InitNameAndTag()
 			unban_time = 0
@@ -110,7 +111,7 @@ if SERVER then
 			assert(ply:IsPlayer(), "Player is not a player?")
 
 			steamid64 = ply:SteamID64()
-			ply:SetGhostBanned(true, unban_time)
+			ply:SetGhostBanned(true, unban_time, description)
 		elseif isstring(ply) then
 			if string.StartsWith(ply, "STEAM_") then
 				steamid64 = util.SteamIDTo64(ply)
@@ -153,7 +154,7 @@ if SERVER then
 	end
 
 	hook.Add("PlayerInitialSpawn", "apply_ghost_ban", function (ply, transition)
-		local results = sql.QueryTyped("SELECT expire_time FROM fsb_ghostbans WHERE steamid = ?", ply:SteamID64())
+		local results = sql.QueryTyped("SELECT expire_time, description FROM fsb_ghostbans WHERE steamid = ?", ply:SteamID64())
 		assert(results ~= false, "The SQL Query is broken in 'apply_ghost_ban'")
 
 		local result = results[1]
@@ -167,7 +168,8 @@ if SERVER then
 			return
 		end
 
-		ply:SetGhostBanned(true, unban_time)
+		local description = result["description"]
+		ply:SetGhostBanned(true, unban_time, description)
 	end)
 
 	local net_ratelimit = {}
