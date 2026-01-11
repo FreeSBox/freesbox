@@ -4,7 +4,8 @@ if SERVER then
 		steamid TEXT PRIMARY KEY,
 		description TEXT,
 		creation_time BIGINT,
-		expire_time BIGINT
+		expire_time BIGINT,
+		banned_by_steamid TEXT
 	)]])
 end
 
@@ -104,7 +105,8 @@ if SERVER then
 	---@param ply Player|string Player or steamid or steamid64.
 	---@param unban_time number
 	---@param description string
-	function FSB.GhostBan(ply, unban_time, description)
+	---@param banned_by Player? Admin that caused this ban. NULL player or nil for console.
+	function FSB.GhostBan(ply, unban_time, description, banned_by)
 		local steamid64
 		if isentity(ply) then
 			assert(IsValid(ply), "Player is invalid")
@@ -119,6 +121,10 @@ if SERVER then
 				steamid64 = ply
 			end
 		end
+		local banned_by_steamid
+		if IsValid(banned_by) then
+			banned_by_steamid = banned_by:SteamID64()
+		end
 
 		description = description or "not specified"
 		unban_time = unban_time or 0
@@ -127,9 +133,10 @@ if SERVER then
 			steamid,
 			description,
 			creation_time,
-			expire_time
-		) VALUES (?, ?, ?, ?)
-		]], steamid64, description, os.time(), unban_time)
+			expire_time,
+			banned_by_steamid
+		) VALUES (?, ?, ?, ?, ?)
+		]], steamid64, description, os.time(), unban_time, banned_by_steamid)
 
 	end
 
