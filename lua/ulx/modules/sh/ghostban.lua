@@ -7,9 +7,9 @@ local function ghostBanULXWrapper(calling_ply, target_ply, minutes, reason)
 
 	local str = "#A ghostbanned #T for #s"
 	if reason and reason ~= "" then str = str .. " (#s)" end
-	ulx.fancyLogAdmin( calling_ply, str, target_ply, minutes ~= 0 and ULib.secondsToStringTime( minutes * 60 ) or reason, reason )
+	ulx.fancyLogAdmin(calling_ply, str, target_ply, minutes ~= 0 and ULib.secondsToStringTime(minutes*60) or reason, reason)
 
-	FSB.GhostBan(target_ply, os.time()+minutes*60, reason)
+	FSB.GhostBan(target_ply, os.time()+minutes*60, reason, calling_ply)
 end
 
 local function ghostUnBanULXWrapper(calling_ply, target_ply)
@@ -19,8 +19,8 @@ end
 
 local function ghostBanIDULXWrapper(calling_ply, steamid, minutes, reason)
 	steamid = steamid:upper()
-	if not ULib.isValidSteamID( steamid ) then
-		ULib.tsayError( calling_ply, "Invalid steamid." )
+	if not ULib.isValidSteamID(steamid) then
+		ULib.tsayError(calling_ply, "Invalid steamid.")
 		return
 	end
 
@@ -32,15 +32,15 @@ local function ghostBanIDULXWrapper(calling_ply, steamid, minutes, reason)
 
 	local str = "#A ghostbanned steamid #s for #s"
 	if reason and reason ~= "" then str = str .. " (#s)" end
-	ulx.fancyLogAdmin( calling_ply, str, steamid, minutes ~= 0 and ULib.secondsToStringTime( minutes * 60 ) or reason, reason )
+	ulx.fancyLogAdmin(calling_ply, str, steamid, minutes ~= 0 and ULib.secondsToStringTime(minutes*60) or reason, reason)
 
-	FSB.GhostBan(steamid, os.time()+minutes*60, reason)
+	FSB.GhostBan(steamid, os.time()+minutes*60, reason, calling_ply)
 end
 
 local function ghostUnBanIDULXWrapper(calling_ply, steamid)
 	steamid = steamid:upper()
-	if not ULib.isValidSteamID( steamid ) then
-		ULib.tsayError( calling_ply, "Invalid steamid." )
+	if not ULib.isValidSteamID(steamid) then
+		ULib.tsayError(calling_ply, "Invalid steamid.")
 		return
 	end
 
