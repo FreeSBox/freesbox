@@ -24,7 +24,7 @@ local whitelisted_nets = {
 local PLAYER = FindMetaTable("Player")
 
 if SERVER then
-	function PLAYER:SetGhostBanned(is_banned, unban_time, description)
+	function PLAYER:SetGhostBanned(is_banned, unban_time, description, banned_by_steamid)
 		self:SetPlayerNameNoSave("")
 		if is_banned then
 			description = description and "\n" .. description or ""
@@ -32,13 +32,22 @@ if SERVER then
 		else
 			self:InitNameAndTag()
 			unban_time = 0
+			banned_by_steamid = ""
 		end
 		self:SetNWFloat("GhostUnBanTime", unban_time)
+		self:SetNWString("GhostBannedBySteamID", banned_by_steamid)
+		self:SetNWString("GhostBanDesc", description)
 	end
 end
 
 function PLAYER:IsGhostBanned()
 	return self:GetNWFloat("GhostUnBanTime") > os.time()
+end
+function PLAYER:GetGhostBannedBySteamID64()
+	return self:GetNWString("GhostBannedBySteamID")
+end
+function PLAYER:GetGhostBanDescription()
+	return self:GetNWString("GhostBanDesc")
 end
 
 local TAG = "ghost_ban_check"
@@ -107,23 +116,24 @@ if SERVER then
 	---@param description string
 	---@param banned_by Player? Admin that caused this ban. NULL player or nil for console.
 	function FSB.GhostBan(ply, unban_time, description, banned_by)
+		local banned_by_steamid
+		if IsValid(banned_by) then
+			banned_by_steamid = banned_by:SteamID64()
+		end
+
 		local steamid64
 		if isentity(ply) then
 			assert(IsValid(ply), "Player is invalid")
 			assert(ply:IsPlayer(), "Player is not a player?")
 
 			steamid64 = ply:SteamID64()
-			ply:SetGhostBanned(true, unban_time, description)
+			ply:SetGhostBanned(true, unban_time, description, banned_by_steamid)
 		elseif isstring(ply) then
 			if string.StartsWith(ply, "STEAM_") then
 				steamid64 = util.SteamIDTo64(ply)
 			else
 				steamid64 = ply
 			end
-		end
-		local banned_by_steamid
-		if IsValid(banned_by) then
-			banned_by_steamid = banned_by:SteamID64()
 		end
 
 		description = description or "not specified"
@@ -161,7 +171,7 @@ if SERVER then
 	end
 
 	hook.Add("PlayerInitialSpawn", "apply_ghost_ban", function (ply, transition)
-		local results = sql.QueryTyped("SELECT expire_time, description FROM fsb_ghostbans WHERE steamid = ?", ply:SteamID64())
+		local results = sql.QueryTyped("SELECT expire_time, description, banned_by_steamid FROM fsb_ghostbans WHERE steamid = ?", ply:SteamID64())
 		assert(results ~= false, "The SQL Query is broken in 'apply_ghost_ban'")
 
 		local result = results[1]
@@ -176,7 +186,8 @@ if SERVER then
 		end
 
 		local description = result["description"]
-		ply:SetGhostBanned(true, unban_time, description)
+		local banned_by_steamid = result["banned_by_steamid"]
+		ply:SetGhostBanned(true, unban_time, description, banned_by_steamid)
 	end)
 
 	local net_ratelimit = {}
