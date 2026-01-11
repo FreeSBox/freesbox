@@ -139,7 +139,7 @@ if SERVER then
 		description = description or "not specified"
 		unban_time = unban_time or 0
 
-		sql.QueryTyped([[INSERT INTO fsb_ghostbans(
+		sql.QueryTyped([[INSERT OR REPLACE INTO fsb_ghostbans(
 			steamid,
 			description,
 			creation_time,
