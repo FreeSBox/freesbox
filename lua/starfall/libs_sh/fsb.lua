@@ -5,7 +5,7 @@ local PLY_META = FindMetaTable("Player")
 
 return function(instance)
 local player_methods, player_meta = instance.Types.Player.Methods, instance.Types.Player
-local Ply_InPVPMode, Ply_GetOriginalName, Ply_PVPModeEndTime, Ply_GetNameTag = PLY_META.InPVPMode, PLY_META.GetOriginalName, PLY_META.PVPModeEndTime, PLY_META.GetNameTag
+local Ply_GetGhostBanDescription, Ply_GetGhostBannedBySteamID64, Ply_IsGhostBanned, Ply_InPVPMode, Ply_GetOriginalName, Ply_PVPModeEndTime, Ply_GetNameTag = PLY_META.GetGhostBanDescription, PLY_META.GetGhostBannedBySteamID64, PLY_META.IsGhostBanned, PLY_META.InPVPMode, PLY_META.GetOriginalName, PLY_META.PVPModeEndTime, PLY_META.GetNameTag
 local Ent_IsValid = ENT_META.IsValid
 
 local function getply(self)
@@ -29,6 +29,27 @@ end
 -- @return boolean
 function player_methods:isPVP()
 	return Ply_InPVPMode(getply(self))
+end
+
+--- Checks if the player is ghostbanned.
+-- @shared
+-- @return boolean
+function player_methods:isGhostBanned()
+	return Ply_IsGhostBanned(getply(self))
+end
+
+--- Returns the steamid64 of the admin that ghostbanned this player.
+-- @shared
+-- @return string
+function player_methods:getGhostBannedBySteamID64()
+	return Ply_GetGhostBannedBySteamID64(getply(self))
+end
+
+--- Returns the reason for the ghostban.
+-- @shared
+-- @return string
+function player_methods:getGhostBanDescription()
+	return Ply_GetGhostBanDescription(getply(self))
 end
 
 --- Gets the time when the player will leave PVP mode.
