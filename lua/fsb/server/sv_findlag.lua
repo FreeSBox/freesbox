@@ -54,14 +54,16 @@ concommand.Add("findlag", function (ply, cmd, args, arg_str)
 		lag_scores[owner] = lag_scores[owner] and lag_scores[owner] + ent_score or ent_score
 	end
 
+	local sorted_scores = table.SortByKey(lag_scores, false)
+
 	if IsValid(ply) then
 		ply:SendLocalizedMessage("findlag.note")
-		for index, value in pairs(lag_scores) do
-			ply:PrintMessage(HUD_PRINTTALK, string.format("%s: %i", index:Nick(), math.floor(value)))
+		for _, index in ipairs(sorted_scores) do
+			ply:PrintMessage(HUD_PRINTTALK, string.format("%s: %i", index:Nick(), math.floor(lag_scores[index])))
 		end
 	else
-		for index, value in pairs(lag_scores) do
-			print(string.format("%s: %i", index:Nick(), math.floor(value)))
+		for _, index in ipairs(sorted_scores) do
+			print(string.format("%s: %i", index:Nick(), math.floor(lag_scores[index])))
 		end
 	end
 end)
