@@ -1,6 +1,6 @@
 ---@diagnostic disable: inject-field
-local cleanup_threshold = 0.3 -- tps%
-local penetration_stopper_threshold = 0.6 -- tps%
+local cleanup_threshold = 300 -- milliseconds
+local penetration_stopper_threshold = 60 -- milliseconds
 local seconds_before_cleanup = 60
 local max_entities_per_tick = 15 -- How many entities can a player spawn in 1 tick.
 local autoban_time = 300 -- For how many seconds do we automatically ban a suspected crasher?
@@ -27,17 +27,17 @@ local last_frames = {}
 
 -- Fill the structure with ideal data initially.
 for i = 1, num_frames do
-	last_frames[i] = 1/engine.TickInterval()
+	last_frames[i] = engine.TickInterval()*1000
 end
 
-local function pushFramerate(framerate)
+local function pushMSPT(framerate)
 	for i = 1, num_frames-1 do
 		last_frames[i] = last_frames[i+1]
 	end
 	last_frames[num_frames] = framerate
 end
 
-local function getAverageFramerate()
+local function getAverageMSPT()
 	local sum = 0
 	for i = 1, num_frames do
 		sum = sum + last_frames[i]
@@ -45,8 +45,8 @@ local function getAverageFramerate()
 	return sum/num_frames
 end
 
-function FSB.GetAverageTPS()
-	return getAverageFramerate()
+function FSB.GetAverageMSPT()
+	return getAverageMSPT()
 end
 
 local function handleFindPropPenetration()
@@ -74,13 +74,14 @@ local function handleFindPropPenetration()
 		for k,v in pairs(num_penetrations_per_player) do table.insert(temp, {ply = k, count = v}) end
 		table.sort(temp, function(a, b) return a.count > b.count end)
 		if temp[1] then
-			temp[1].ply.likely_crasher = temp[1].ply.likely_crasher + 1
+			temp[1].ply.likely_crasher = (temp[1].ply.likely_crasher or 0) + 1
 			FSB.SendLocalizedMessage("lag.print_penetrating", temp[1].ply:Nick(), temp[1].count)
 			print(temp[1].ply:Nick(), "has", temp[1].count, "penetrating props!")
 
 			if temp[1].ply.likely_crasher > 6 then
 				FSB.GhostBan(temp[1].ply, os.time()+autoban_time, "lag autoban")
 				FSB.SendLocalizedMessage("lag.autobanned", temp[1].ply:Nick(), autoban_time)
+				NADMOD.CleanPlayer(Player(0), temp[1].ply)
 				MsgN("Anticrash automatically banned " .. temp[1].ply:Nick() .. " for " .. autoban_time .. " seconds")
 			end
 		end
@@ -102,14 +103,14 @@ end
 hook.Add("Tick", "lag_detect", function()
 	local sys_time = SysTime()
 	local delta_time = sys_time-last_ticktime
-	pushFramerate(1/delta_time)
+	pushMSPT(delta_time*1000)
 	local not_from_hybernation = player.GetCount() > 0 -- GetCount doesn't count loading players.
 	local should_run_cleanup_logic = ( sv_hibernate_think:GetBool() or not_from_hybernation ) and last_ticktime ~= 0 and not FSB.IsCleanUpInProgress() and game.MaxPlayers() ~= 1
 	if should_run_cleanup_logic then
-		if getAverageFramerate() < penetration_stopper_threshold*tickrate then
+		if getAverageMSPT() > penetration_stopper_threshold then
 			handleFindPropPenetration()
 		end
-		if getAverageFramerate() < cleanup_threshold*tickrate then
+		if getAverageMSPT() > cleanup_threshold then
 			handleCleanUp()
 		end
 	end
