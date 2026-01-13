@@ -1,7 +1,7 @@
 require("tickrate")
 
 ---@diagnostic disable: inject-field
-local cleanup_threshold = 300 -- milliseconds
+local cleanup_threshold = 800 -- milliseconds
 local penetration_stopper_threshold = 60 -- milliseconds
 local seconds_before_cleanup = 60
 local max_entities_per_tick = 15 -- How many entities can a player spawn in 1 tick.
