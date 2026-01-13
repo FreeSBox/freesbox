@@ -25,6 +25,7 @@ Included in this addon are:
 | [EasyChat](https://github.com/Earu/EasyChat)                                     | Yes      | Used to parse names in tab and name tags                                                |
 | [NadmodPP](https://github.com/Nebual/NadmodPP)                                   | Yes      | Used to count entities owned by a player (CPPI doesn't have an API for this)            |
 | [gmsv_remove_restrictions](https://github.com/FreeSBox/gmsv_remove_restrictions) | Yes      | Allow running all console commands on the server, allow players using a steam emulator. |
+| [gmsv_tickrate](https://github.com/FreeSBox/gmsv_tickrate)                       | Yes      | Used to get the current MSPT for lag detection and to desplay in the scoreboard. Can be patched out if you don't care about the scoreboard info. |
 
 *Required* means this addon will couse lua errors without this dependency.
 

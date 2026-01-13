@@ -1,3 +1,5 @@
+require("tickrate")
+
 ---@diagnostic disable: inject-field
 local cleanup_threshold = 300 -- milliseconds
 local penetration_stopper_threshold = 60 -- milliseconds
@@ -103,7 +105,7 @@ end
 hook.Add("Tick", "lag_detect", function()
 	local sys_time = SysTime()
 	local delta_time = sys_time-last_ticktime
-	pushMSPT(delta_time*1000)
+	pushMSPT(GetFrameDelta())
 	local not_from_hybernation = player.GetCount() > 0 -- GetCount doesn't count loading players.
 	local should_run_cleanup_logic = ( sv_hibernate_think:GetBool() or not_from_hybernation ) and last_ticktime ~= 0 and not FSB.IsCleanUpInProgress() and game.MaxPlayers() ~= 1
 	if should_run_cleanup_logic then
