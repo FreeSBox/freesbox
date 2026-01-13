@@ -91,7 +91,7 @@ if SERVER then
 				if self:IsPosAffected(ply) then
 					if self:GetForcePVP() and not ply:InPVPMode() then
 						ply:Give("weapon_pistol")
-					elseif isInNoclip(ply) then
+					elseif ply:IsNoClipping() then
 						ply:SetMoveType(MOVETYPE_WALK)
 					end
 				end
