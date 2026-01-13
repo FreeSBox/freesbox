@@ -29,6 +29,9 @@ if SERVER then
 		if is_banned then
 			description = description and "\n" .. description or ""
 			self:SetNameTagNoSave("<color=255,0,0>[BANNED]<stop>" .. description)
+			if self:IsNoClipping() then
+				self:SetMoveType(MOVETYPE_WALK)
+			end
 		else
 			self:InitNameAndTag()
 			unban_time = 0

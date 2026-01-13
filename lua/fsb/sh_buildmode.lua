@@ -201,8 +201,9 @@ function PLAYER:PVPModeEndTime()
 	return self:GetNWFloat(PVP_NET_FLOAT)
 end
 
-local function isInNoclip(player)
-	return player:GetMoveType() == MOVETYPE_NOCLIP and not player:InVehicle()
+---@return boolean
+function PLAYER:IsNoClipping()
+	return self:GetMoveType() == MOVETYPE_NOCLIP and not self:InVehicle()
 end
 
 ---This will throw the player into the PVP mode, it will not deactivate until the player drops a PVP weapon,
@@ -214,7 +215,7 @@ function PLAYER:PutIntoPVP()
 	if hook.Run("FSBEnterPVP", self) == false then return end
 
 	self:SetNWFloat(PVP_NET_FLOAT, IN_PVP_MAGIC_VALUE)
-	if isInNoclip(self) then
+	if self:IsNoClipping() then
 		self:SetMoveType(MOVETYPE_WALK)
 	end
 
