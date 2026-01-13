@@ -44,6 +44,7 @@ return {
 		["findlag.note"] = "Please note that this is not an objective metric, players with high values here may not necessarily be the cause of the lag!",
 
 		["advert.ghostbanned"] = "You are banned until: %s",
+		["advert.ghostbanned_reason"] = "You are banned until: %s (%s)",
 		["advert.pi_menu"] = "Press F2 to access the server menu.",
 		["advert.petitions"] = "It would be nice if you signed some petitions in the F2 menu.",
 
