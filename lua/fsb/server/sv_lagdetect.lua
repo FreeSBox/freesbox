@@ -109,10 +109,10 @@ hook.Add("Tick", "lag_detect", function()
 	local not_from_hybernation = player.GetCount() > 0 -- GetCount doesn't count loading players.
 	local should_run_cleanup_logic = ( sv_hibernate_think:GetBool() or not_from_hybernation ) and last_ticktime ~= 0 and not FSB.IsCleanUpInProgress() and game.MaxPlayers() ~= 1
 	if should_run_cleanup_logic then
-		if getAverageMSPT() > penetration_stopper_threshold then
+		if physenv.GetLastSimulationTime()*1000 > penetration_stopper_threshold then
 			handleFindPropPenetration()
 		end
-		if getAverageMSPT() > cleanup_threshold then
+		if physenv.GetLastSimulationTime()*1000 > cleanup_threshold then
 			handleCleanUp()
 		end
 	end
