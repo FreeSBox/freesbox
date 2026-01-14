@@ -26,8 +26,6 @@ local PLAYER = FindMetaTable("Player")
 if SERVER then
 	function PLAYER:SetGhostBanned(is_banned, unban_time, description, banned_by_steamid)
 		self:SetPlayerNameNoSave("")
-		self:SetNWFloat("GhostUnBanTime", unban_time)
-		self:SetNWString("GhostBannedBySteamID", banned_by_steamid)
 		self:SetNWString("GhostBanDesc", description)
 		if is_banned then
 			description = description and "\n" .. description or ""
@@ -40,6 +38,8 @@ if SERVER then
 			unban_time = 0
 			banned_by_steamid = ""
 		end
+		self:SetNWFloat("GhostUnBanTime", unban_time)
+		self:SetNWString("GhostBannedBySteamID", banned_by_steamid)
 	end
 end
 
