@@ -112,7 +112,7 @@ hook.Add("Tick", "lag_detect", function()
 		if physenv.GetLastSimulationTime()*1000 > penetration_stopper_threshold then
 			handleFindPropPenetration()
 		end
-		if physenv.GetLastSimulationTime()*1000 > cleanup_threshold then
+		if physenv.GetLastSimulationTime()*1000 > penetration_stopper_threshold and getAverageMSPT() > cleanup_threshold then
 			handleCleanUp()
 		end
 	end
