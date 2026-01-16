@@ -323,6 +323,7 @@ end)
 
 net.Receive("petition_removed", function (len, ply)
 	local index = net.ReadUInt(PETITION_ID_BITS)
+	petitions_requested[index] = nil
 	petitions_available[index] = nil
 	petitions_cache[index] = nil
 	print("Server removed petition", index)
