@@ -29,6 +29,7 @@ local shared_files = {
 
 local server_files = {
 	"fsb/server/sv_anti_net_msg_spam.lua",
+	"fsb/server/sv_auto_restart.lua",
 	"fsb/server/sv_block_spawn_when_dead.lua",
 	"fsb/server/sv_cleanup.lua",
 	"fsb/server/sv_findlag.lua",
