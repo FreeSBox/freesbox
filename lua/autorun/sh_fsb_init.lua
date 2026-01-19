@@ -38,7 +38,7 @@ local server_files = {
 	"fsb/server/sv_lagdetect.lua",
 	"fsb/server/sv_performance.lua",
 	"fsb/server/sv_player_menu_v2.lua",
-	"fsb/server/sv_remove_restrictions.lua",
+	"fsb/server/sv_load_bin_modules.lua",
 	"fsb/server/sv_servershutdown.lua",
 	"fsb/server/sv_skyboxprotect.lua",
 	"fsb/server/sv_usergroups.lua",
