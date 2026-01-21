@@ -91,8 +91,7 @@ local function handleFindPropPenetration()
 end
 
 local function handleCleanUp()
-	FSB.FreezeAllProps()
-	RunConsoleCommand("phys_timescale", "0")
+	physenv.SetPhysicsPaused(true)
 	FSB.SendLocalizedMessage("lag.cleanup", seconds_before_cleanup)
 	local cur_time = CurTime()
 	Msg("Cleanup forced, dump of the last " .. tostring(num_frames) .. " frames:\n")
