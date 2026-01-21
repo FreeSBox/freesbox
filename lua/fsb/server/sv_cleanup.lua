@@ -8,7 +8,7 @@ function FSB.CleanUpMap(time_until_cleanup)
 
 	timer.Create("fsb_cleanup_timer", time_until_cleanup, 1, function ()
 		game.CleanUpMap()
-		RunConsoleCommand("phys_timescale", "1")
+		physenv.SetPhysicsPaused(false)
 		cleanup_in_progress = false
 	end)
 end
@@ -18,7 +18,7 @@ function FSB.CancelCleanUp()
 	timer.Stop("fsb_cleanup_timer")
 
 	FSB.StopTimer()
-	RunConsoleCommand("phys_timescale", "1")
+	physenv.SetPhysicsPaused(false)
 	cleanup_in_progress = false
 end
 
