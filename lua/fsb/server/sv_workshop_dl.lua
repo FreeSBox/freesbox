@@ -33,4 +33,5 @@ resource.AddWorkshop("2538387266") -- ActMod
 resource.AddWorkshop("2615656036") -- Base Anim-AM4
 resource.AddWorkshop("3567487307") -- [ActMod] More Emotes
 resource.AddWorkshop("104548572") -- Playable Piano
+resource.AddWorkshop("2953413221") -- Barricade SWEP
 --#endregion
