@@ -54,7 +54,7 @@ if SERVER then
 
 	local function isEntityDisallowedAtSpawn(ent)
 		local class = ent:GetClass()
-		return (ent:CPPIGetOwner() ~= nil and not ent:CreatedByMap() and not ent.jailWall and not ent:IsWeapon() and not allowed_classes[class]) or disallowed_classes[class] == true
+		return (ent:CPPIGetOwner() ~= nil and not ent:CreatedByMap() and not ent.NoDeleting and not ent:IsWeapon() and not allowed_classes[class]) or disallowed_classes[class] == true
 	end
 
 	hook.Add("Think", "check_spawnzone_ents", function()
