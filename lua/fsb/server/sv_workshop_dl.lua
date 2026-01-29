@@ -15,7 +15,6 @@ resource.AddWorkshop("109643223") -- 3D2D Textscreens
 resource.AddWorkshop("2840295308") -- Primitive
 resource.AddWorkshop("2458909924") -- Prop2Mesh
 resource.AddWorkshop("287012681") -- Track Assembly Tool
-resource.AddWorkshop("2447979470") -- StormFox 2
 resource.AddWorkshop("2639959090") -- Manable Emplacements
 resource.AddWorkshop("3457996478") -- Glide // Conscript APC
 resource.AddWorkshop("3436601554") -- Glide // Hunter-Chopper
@@ -24,14 +23,8 @@ resource.AddWorkshop("3001397905") -- Media Player (Updated Edition)
 resource.AddWorkshop("2821862386") -- Simple Weapons: Base
 resource.AddWorkshop("2821865508") -- Simple Weapons: CS:S
 resource.AddWorkshop("2832566843") -- Simple Weapons: Half-Life 2 Extended
-resource.AddWorkshop("3081978414") -- Profiteers Parachute
-resource.AddWorkshop("2825347854") -- GPoker - Poker in Garry's Mod
-resource.AddWorkshop("2718789320") -- QCardWars - Card Game in GMod!
 resource.AddWorkshop("3542961565") -- Liberty City // GLIDE
 resource.AddWorkshop("104691717") -- PAC3
-resource.AddWorkshop("2538387266") -- ActMod
-resource.AddWorkshop("2615656036") -- Base Anim-AM4
-resource.AddWorkshop("3567487307") -- [ActMod] More Emotes
 resource.AddWorkshop("104548572") -- Playable Piano
 resource.AddWorkshop("2953413221") -- Barricade SWEP
 --#endregion
