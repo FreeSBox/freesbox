@@ -29,7 +29,7 @@ local spawnzones =
 	},
 	["gm_genesis"] = {
 		min = Vector(2640, -10352, -8832),
-		max = Vector(432, -7856, -8321),
+		max = Vector(432, -7856, -8325),
 		shoud_draw = true
 	},
 }
