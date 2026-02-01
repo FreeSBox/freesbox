@@ -1,4 +1,23 @@
-require("tickrate")
+if util.IsBinaryModuleInstalled("tickrate") then
+	require("tickrate")
+else
+	MsgN("gmsv_tickrate is not installed, MSPT display may not be accurate")
+	local last_ticktime = 0
+	local last_delta = 0
+
+	--This implementation is worse then the tickrate module
+	--because if it took less then `engine.TickInterval()` to process the tick
+	--this will still return `engine.TickInterval()`,
+	function GetFrameDelta()
+		return last_delta*1000
+	end
+
+	hook.Add("Tick", "mspt_counter", function()
+		local sys_time = SysTime()
+		last_delta = sys_time-last_ticktime
+		last_ticktime = sys_time
+	end)
+end
 
 ---@diagnostic disable: inject-field
 local cleanup_threshold = 800 -- milliseconds
@@ -9,7 +28,6 @@ local autoban_time = 300 -- For how many seconds do we automatically ban a suspe
 local num_frames = 6 -- the avarage of this number of frames is checked against the threashold
 
 
-local tickrate = 1/engine.TickInterval()
 local sv_hibernate_think = GetConVar("sv_hibernate_think")
 local last_ticktime = 0
 
@@ -103,7 +121,6 @@ end
 
 hook.Add("Tick", "lag_detect", function()
 	local sys_time = SysTime()
-	local delta_time = sys_time-last_ticktime
 	pushMSPT(GetFrameDelta())
 	local not_from_hybernation = player.GetCount() > 0 -- GetCount doesn't count loading players.
 	local should_run_cleanup_logic = ( sv_hibernate_think:GetBool() or not_from_hybernation ) and last_ticktime ~= 0 and not FSB.IsCleanUpInProgress() and game.MaxPlayers() ~= 1
