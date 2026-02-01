@@ -52,11 +52,11 @@ concommand.Add("findlag", function (ply, cmd, args, arg_str)
 			local data = entity:GetOverlayData()
 			if not data then continue end
 
-			ent_score = ent_score + data.prfbench/150
+			ent_score = ent_score + data.context.timebench*2000
 		end
 
 		if entity:GetClass() == "starfall_processor" then
-			ent_score = ent_score + entity:GetNWFloat("CPUpercent", 0)
+			ent_score = ent_score + entity.instance.cpu_average*2000
 		end
 
 		lag_scores[owner] = lag_scores[owner] and lag_scores[owner] + ent_score or ent_score
