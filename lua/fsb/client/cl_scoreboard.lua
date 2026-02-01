@@ -13,6 +13,11 @@ local player_height = 32 + player_padding*2
 local right_info_padding = 10
 local collumn_padding = 32
 
+---@class ScoreboardPlayerName
+---@field Markup MarkupObject
+---@field Nick string
+---@field DefaultColor Color
+
 -- Keep it local for now, but we may want to make it global at some point.
 local scoreboard =
 {
@@ -20,6 +25,7 @@ local scoreboard =
 	size = { w=0, h=0 },
 
 	players = {},
+	---@type table<integer, ScoreboardPlayerName>
 	player_names = {},
 	extended_infos = {},
 
@@ -46,22 +52,25 @@ local scoreboard =
 	},
 }
 
+---@param ply Player
 function scoreboard:ParseNick(ply)
 	local team_col, nick = team.GetColor(ply:Team()), ply:RichName()
 	local name = self.player_names[ply:UserID()]
 	if not name or nick ~= name.Nick or team_col ~= name.DefaultColor or not name.Markup then
-		name = {}
-		self.player_names[ply:UserID()] = name
-		name.Markup = ec_markup.AdvancedParse(ply:RichNick(),
+		name =
 		{
-			nick = true,
-			default_color = team_col,
-			default_font = "Nickname",
-			default_shadow_font = "NicknameShadow",
-			shadow_intensity = 2,
-		})
-		name.DefaultColor = team_col
-		name.Nick = nick
+			Markup = ec_markup.AdvancedParse(ply:RichNick(),
+			{
+				nick = true,
+				default_color = team_col,
+				default_font = "Nickname",
+				default_shadow_font = "NicknameShadow",
+				shadow_intensity = 2,
+			}),
+			DefaultColor = team_col,
+			Nick = nick,
+		}
+		self.player_names[ply:UserID()] = name
 	end
 end
 
@@ -136,7 +145,27 @@ function scoreboard:ReloadPlayerList()
 
 			scoreboard:ParseNick(self.ply)
 			local markup = scoreboard.player_names[userid].Markup
+
 			markup:Draw(avatar_size+player_padding*2, player_height/2-nickname_font_size/2)
+
+			surface.SetFont("Nickname")
+			surface.SetTextPos(avatar_size+player_padding*2+markup:GetWidth(), player_height/2-nickname_font_size/2)
+			surface.SetTextColor(255,0,0)
+
+			local focus_loss_time = self.ply:GetFocusLossTime()
+			if self.ply:IsTimingOut() then
+				surface.DrawText(" | Timing Out")
+			elseif focus_loss_time ~= 0 then
+				local afk_time = CurTime()-focus_loss_time
+				local afk_time_table = string.FormattedTime(afk_time)
+				local afk_text
+				if afk_time_table.h == 0 then
+					afk_text = string.format(" | AFK: %02i:%02i", afk_time_table.m, afk_time_table.s)
+				else
+					afk_text = string.format(" | AFK: %02i:%02i:%02i", afk_time_table.h, afk_time_table.m, afk_time_table.s)
+				end
+				surface.DrawText(afk_text)
+			end
 
 			scoreboard:DrawPlayerButtonRightInfo(self.ply, w, h)
 
