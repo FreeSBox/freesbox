@@ -18,12 +18,20 @@ local collumn_padding = 32
 ---@field Nick string
 ---@field DefaultColor Color
 
+---@class ConnectingPlayer
+---@field Name string
+---@field UserID integer
+---@field SteamID string
+---@field JoinTime number CurTime at wich this client has joined.
+
 -- Keep it local for now, but we may want to make it global at some point.
 local scoreboard =
 {
 	open = false,
 	size = { w=0, h=0 },
 
+	---@type table<Player, ConnectingPlayer>
+	connecting_players = {},
 	players = {},
 	---@type table<integer, ScoreboardPlayerName>
 	player_names = {},
@@ -52,8 +60,31 @@ local scoreboard =
 	},
 }
 
+---You can call this when the player is invalid
+---@param userid integer
+---@param nick string
+function scoreboard:ParseNick(userid, nick)
+	local name = self.player_names[userid]
+	if not name or nick ~= name.Nick or color_white ~= name.DefaultColor or not name.Markup then
+		name =
+		{
+			Markup = ec_markup.AdvancedParse(nick,
+			{
+				nick = true,
+				default_color = color_white,
+				default_font = "Nickname",
+				default_shadow_font = "NicknameShadow",
+				shadow_intensity = 2,
+			}),
+			DefaultColor = color_white,
+			Nick = nick,
+		}
+		self.player_names[userid] = name
+	end
+end
+
 ---@param ply Player
-function scoreboard:ParseNick(ply)
+function scoreboard:ParsePlayerNick(ply)
 	local team_col, nick = team.GetColor(ply:Team()), ply:RichName()
 	local name = self.player_names[ply:UserID()]
 	if not name or nick ~= name.Nick or team_col ~= name.DefaultColor or not name.Markup then
@@ -143,7 +174,7 @@ function scoreboard:ReloadPlayerList()
 
 			local userid = self.ply:UserID()
 
-			scoreboard:ParseNick(self.ply)
+			scoreboard:ParsePlayerNick(self.ply)
 			local markup = scoreboard.player_names[userid].Markup
 
 			markup:Draw(avatar_size+player_padding*2, player_height/2-nickname_font_size/2)
@@ -251,11 +282,67 @@ function scoreboard:ReloadPlayerList()
 		avatar:SetPos(player_padding,player_padding)
 		avatar:SetPlayer(player, avatar_size)
 	end
+
+	--TODO: Code duplication
+	for _, player in pairs(self.connecting_players) do
+		local player_btn = self.scroll:Add("DButton")
+		player_btn:SetName("player_btn")
+		player_btn:DockMargin(0,2,0,0)
+		player_btn:Dock(TOP)
+		player_btn:SetText("")
+		player_btn.ply = player
+		player_btn:SetSize(0, player_height)
+		function player_btn:Paint(w,h)
+			if self:IsHovered() then
+				surface.SetDrawColor(60,60,60,255)
+			else
+				surface.SetDrawColor(50,50,50,255)
+			end
+			surface.DrawRect(0, 0, w, h)
+
+			scoreboard:ParseNick(self.ply.UserID, self.ply.Name)
+			local markup = scoreboard.player_names[self.ply.UserID].Markup
+			markup:Draw(avatar_size+player_padding*2, player_height/2-nickname_font_size/2)
+
+			surface.SetTextColor(255,255,255)
+			local join_time_table = string.FormattedTime(CurTime()-self.ply.JoinTime)
+			local join_text = string.format(T"scoreboard.joining", join_time_table.m, join_time_table.s)
+			local join_text_x, join_text_y = surface.GetTextSize(join_text)
+			surface.SetTextPos(w-player_padding-join_text_x, player_padding)
+			surface.DrawText(join_text)
+		end
+		function player_btn:DoRightClick()
+			scoreboard.ctx_menu = DermaMenu()
+			scoreboard.ctx_menu:AddOption(T"scoreboard.copy_real_name", function ()
+				SetClipboardText(self.ply.Name)
+			end):SetIcon("icon16/report_user.png")
+			scoreboard.ctx_menu:AddOption(T"scoreboard.copy_steamid", function ()
+				SetClipboardText(self.ply.SteamID)
+			end):SetIcon("icon16/tag_blue.png")
+
+			scoreboard.ctx_menu:Open()
+		end
+		local avatar = player_btn:Add("AvatarImage")
+		avatar:SetSize(avatar_size,avatar_size)
+		avatar:SetPos(player_padding,player_padding)
+		avatar:SetSteamID(util.SteamIDTo64(player.SteamID), avatar_size)
+	end
+end
+
+function scoreboard:UpdateConnectingPlayers()
+	for userid, ply in pairs(self.connecting_players) do
+		if Player(ply.UserID):IsValid() then
+			self.connecting_players[userid] = nil
+			print("REMOVEME: Removed", ply)
+		end
+	end
 end
 
 function scoreboard:Open()
 	if self.open then return end
 	if vgui.CursorVisible() then return end
+
+	self:UpdateConnectingPlayers()
 
 	self.open = true
 	self.size = { w = ScrW() / 2.5, h = ScrH() / 1.5 }
@@ -350,17 +437,20 @@ hook.Add("StartCommand", "init_scoreboard", function()
 	hook.Remove("StartCommand", "init_scoreboard")
 end)
 
-hook.Add("FSBPlayerJoined", "add_player", function (userid, index, networkid, name)
+hook.Add("FSBPlayerJoined", "add_player", function (userid, networkid, name)
+	scoreboard.connecting_players[userid] = {Name = name, SteamID = networkid, UserID = userid, JoinTime = CurTime()}
 	if not scoreboard:IsOpen() then return end
 
 	scoreboard:ReloadPlayers()
 	scoreboard:ReloadPlayerList()
 end)
-hook.Add("FSBPlayerLeft", "remove_player", function (userid, index, networkid, name, reason)
+hook.Add("FSBPlayerLeft", "remove_player", function (userid, networkid, name, reason)
+	scoreboard.connecting_players[userid] = nil
+	scoreboard.player_names[userid] = nil
+	scoreboard.extended_infos[userid] = nil
+
 	if not scoreboard:IsOpen() then return end
 
 	scoreboard:ReloadPlayers()
-	scoreboard.player_names[userid] = nil
-	scoreboard.extended_infos[userid] = nil
 	scoreboard:ReloadPlayerList()
 end)
