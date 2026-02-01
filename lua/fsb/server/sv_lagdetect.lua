@@ -20,12 +20,12 @@ else
 end
 
 ---@diagnostic disable: inject-field
-local cleanup_threshold = 800 -- milliseconds
-local penetration_stopper_threshold = 60 -- milliseconds
-local seconds_before_cleanup = 60
-local max_entities_per_tick = 15 -- How many entities can a player spawn in 1 tick.
-local autoban_time = 300 -- For how many seconds do we automatically ban a suspected crasher?
-local num_frames = 6 -- the avarage of this number of frames is checked against the threashold
+local CLEANUP_THRESHOLD = 800 -- milliseconds
+local PENETRATION_STOPPER_THRESHOLD = 60 -- milliseconds
+local SECONDS_BEFORE_CLEANUP = 60
+local MAX_ENTITIES_PER_TICK = 15 -- How many entities can a player spawn in 1 tick.
+local AUTOBAN_TIME = 300 -- For how many seconds do we automatically ban a suspected crasher?
+local NUM_FRAMES = 6 -- the avarage of this number of frames is checked against the threashold
 
 
 local sv_hibernate_think = GetConVar("sv_hibernate_think")
@@ -46,23 +46,23 @@ end
 local last_frames = {}
 
 -- Fill the structure with ideal data initially.
-for i = 1, num_frames do
+for i = 1, NUM_FRAMES do
 	last_frames[i] = engine.TickInterval()*1000
 end
 
 local function pushMSPT(framerate)
-	for i = 1, num_frames-1 do
+	for i = 1, NUM_FRAMES-1 do
 		last_frames[i] = last_frames[i+1]
 	end
-	last_frames[num_frames] = framerate
+	last_frames[NUM_FRAMES] = framerate
 end
 
 local function getAverageMSPT()
 	local sum = 0
-	for i = 1, num_frames do
+	for i = 1, NUM_FRAMES do
 		sum = sum + last_frames[i]
 	end
-	return sum/num_frames
+	return sum/NUM_FRAMES
 end
 
 function FSB.GetAverageMSPT()
@@ -99,10 +99,10 @@ local function handleFindPropPenetration()
 			print(temp[1].ply:Nick(), "has", temp[1].count, "penetrating props!")
 
 			if temp[1].ply.likely_crasher > 6 then
-				FSB.GhostBan(temp[1].ply, os.time()+autoban_time, "lag autoban")
-				FSB.SendLocalizedMessage("lag.autobanned", temp[1].ply:Nick(), autoban_time)
+				FSB.GhostBan(temp[1].ply, os.time()+AUTOBAN_TIME, "lag autoban")
+				FSB.SendLocalizedMessage("lag.autobanned", temp[1].ply:Nick(), AUTOBAN_TIME)
 				NADMOD.CleanPlayer(Player(0), temp[1].ply)
-				MsgN("Anticrash automatically banned " .. temp[1].ply:Nick() .. " for " .. autoban_time .. " seconds")
+				MsgN("Anticrash automatically banned " .. temp[1].ply:Nick() .. " for " .. AUTOBAN_TIME .. " seconds")
 			end
 		end
 	end
@@ -110,10 +110,10 @@ end
 
 local function handleCleanUp()
 	physenv.SetPhysicsPaused(true)
-	FSB.SendLocalizedMessage("lag.cleanup", seconds_before_cleanup)
+	FSB.SendLocalizedMessage("lag.cleanup", SECONDS_BEFORE_CLEANUP)
 	local cur_time = CurTime()
-	Msg("Cleanup forced, dump of the last " .. tostring(num_frames) .. " frames:\n")
-	for i = 1, num_frames do
+	Msg("Cleanup forced, dump of the last " .. tostring(NUM_FRAMES) .. " frames:\n")
+	for i = 1, NUM_FRAMES do
 		MsgN(last_frames[i])
 	end
 	FSB.CleanUpMap(60)
@@ -125,10 +125,10 @@ hook.Add("Tick", "lag_detect", function()
 	local not_from_hybernation = player.GetCount() > 0 -- GetCount doesn't count loading players.
 	local should_run_cleanup_logic = ( sv_hibernate_think:GetBool() or not_from_hybernation ) and last_ticktime ~= 0 and not FSB.IsCleanUpInProgress() and game.MaxPlayers() ~= 1
 	if should_run_cleanup_logic then
-		if physenv.GetLastSimulationTime()*1000 > penetration_stopper_threshold then
+		if physenv.GetLastSimulationTime()*1000 > PENETRATION_STOPPER_THRESHOLD then
 			handleFindPropPenetration()
 		end
-		if physenv.GetLastSimulationTime()*1000 > penetration_stopper_threshold and getAverageMSPT() > cleanup_threshold then
+		if physenv.GetLastSimulationTime()*1000 > PENETRATION_STOPPER_THRESHOLD and getAverageMSPT() > CLEANUP_THRESHOLD then
 			handleCleanUp()
 		end
 	end
@@ -156,7 +156,7 @@ hook.Add("PlayerSpawnObject", "blocked_props", handle_blacklist)
 
 local function handle_ratelimit(ply)
 	if ply.spawns_blocked then return false end
-	if ply.ents_this_tick > max_entities_per_tick then
+	if ply.ents_this_tick > MAX_ENTITIES_PER_TICK then
 		ply.spawns_blocked = true
 		return false
 	end

@@ -1,5 +1,5 @@
 
-local timout_time = 0.5
+local TIMEOUT_TIME = 0.5
 local was_timing_out = false
 
 hook.Add("StartCommand", "init_crash_detect", function (ply, ucmd)
@@ -7,7 +7,7 @@ hook.Add("StartCommand", "init_crash_detect", function (ply, ucmd)
 	-- But it's better then assuming the player has enough timeout time.
 	RunConsoleCommand("cl_timeout", "600")
 
-	timer.Create("CrashDetect", timout_time, 0, function ()
+	timer.Create("CrashDetect", TIMEOUT_TIME, 0, function ()
 		local timing_out, last_ping = GetTimeoutInfo()
 		if timing_out then
 			if not was_timing_out then

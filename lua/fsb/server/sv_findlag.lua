@@ -1,5 +1,5 @@
 
-local ratelimit = 5
+local RATELIMIT = 5
 local ratelimit_table = {}
 
 local function cmd_out(ply, msg)
@@ -11,8 +11,8 @@ local function cmd_out(ply, msg)
 end
 
 concommand.Add("findlag", function (ply, cmd, args, arg_str)
-	if not FSB.Ratelimit(ratelimit_table, ply, 5) then
-		ply:SendLocalizedMessage("ratelimit", ratelimit)
+	if not FSB.Ratelimit(ratelimit_table, ply, RATELIMIT) then
+		ply:SendLocalizedMessage("ratelimit", RATELIMIT)
 		return
 	end
 
@@ -95,8 +95,8 @@ local function getChipDataForPrint(chip)
 end
 
 concommand.Add("findchips", function (ply, cmd, args, arg_str)
-	if not FSB.Ratelimit(ratelimit_table, ply, 5) then
-		ply:SendLocalizedMessage("ratelimit", ratelimit)
+	if not FSB.Ratelimit(ratelimit_table, ply, RATELIMIT) then
+		ply:SendLocalizedMessage("ratelimit", RATELIMIT)
 		return
 	end
 

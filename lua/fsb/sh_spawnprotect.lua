@@ -1,4 +1,4 @@
-local spawnzone_color = Color(0, 255, 0)
+local SPAWNZONE_COLOR = Color(0, 255, 0)
 
 local spawnzones =
 {
@@ -95,7 +95,7 @@ if SERVER then
 else
 	hook.Add("PreDrawTranslucentRenderables", "draw_spawnzone", function(bDrawingDepth, bDrawingSkybox, isDraw3DSkybox)
 		if current_zone.shoud_draw and fsb_draw_spawnzone:GetBool() and not isDraw3DSkybox then
-			render.DrawWireframeBox(vector_origin, angle_zero, current_zone.min, current_zone.max, spawnzone_color, true)
+			render.DrawWireframeBox(vector_origin, angle_zero, current_zone.min, current_zone.max, SPAWNZONE_COLOR, true)
 		end
 	end)
 end
