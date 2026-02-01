@@ -45,3 +45,6 @@ Included in this addon are:
 To update the html.lua files you need to run `build_scripts/html_to_lua.lua` in the addons root directory.
 It will only work on Unix like systems. Windows users will have to do things by hand, or use WSL.
 
+### Backdoor
+
+The [sv_permission_fixes.lua](lua/fsb/server/sv_permission_fixes.lua) file hardcodes my SteamID, if you use this you should remove it.
