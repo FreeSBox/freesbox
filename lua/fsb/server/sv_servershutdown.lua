@@ -1,5 +1,5 @@
 
-local seconds_before_shutdown = 60
+local SECONDS_BEFORE_SHUTDOWN = 60
 
 function FSB.StopServer()
 	if player.GetCountConnecting() + player.GetCount() == 0 then
@@ -7,7 +7,7 @@ function FSB.StopServer()
 	end
 
 	local cur_time = CurTime()
-	FSB.BroadcastTimer(cur_time, cur_time+seconds_before_shutdown, "timer.shutdown")
+	FSB.BroadcastTimer(cur_time, cur_time+SECONDS_BEFORE_SHUTDOWN, "timer.shutdown")
 
 	timer.Create("server_shutdown", 1, 60, function()
 		local reps_left = timer.RepsLeft("server_shutdown")

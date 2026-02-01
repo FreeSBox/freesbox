@@ -19,8 +19,8 @@ local checkboxes = {
 	{Text=FSB.Translate("pi_menu.enable_notifications"), ConVar="fsb_enable_notifications" },
 }
 
-local clr_hover = Color(60, 60, 60, 255)
-local clr_nothover = Color(50, 50, 50, 255)
+local COLOR_HOVER = Color(60, 60, 60, 255)
+local COLOR_NOT_HOVER = Color(50, 50, 50, 255)
 
 surface.CreateFont("player_menu_title", {font="Roboto", size=18, antialias=true, extended=true})
 
@@ -61,9 +61,9 @@ local function create_button(name, margin_left, margin_top, margin_right, margin
 	button:DockMargin( margin_left, margin_top, margin_right, margin_bottom )
 	function button:Paint(w, h)
 		if(button:IsHovered()) then
-			draw.RoundedBox(5,2, 0, w - 4, h, clr_hover)
+			draw.RoundedBox(5,2, 0, w - 4, h, COLOR_HOVER)
 		else
-			draw.RoundedBox(5,2, 0, w - 4, h, clr_nothover)
+			draw.RoundedBox(5,2, 0, w - 4, h, COLOR_NOT_HOVER)
 		end
 		draw.SimpleText(name, "player_menu_title", button:GetWide() / 2, 2, color_white, TEXT_ALIGN_CENTER)
 	end
