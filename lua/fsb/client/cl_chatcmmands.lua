@@ -3,7 +3,6 @@
 local chatcmds =
 {
 	["+drop"] = "chatcmd.use_console_dumbass",
-	["!build"] = "chatcmd.custom_build_on_server",
 }
 
 hook.Add("PlayerSay", "explain_commands", function (sender, text, teamChat)

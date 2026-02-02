@@ -222,6 +222,18 @@ function PLAYER:PutIntoPVP()
 	self:SendLocalizedHint("pvp.entered_pvp", NOTIFY_GENERIC, 3)
 end
 
+---Removes all weapons and calls MarkAsReadyForBuild
+function PLAYER:PutIntoBUILD()
+	local player_weapons = self:GetWeapons()
+	for _, weapon in ipairs(player_weapons) do
+		if not BUILD_WEAPONS[weapon:GetClass()] then
+			weapon:Remove()
+		end
+	end
+
+	self:MarkAsReadyForBuild()
+end
+
 ---This will set the PVP timer to 50 seconds in the future.
 function PLAYER:MarkAsReadyForBuild()
 	if self:GetNWFloat(PVP_NET_FLOAT) ~= IN_PVP_MAGIC_VALUE then
@@ -362,14 +374,7 @@ if SERVER then
 	end)
 
 	concommand.Add("build", function (ply, cmd, args, argStr)
-		local player_weapons = ply:GetWeapons()
-		for _, weapon in ipairs(player_weapons) do
-			if not BUILD_WEAPONS[weapon:GetClass()] then
-				weapon:Remove()
-			end
-		end
-
-		ply:MarkAsReadyForBuild()
+		ply:PutIntoBUILD()
 	end)
 end
 
