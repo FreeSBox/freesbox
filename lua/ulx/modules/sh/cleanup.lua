@@ -1,19 +1,40 @@
 
+local function cleanupplayerULXWrapper(calling_ply, target_ply)
+	NADMOD.CleanPlayer(calling_ply, target_ply)
+
+	ulx.fancyLogAdmin(calling_ply, "#A cleaned up #T's props", target_ply)
+end
+local function cleanupdisconnectedULXWrapper(calling_ply)
+	-- This is pasted from the NADMOD source because they don't provide a function for it that doen't check admin access.
+	local count = 0
+	for k,v in pairs(NADMOD.Props) do
+		if not v.Ent:IsValid() then
+			NADMOD.EntityRemoved(v.Ent)
+		elseif not IsValid(v.Owner) and (v.Name ~= "O" and v.Name ~= "W") and not v.Ent:GetPersistent() then
+			v.Ent:Remove()
+			count = count + 1
+		end
+	end
+	NADMOD.Notify("Disconnected players props ("..count..") have been cleaned up")
+
+	ulx.fancyLogAdmin(calling_ply, "#A cleaned up disconnected props")
+end
+
 local function cleanupULXWrapper(calling_ply, time)
 	FSB.CleanUpMap(time)
 
-	ulx.fancyLogAdmin( calling_ply, "#A started a map cleanup" )
+	ulx.fancyLogAdmin(calling_ply, "#A started a map cleanup")
 end
 local function cancelCleanupULXWrapper(calling_ply)
 	FSB.CancelCleanUp()
 
-	ulx.fancyLogAdmin( calling_ply, "#A stopped the cleanup" )
+	ulx.fancyLogAdmin(calling_ply, "#A stopped the cleanup")
 end
 
 local function freezeAllULXWrapper(calling_ply)
 	FSB.FreezeAllProps()
 
-	ulx.fancyLogAdmin( calling_ply, "#A froze all props" )
+	ulx.fancyLogAdmin(calling_ply, "#A froze all props")
 end
 
 local function freezePlayerProps(calling_ply, target_ply)
@@ -26,8 +47,17 @@ local function freezePlayerProps(calling_ply, target_ply)
 		end
 	end
 
-	ulx.fancyLogAdmin( calling_ply, "#A froze #T's props", target_ply )
+	ulx.fancyLogAdmin(calling_ply, "#A froze #T's props", target_ply)
 end
+
+local cleanupplayer = ulx.command("FSB", "ulx cleanplayer", cleanupplayerULXWrapper, "!cleanplayer")
+cleanupplayer:addParam{ type=ULib.cmds.PlayerArg }
+cleanupplayer:defaultAccess( ULib.ACCESS_ADMIN )
+cleanupplayer:help( "Cleans up players props." )
+
+local cleanupdisconnected = ulx.command("FSB", "ulx cdp", cleanupdisconnectedULXWrapper, "!cdp")
+cleanupdisconnected:defaultAccess( ULib.ACCESS_ADMIN )
+cleanupdisconnected:help( "Cleans up props from disconnected players." )
 
 local cleanup = ulx.command("FSB", "ulx cleanup", cleanupULXWrapper, "!cleanup")
 cleanup:addParam{ type=ULib.cmds.NumArg, min=10, max=120, default=60, hint="seconds to wait before cleaning up", ULib.cmds.round, ULib.cmds.optional }
@@ -46,4 +76,3 @@ local freezeprops = ulx.command("FSB", "ulx freezeprops", freezePlayerProps, "!f
 freezeprops:addParam{ type=ULib.cmds.PlayerArg }
 freezeprops:defaultAccess( ULib.ACCESS_ADMIN )
 freezeprops:help( "Freezes props owned by a player." )
-
