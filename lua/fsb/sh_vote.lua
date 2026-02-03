@@ -99,10 +99,3 @@ eVoteStatus =
 	LIKE = 1,
 	DISLIKE = 2,
 }
-
-if SERVER then
-	include("vote/sv_vote.lua")
-	AddCSLuaFile("vote/cl_vote.lua")
-else
-	include("vote/cl_vote.lua")
-end
