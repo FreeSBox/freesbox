@@ -29,3 +29,27 @@ else
 end
 
 print("FreeSBox initialized.")
+
+-- Load clientside extensions
+if CLIENT then
+	local lua_files = file.Find("fsb/*.lua", "LuaMenu")
+	local lua_client_files = file.Find("fsb/client/*.lua", "LuaMenu")
+	local addon_files = file.Find("lua/fsb/*.lua", "THIRDPARTY")
+	local addon_client_files = file.Find("lua/fsb/client/*.lua", "THIRDPARTY")
+
+	for _, file in ipairs(lua_files) do
+		include("fsb/" .. file)
+	end
+	for _, file in ipairs(lua_client_files) do
+		include("fsb/client/" .. file)
+	end
+
+	for _, file in ipairs(addon_files) do
+		include("fsb/" .. file)
+	end
+	for _, file in ipairs(addon_client_files) do
+		include("fsb/client/" .. file)
+	end
+
+	print("Custom client side lua scripts loaded")
+end
