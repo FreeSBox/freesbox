@@ -260,6 +260,7 @@ function scoreboard:ReloadPlayerList()
 			end
 			function slider.Knob:Paint(w,h) end
 			function slider.OnValueChanged(self_, x,y)
+				if not IsValid(self.ply) then return end
 				--x^2 is pretty bad, but much better then linear, so whatever.
 				self.ply:SetVoiceVolumeScale(x^2)
 			end
@@ -332,7 +333,6 @@ function scoreboard:UpdateConnectingPlayers()
 	for userid, ply in pairs(self.connecting_players) do
 		if Player(ply.UserID):IsValid() then
 			self.connecting_players[userid] = nil
-			print("REMOVEME: Removed", ply)
 		end
 	end
 end
