@@ -24,6 +24,7 @@ local CLEANUP_THRESHOLD = 800 -- milliseconds
 local PENETRATION_STOPPER_THRESHOLD = 60 -- milliseconds
 local SECONDS_BEFORE_CLEANUP = 60
 local MAX_ENTITIES_PER_TICK = 15 -- How many entities can a player spawn in 1 tick.
+local AUTOBAN_INFRACTIONS = 3 -- How many times does a player need to trigger the anti-lag to get auto banned
 local AUTOBAN_TIME = 300 -- For how many seconds do we automatically ban a suspected crasher?
 local NUM_FRAMES = 6 -- the avarage of this number of frames is checked against the threashold
 
@@ -98,10 +99,11 @@ local function handleFindPropPenetration()
 			FSB.SendLocalizedMessage("lag.print_penetrating", temp[1].ply:Nick(), temp[1].count)
 			print(temp[1].ply:Nick(), "has", temp[1].count, "penetrating props!")
 
-			if temp[1].ply.likely_crasher > 6 then
+			if temp[1].ply.likely_crasher > AUTOBAN_INFRACTIONS then
 				FSB.GhostBan(temp[1].ply, os.time()+AUTOBAN_TIME, "lag autoban")
 				FSB.SendLocalizedMessage("lag.autobanned", temp[1].ply:Nick(), AUTOBAN_TIME)
 				NADMOD.CleanPlayer(Player(0), temp[1].ply)
+				FSB.TelemetryLikelyCrasher(temp[1].ply, temp[1].count)
 				MsgN("Anticrash automatically banned " .. temp[1].ply:Nick() .. " for " .. AUTOBAN_TIME .. " seconds")
 			end
 		end
@@ -111,15 +113,14 @@ end
 local function handleCleanUp()
 	physenv.SetPhysicsPaused(true)
 	FSB.SendLocalizedMessage("lag.cleanup", SECONDS_BEFORE_CLEANUP)
-	local cur_time = CurTime()
 	Msg("Cleanup forced, dump of the last " .. tostring(NUM_FRAMES) .. " frames:\n")
 	for i = 1, NUM_FRAMES do
 		MsgN(last_frames[i])
 	end
-	FSB.CleanUpMap(60)
+	FSB.CleanUpMap(SECONDS_BEFORE_CLEANUP)
 end
 
-hook.Add("Tick", "lag_detect", function()
+hook.Add("Think", "lag_detect", function()
 	local sys_time = SysTime()
 	pushMSPT(GetFrameDelta())
 	local not_from_hybernation = player.GetCount() > 0 -- GetCount doesn't count loading players.
@@ -130,6 +131,7 @@ hook.Add("Tick", "lag_detect", function()
 		end
 		if physenv.GetLastSimulationTime()*1000 > PENETRATION_STOPPER_THRESHOLD and getAverageMSPT() > CLEANUP_THRESHOLD then
 			handleCleanUp()
+			FSB.TelemetryLagDetected(last_frames)
 		end
 	end
 	last_ticktime = sys_time
@@ -187,6 +189,7 @@ timer.Create("reset_spawn_blocked", 1, 0, function ()
 	for _, v in ipairs(player.GetHumans()) do
 		if v.spawns_blocked then
 			FSB.SendLocalizedMessage("lag.too_many_props", v:Nick())
+			Msg(string.format("%s spawned more them %i entities in one tick\n", v:Nick(), MAX_ENTITIES_PER_TICK))
 			v.spawns_blocked = false
 		end
 	end
