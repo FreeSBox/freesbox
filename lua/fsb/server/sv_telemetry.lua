@@ -17,7 +17,7 @@ function FSB.TelemetryWrite(type, data)
 			type,
 			data,
 			time
-		) VALUES (?, ?, ?, ?, ?, ?)
+		) VALUES (?, ?, ?)
 		]],
 		type,
 		util.TableToJSON(data, false),
