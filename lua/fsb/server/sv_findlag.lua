@@ -51,6 +51,7 @@ concommand.Add("findlag", function (ply, cmd, args, arg_str)
 		if entity:GetClass() == "gmod_wire_expression2" then
 			local data = entity:GetOverlayData()
 			if not data then continue end
+			if not data.context then continue end
 
 			ent_score = ent_score + data.context.timebench*2000
 		end
