@@ -57,6 +57,8 @@ concommand.Add("findlag", function (ply, cmd, args, arg_str)
 		end
 
 		if entity:GetClass() == "starfall_processor" then
+			if not entity.instance then continue end
+
 			ent_score = ent_score + entity.instance.cpu_average*2000
 		end
 
@@ -77,14 +79,14 @@ end)
 local function getChipDataForPrint(chip)
 	local is_e2 = chip:GetClass() == "gmod_wire_expression2"
 
-	local name
-	local exec_time
+	local name = "errored"
+	local exec_time = 0
 	local chip_type = is_e2 and "E2" or "SF"
 
-	if is_e2 then
+	if is_e2 and chip.context ~= nil then
 		name = chip.name
 		exec_time = chip.context.timebench*1000
-	else -- Assume starfall
+	elseif chip.instance ~= nil then -- Assume starfall
 		name = chip.name
 		exec_time = chip.instance.cpu_average*1000
 	end
