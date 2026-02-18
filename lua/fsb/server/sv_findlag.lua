@@ -59,7 +59,7 @@ concommand.Add("findlag", function (ply, cmd, args, arg_str)
 		if entity:GetClass() == "starfall_processor" then
 			if not entity.instance then continue end
 
-			ent_score = ent_score + entity.instance.cpu_average*2000
+			ent_score = ent_score + entity.instance.perf.cpuAverage*2000
 		end
 
 		lag_scores[owner] = lag_scores[owner] and lag_scores[owner] + ent_score or ent_score
@@ -88,7 +88,7 @@ local function getChipDataForPrint(chip)
 		exec_time = chip.context.timebench*1000
 	elseif chip.instance ~= nil then -- Assume starfall
 		name = chip.name
-		exec_time = chip.instance.cpu_average*1000
+		exec_time = chip.instance.perf.cpuAverage*1000
 	end
 
 	local owner = chip:CPPIGetOwner()
