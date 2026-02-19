@@ -59,22 +59,17 @@ return [[
 ---
 
 "></textarea>
-			<details>
-				<summary>Написание петиций wiki</summary>
-				<iframe
-					id="petitions_wiki"
-					title="Написание петиций"
-					loading="lazy"
-					style="pointer-events:visible;height:2000px;width:100%"
-					src="https://freesbox.github.io/docs/writing_petitions/">
-				</iframe>
-			</details>
 		</pane>
 		<pane title="Предпросмотр">
 			<div id="preview"></div>
 		</pane>
 
 		<input id="createButton" type="submit" value="Создать" onclick="submit_petition()">
+
+		<details>
+			<summary>Как писать петиции</summary>
+			<div id="petition_writing_wiki"></div>
+		</details>
 	</tabs>
 
 	<div id="notification_list" ng-controller="petitionCreatorController as notificationList">
@@ -127,6 +122,7 @@ return [[
 
 	#preview {
 		width: 100%;
+		min-height: 10vh;
 		max-width: fit-content;
 		margin: 0;
 		color: var(--text-color);
@@ -272,15 +268,16 @@ return [[
 
 	function IsGMod()
 	{
-		return typeof gmod !== "undefined"
+		return typeof gmod !== "undefined";
 	}
 
 	function IsLinux()
 	{
-		return navigator.appVersion.indexOf("Linux") != -1
+		return navigator.appVersion.indexOf("Linux") != -1;
 	}
 
-	function UpdateDigest(scope, timeout) {
+	function UpdateDigest(scope, timeout)
+	{
 		if (!scope) return;
 		if (scope.DigestUpdate) return;
 
@@ -354,7 +351,21 @@ return [[
 			$scope.Notifications = [];
 		});
 
-	var parseAndRender = function() {
+	// In GMod, we don't want to open links directly, instead, open the steam overlay and open the link there.
+	function fixAncherTags()
+	{
+		$('a').click(function(e) {
+			// This is not for safety, but so we don't open empty links.
+			if (e.currentTarget.href.startsWith("http"))
+			{
+				e.preventDefault();
+				gmod.OpenURL(e.currentTarget.href);
+			}
+		});
+	}
+
+	function parseAndRender()
+	{
 		var textarea = $("#descriptionInput");
 		var result = marked.parse(textarea.val().replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/,""));
 		var preview = $("#preview");
@@ -363,17 +374,9 @@ return [[
 		if (IsGMod())
 		{
 			var nameinput = $("#nameInput")
-			gmod.SetDraftText(nameinput.val(), textarea.val())
+			gmod.SetDraftText(nameinput.val(), textarea.val());
 
-			// In GMod, we don't want to open links directly, instead, open the steam overlay and open the link there.
-			$('a').click(function(e) {
-				// This is not for safety, but so we don't open empty links.
-				if (e.currentTarget.href.startsWith("http"))
-				{
-					e.preventDefault();
-					gmod.OpenURL(e.currentTarget.href)
-				}
-			});
+			fixAncherTags();
 		}
 	};
 
@@ -384,7 +387,7 @@ return [[
 
 		if (isWhitespaceString(name))
 		{
-			gScope.Notifications.push({text: "Название не может быть пустым"})
+			gScope.Notifications.push({text: "Название не может быть пустым"});
 			UpdateDigest(gScope, 50);
 			return;
 		}
@@ -392,26 +395,14 @@ return [[
 		var description_text = $("#descriptionInput").val();
 		if (isWhitespaceString(description_text))
 		{
-			gScope.Notifications.push({text: "Описание не может быть пустым"})
+			gScope.Notifications.push({text: "Описание не может быть пустым"});
 			UpdateDigest(gScope, 50);
 			return;
 		}
 
 		if (name == description_text)
 		{
-			gScope.Notifications.push({text: "Читай серый текст"})
-			UpdateDigest(gScope, 50);
-			return;
-		}
-
-		{
-			gScope.Notifications.push({text:
-`
-Ёбаный задрот!
-Перед публикацией:
-1. Прочитай серый текст в поле ввода
-2. Прочитай в wiki сервера "Написание петиций"
-`})
+			gScope.Notifications.push({text: "Читай серый текст"});
 			UpdateDigest(gScope, 50);
 			return;
 		}
@@ -423,7 +414,7 @@ return [[
 		}
 		else
 		{
-			console.log("Imagine that a new petition was created", name, description_text)
+			console.log("Imagine that a new petition was created", name, description_text);
 		}
 	}
 
@@ -458,7 +449,7 @@ return [[
 			debounce(parseAndRender, 200)
 		);
 
-		textarea.keydown(keydown)
+		textarea.keydown(keydown);
 
 		if (IsGMod())
 		{
@@ -469,10 +460,31 @@ return [[
 
 				if (!isWhitespaceString(desc))
 				{
-					parseAndRender()
+					parseAndRender();
 				}
 			});
 		}
+
+		// This is awful but it's better the copypasting the wiki and maintaining it in two places.
+		// This is also better then the user not reading it at all.
+		fetch("https://raw.githubusercontent.com/FreeSBox/freesbox.github.io/refs/heads/master/content/docs/writing_petitions.md")
+		.then(res => res.text())
+		.then(text => {
+			// regex magic to remove hugo header
+			text = text.replace(/---(.|\n)*?---/, "");
+			// regex magic to redirect the links to the public wiki
+			text = text.replace(/\/docs\//, "https://freesbox.github.io/docs/");
+
+			var result = marked.parse(text);
+			var wiki = $("#petition_writing_wiki");
+			wiki.get(0).innerHTML = result;
+
+			if (IsGMod())
+			{
+				fixAncherTags();
+			}
+		})
+		.catch(err => console.log(err));
 	});
 
 
