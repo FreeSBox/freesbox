@@ -38,11 +38,6 @@ return [[
 	<tabs>
 		<pane title="Писать">
 			<textarea id="descriptionInput" placeholder="Опишите здесь свою петицию.
-Прочтите заповеди перед написанием петиции.
-Если вам лень писать описание - создателю лень реализовывать вашу петицию.
-
-Петиции нельзя удалить или редактировать - думайте перед тем как создавать.
-
 # Заголовок
 ## Заголовок но меньше
 
@@ -64,6 +59,16 @@ return [[
 ---
 
 "></textarea>
+			<details>
+				<summary>Написание петиций wiki</summary>
+				<iframe
+					id="petitions_wiki"
+					title="Написание петиций"
+					loading="lazy"
+					style="pointer-events:visible;height:2000px;width:100%"
+					src="https://freesbox.github.io/docs/writing_petitions/">
+				</iframe>
+			</details>
 		</pane>
 		<pane title="Предпросмотр">
 			<div id="preview"></div>
@@ -87,6 +92,10 @@ return [[
 		--light-color: rgb(50, 50, 50);
 	}
 
+	* {
+		color: var(--text-color);
+	}
+
 	:link, :visited
 	{
 		color: #58a6ff;
@@ -99,11 +108,7 @@ return [[
 	}
 
 	#nameInput {
-		color: var(--text-color);
 		background-color: var(--main-color);
-	}
-	label {
-		color: var(--text-color);
 	}
 
 	textarea {
@@ -395,6 +400,18 @@ return [[
 		if (name == description_text)
 		{
 			gScope.Notifications.push({text: "Читай серый текст"})
+			UpdateDigest(gScope, 50);
+			return;
+		}
+
+		{
+			gScope.Notifications.push({text:
+`
+Ёбаный задрот!
+Перед публикацией:
+1. Прочитай серый текст в поле ввода
+2. Прочитай в wiki сервера "Написание петиций"
+`})
 			UpdateDigest(gScope, 50);
 			return;
 		}
