@@ -37,7 +37,7 @@ return [[
 
 	<tabs>
 		<pane title="Писать">
-			<textarea id="descriptionInput" placeholder="Опишите здесь свою петицию.
+			<textarea class="petition_input" id="descriptionInput" placeholder="Опишите здесь свою петицию.
 # Заголовок
 ## Заголовок но меньше
 
@@ -61,7 +61,7 @@ return [[
 "></textarea>
 		</pane>
 		<pane title="Предпросмотр">
-			<div id="preview"></div>
+			<div class="petition_input" id="preview"></div>
 		</pane>
 
 		<input id="createButton" type="submit" value="Создать" onclick="submit_petition()">
@@ -106,6 +106,13 @@ return [[
 		background-color: var(--main-color);
 	}
 
+	.petition_input {
+		border: 1px solid gray;
+		border-bottom-left-radius: 4px;
+		border-bottom-right-radius: 4px;
+		border-top: none;
+	}
+
 	textarea {
 		width: 100%;
 		height: 100%;
@@ -114,17 +121,14 @@ return [[
 		box-sizing: border-box;
 		color: var(--text-color);
 		background-color: var(--main-color);
-
-		border-bottom-left-radius: 4px;
-		border-bottom-right-radius: 4px;
-		border-top: none;
 	}
 
 	#preview {
+		overflow: hidden;
 		width: 100%;
 		min-height: 10vh;
-		max-width: fit-content;
 		margin: 0;
+		padding-left: 8px;
 		color: var(--text-color);
 		box-sizing:border-box;
 		word-wrap: break-word;
