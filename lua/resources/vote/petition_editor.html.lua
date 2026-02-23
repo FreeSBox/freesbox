@@ -7,6 +7,7 @@ return [[
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
@@ -37,12 +38,7 @@ return [[
 
 	<tabs>
 		<pane title="Писать">
-			<textarea id="descriptionInput" placeholder="Опишите здесь свою петицию.
-Прочтите заповеди перед написанием петиции.
-Если вам лень писать описание - создателю лень реализовывать вашу петицию.
-
-Петиции нельзя удалить или редактировать - думайте перед тем как создавать.
-
+			<textarea class="petition_input" id="descriptionInput" placeholder="Опишите здесь свою петицию.
 # Заголовок
 ## Заголовок но меньше
 
@@ -66,10 +62,15 @@ return [[
 "></textarea>
 		</pane>
 		<pane title="Предпросмотр">
-			<div id="preview"></div>
+			<div class="petition_input" id="preview"></div>
 		</pane>
 
 		<input id="createButton" type="submit" value="Создать" onclick="submit_petition()">
+
+		<details>
+			<summary>Как писать петиции</summary>
+			<div id="petition_writing_wiki"></div>
+		</details>
 	</tabs>
 
 	<div id="notification_list" ng-controller="petitionCreatorController as notificationList">
@@ -87,6 +88,10 @@ return [[
 		--light-color: rgb(50, 50, 50);
 	}
 
+	* {
+		color: var(--text-color);
+	}
+
 	:link, :visited
 	{
 		color: #58a6ff;
@@ -99,11 +104,14 @@ return [[
 	}
 
 	#nameInput {
-		color: var(--text-color);
 		background-color: var(--main-color);
 	}
-	label {
-		color: var(--text-color);
+
+	.petition_input {
+		border: 1px solid gray;
+		border-bottom-left-radius: 4px;
+		border-bottom-right-radius: 4px;
+		border-top: none;
 	}
 
 	textarea {
@@ -114,16 +122,18 @@ return [[
 		box-sizing: border-box;
 		color: var(--text-color);
 		background-color: var(--main-color);
+	}
 
-		border-bottom-left-radius: 4px;
-		border-bottom-right-radius: 4px;
-		border-top: none;
+	button {
+		background-color: var(--main-color);
 	}
 
 	#preview {
+		overflow: hidden;
 		width: 100%;
-		max-width: fit-content;
+		min-height: 25em;
 		margin: 0;
+		padding-left: 8px;
 		color: var(--text-color);
 		box-sizing:border-box;
 		word-wrap: break-word;
@@ -237,6 +247,16 @@ return [[
 		display: none;
 	}
 
+	.toolbar {
+		justify-content: right;
+		padding: 8px;
+		display: flex;
+	}
+
+	.hide {
+		display: none;
+	}
+
 	.notification {
 		display: block;
 		position: absolute;
@@ -267,15 +287,16 @@ return [[
 
 	function IsGMod()
 	{
-		return typeof gmod !== "undefined"
+		return typeof gmod !== "undefined";
 	}
 
 	function IsLinux()
 	{
-		return navigator.appVersion.indexOf("Linux") != -1
+		return navigator.appVersion.indexOf("Linux") != -1;
 	}
 
-	function UpdateDigest(scope, timeout) {
+	function UpdateDigest(scope, timeout)
+	{
 		if (!scope) return;
 		if (scope.DigestUpdate) return;
 
@@ -286,8 +307,174 @@ return [[
 		}, timeout);
 	}
 
+	function FindLastNewLineFromPos(text, pos)
+	{
+		var last_new_line = text.lastIndexOf("\n", pos);
+		const is_at_end_of_line = text.charAt(pos) == "\n";
+		if (!is_at_end_of_line)
+		{
+			last_new_line++;
+		}
+		else
+		{
+			last_new_line = text.lastIndexOf("\n", pos-1)+1;
+		}
+		if (last_new_line == -1)
+		{
+			last_new_line = 0;
+		}
+
+		return last_new_line;
+	}
+
+	// I hate this web dev shit.
+	// This is depricated, but of course there is no other way of doing this.
+	// https://stackoverflow.com/a/56509046
+	function ReplaceText(new_text)
+	{
+		document.execCommand("selectAll", false);
+		var el = document.createElement("p");
+		el.innerHTML = new_text;
+
+		document.execCommand('insertHTML', false, el.innerHTML);
+		el.remove();
+	}
+
+
+	function InsertHeading()
+	{
+		var input = document.getElementById("descriptionInput");
+		var text = input.value;
+		const start = input.selectionStart;
+		var last_new_line = FindLastNewLineFromPos(text, start);
+
+		var pre_text = text.substring(0, last_new_line);
+		var post_text = text.substring(last_new_line);
+
+		input.focus();
+		ReplaceText(pre_text + "### " + post_text);
+	}
+
+	function InsertTagsAroundText(tag)
+	{
+		var input = document.getElementById("descriptionInput");
+		var text = input.value;
+		const start = input.selectionStart;
+		const end = input.selectionEnd;
+
+		var pre_text = text.substring(0, start);
+		var selected_text = text.substring(start, end);
+		var post_text = text.substring(end);
+
+		input.focus();
+		ReplaceText(pre_text + tag + selected_text + tag + post_text);
+	}
+
+	function InsertLinePrefix(prefix)
+	{
+		var input = document.getElementById("descriptionInput");
+		var text = input.value;
+		const start = input.selectionStart;
+		const end = input.selectionEnd;
+		var last_new_line = FindLastNewLineFromPos(text, start);
+
+		var pre_text = text.substring(0, last_new_line);
+		var selected_text = text.substring(last_new_line, end);
+		var post_text = text.substring(end);
+
+		selected_text = selected_text.replace(/\r?\n/g, "\n"+prefix);
+
+		input.focus();
+		ReplaceText(pre_text + prefix + selected_text + post_text);
+	}
+
+	function InsertCodeBlock()
+	{
+		var input = document.getElementById("descriptionInput");
+		var text = input.value;
+		const start = input.selectionStart;
+		const end = input.selectionEnd;
+		var last_new_line = FindLastNewLineFromPos(text, start);
+
+		var pre_text = text.substring(0, start);
+		var selected_text = text.substring(start, end);
+		var post_text = text.substring(end);
+
+		input.focus();
+		if (selected_text.includes("\n"))
+		{
+			ReplaceText(pre_text + "```\n" + selected_text +"\n```" + post_text);
+		}
+		else
+		{
+			ReplaceText(pre_text + "`" + selected_text +"`" + post_text);
+		}
+	}
+
+	function InsertOList()
+	{
+		var input = document.getElementById("descriptionInput");
+		var text = input.value;
+		const start = input.selectionStart;
+		const end = input.selectionEnd;
+		var last_new_line = FindLastNewLineFromPos(text, start);
+
+		var pre_text = text.substring(0, last_new_line);
+		var selected_text = text.substring(last_new_line, end);
+		var post_text = text.substring(end);
+
+		input.focus();
+		if (selected_text.includes("\n"))
+		{
+			var list_items = selected_text.split("\n");
+			var new_text = "";
+			console.log(list_items);
+			for(var i = 0; i < list_items.length; i++)
+			{
+				new_text = new_text + (i+1) + ". " + list_items[i];
+				if (i < list_items.length-1)
+				{
+					new_text = new_text + "\n";
+				}
+			}
+			ReplaceText(pre_text + new_text + post_text);
+		}
+		else
+		{
+			ReplaceText(pre_text + "1. " + selected_text + post_text);
+		}
+	}
+
+	function InsertLink()
+	{
+		var input = document.getElementById("descriptionInput");
+		var text = input.value;
+		const start = input.selectionStart;
+		const end = input.selectionEnd;
+
+		var pre_text = text.substring(0, start);
+		var selected_text = text.substring(start, end);
+		var post_text = text.substring(end);
+
+		if (selected_text === "")
+		{
+			selected_text = "text";
+		}
+
+		input.focus();
+		ReplaceText(pre_text + "[" + selected_text + "](https://)" + post_text);
+	}
+
+
 	// https://stackoverflow.com/a/10262019
 	const isWhitespaceString = str => !str.replace(/\s/g, '').length
+
+	// https://stackoverflow.com/a/37493957
+	function getWordCount(str)
+	{
+		var match = str.match(/[^\s]+/g);
+		return match ? match.length : 0;
+	}
 
 	var gScope = null;
 
@@ -318,6 +505,19 @@ return [[
 							'<li ng-repeat="pane in panes" ng-click="select(pane)" ng-class="{active:pane.selected}">' +
 								'<a href="">{{pane.title}}</a>' +
 							'</li>' +
+							// Yeah, I'd rather hardcode this here then learn this stupid js framework nonsense.
+							// Also I hardcoded the first pane to be the code editor, the edit buttons are hidden otherwise.
+							'<div class="toolbar" ng-class="{hide:!panes[0].selected}">' +
+								'<button onclick="InsertHeading()" class="fa fa-header"></button>' +
+								'<button onclick="InsertTagsAroundText(\'**\')" class="fa fa-bold"></button>' +
+								'<button onclick="InsertTagsAroundText(\'_\')" class="fa fa-italic"></button>' +
+								'<button onclick="InsertLinePrefix(\'> \')" class="fa fa-quote-left"></button>' +
+								'<button onclick="InsertCodeBlock()" class="fa fa-code"></button>' +
+								'<button onclick="InsertLinePrefix(\'- \')" class="fa fa-list-ul"></button>' +
+								'<button onclick="InsertOList()" class="fa fa-list-ol"></button>' +
+								'<button onclick="InsertLinePrefix(\'- [ ] \')" class="fa fa-check"></button>' +
+								'<button onclick="InsertLink()" class="fa fa-link"></button>' +
+							'</div>' +
 						'</ul>' +
 						'<div class="tab-content" ng-transclude></div>' +
 					'</div>',
@@ -349,7 +549,21 @@ return [[
 			$scope.Notifications = [];
 		});
 
-	var parseAndRender = function() {
+	// In GMod, we don't want to open links directly, instead, open the steam overlay and open the link there.
+	function fixAncherTags()
+	{
+		$('a').click(function(e) {
+			// This is not for safety, but so we don't open empty links.
+			if (e.currentTarget.href.startsWith("http"))
+			{
+				e.preventDefault();
+				gmod.OpenURL(e.currentTarget.href);
+			}
+		});
+	}
+
+	function parseAndRender()
+	{
 		var textarea = $("#descriptionInput");
 		var result = marked.parse(textarea.val().replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/,""));
 		var preview = $("#preview");
@@ -358,17 +572,9 @@ return [[
 		if (IsGMod())
 		{
 			var nameinput = $("#nameInput")
-			gmod.SetDraftText(nameinput.val(), textarea.val())
+			gmod.SetDraftText(nameinput.val(), textarea.val());
 
-			// In GMod, we don't want to open links directly, instead, open the steam overlay and open the link there.
-			$('a').click(function(e) {
-				// This is not for safety, but so we don't open empty links.
-				if (e.currentTarget.href.startsWith("http"))
-				{
-					e.preventDefault();
-					gmod.OpenURL(e.currentTarget.href)
-				}
-			});
+			fixAncherTags();
 		}
 	};
 
@@ -379,7 +585,7 @@ return [[
 
 		if (isWhitespaceString(name))
 		{
-			gScope.Notifications.push({text: "Название не может быть пустым"})
+			gScope.Notifications.push({text: "Название не может быть пустым"});
 			UpdateDigest(gScope, 50);
 			return;
 		}
@@ -387,14 +593,14 @@ return [[
 		var description_text = $("#descriptionInput").val();
 		if (isWhitespaceString(description_text))
 		{
-			gScope.Notifications.push({text: "Описание не может быть пустым"})
+			gScope.Notifications.push({text: "Описание не может быть пустым"});
 			UpdateDigest(gScope, 50);
 			return;
 		}
 
-		if (name == description_text)
+		if (name == description_text || getWordCount(description_text) < 10)
 		{
-			gScope.Notifications.push({text: "Читай серый текст"})
+			gScope.Notifications.push({text: "Читай \"Как писать петиции\""});
 			UpdateDigest(gScope, 50);
 			return;
 		}
@@ -406,7 +612,7 @@ return [[
 		}
 		else
 		{
-			console.log("Imagine that a new petition was created", name, description_text)
+			console.log("Imagine that a new petition was created", name, description_text);
 		}
 	}
 
@@ -429,6 +635,17 @@ return [[
 		{
 			document.execCommand('insertText', false /*no UI*/, "\n");
 		}
+		
+		if(event.ctrlKey && event.code == "KeyB")
+		{
+			InsertTagsAroundText("**");
+			event.preventDefault();
+		}
+		if(event.ctrlKey && event.code == "KeyI")
+		{
+			InsertTagsAroundText("_");
+			event.preventDefault();
+		}
 	}
 
 	angular.element(document).ready(function () {
@@ -441,7 +658,7 @@ return [[
 			debounce(parseAndRender, 200)
 		);
 
-		textarea.keydown(keydown)
+		textarea.keydown(keydown);
 
 		if (IsGMod())
 		{
@@ -452,10 +669,31 @@ return [[
 
 				if (!isWhitespaceString(desc))
 				{
-					parseAndRender()
+					parseAndRender();
 				}
 			});
 		}
+
+		// This is awful but it's better the copypasting the wiki and maintaining it in two places.
+		// This is also better then the user not reading it at all.
+		fetch("https://raw.githubusercontent.com/FreeSBox/freesbox.github.io/refs/heads/master/content/docs/writing_petitions.md")
+		.then(res => res.text())
+		.then(text => {
+			// regex magic to remove hugo header
+			text = text.replace(/---(.|\n)*?---/, "");
+			// regex magic to redirect the links to the public wiki
+			text = text.replace(/\/docs\//, "https://freesbox.github.io/docs/");
+
+			var result = marked.parse(text);
+			var wiki = $("#petition_writing_wiki");
+			wiki.get(0).innerHTML = result;
+
+			if (IsGMod())
+			{
+				fixAncherTags();
+			}
+		})
+		.catch(err => console.log(err));
 	});
 
 
