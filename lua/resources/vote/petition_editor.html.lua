@@ -247,10 +247,14 @@ return [[
 		display: none;
 	}
 
-	#toolbar {
+	.toolbar {
 		justify-content: right;
 		padding: 8px;
 		display: flex;
+	}
+
+	.hide {
+		display: none;
 	}
 
 	.notification {
@@ -495,7 +499,8 @@ return [[
 								'<a href="">{{pane.title}}</a>' +
 							'</li>' +
 							// Yeah, I'd rather hardcode this here then learn this stupid js framework nonsense.
-							'<div id="toolbar">' +
+							// Also I hardcoded the first pane to be the code editor, the edit buttons are hidden otherwise.
+							'<div class="toolbar" ng-class="{hide:!panes[0].selected}">' +
 								'<button onclick="InsertHeading()" class="fa fa-header"></button>' +
 								'<button onclick="InsertTagsAroundText(\'**\')" class="fa fa-bold"></button>' +
 								'<button onclick="InsertTagsAroundText(\'_\')" class="fa fa-italic"></button>' +
