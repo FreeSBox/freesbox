@@ -469,6 +469,13 @@ return [[
 	// https://stackoverflow.com/a/10262019
 	const isWhitespaceString = str => !str.replace(/\s/g, '').length
 
+	// https://stackoverflow.com/a/37493957
+	function getWordCount(str)
+	{
+		var match = str.match(/[^\s]+/g);
+		return match ? match.length : 0;
+	}
+
 	var gScope = null;
 
 	angular.module('components', [])
@@ -591,9 +598,9 @@ return [[
 			return;
 		}
 
-		if (name == description_text)
+		if (name == description_text || getWordCount(description_text) < 10)
 		{
-			gScope.Notifications.push({text: "Читай серый текст"});
+			gScope.Notifications.push({text: "Читай \"Как писать петиции\""});
 			UpdateDigest(gScope, 50);
 			return;
 		}
