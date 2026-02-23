@@ -123,6 +123,10 @@ return [[
 		background-color: var(--main-color);
 	}
 
+	button {
+		background-color: var(--main-color);
+	}
+
 	#preview {
 		overflow: hidden;
 		width: 100%;
@@ -242,6 +246,12 @@ return [[
 		display: none;
 	}
 
+	#toolbar {
+		justify-content: right;
+		padding: 8px;
+		display: flex;
+	}
+
 	.notification {
 		display: block;
 		position: absolute;
@@ -292,6 +302,145 @@ return [[
 		}, timeout);
 	}
 
+	function FindLastNewLineFromPos(text, pos)
+	{
+		var last_new_line = text.lastIndexOf("\n", pos);
+		const is_at_end_of_line = text.charAt(pos) == "\n";
+		if (!is_at_end_of_line)
+		{
+			last_new_line++;
+		}
+		else
+		{
+			last_new_line = text.lastIndexOf("\n", pos-1)+1;
+		}
+		if (last_new_line == -1)
+		{
+			last_new_line = 0;
+		}
+
+		return last_new_line;
+	}
+
+	// I hate this web dev shit.
+	// This is depricated, but of course there is no other way of doing this.
+	// https://stackoverflow.com/a/56509046
+	function ReplaceText(new_text)
+	{
+		document.execCommand("selectAll", false);
+		var el = document.createElement("p");
+		el.innerHTML = new_text;
+
+		document.execCommand('insertHTML', false, el.innerHTML);
+		el.remove();
+	}
+
+
+	function InsertHeading()
+	{
+		var input = document.getElementById("descriptionInput");
+		var text = input.value;
+		const start = input.selectionStart;
+		var last_new_line = FindLastNewLineFromPos(text, start);
+
+		var pre_text = text.substring(0, last_new_line);
+		var post_text = text.substring(last_new_line);
+
+		input.focus();
+		ReplaceText(pre_text + "### " + post_text);
+	}
+
+	function InsertTagsAroundText(tag)
+	{
+		var input = document.getElementById("descriptionInput");
+		var text = input.value;
+		const start = input.selectionStart;
+		const end = input.selectionEnd;
+
+		var pre_text = text.substring(0, start);
+		var selected_text = text.substring(start, end);
+		var post_text = text.substring(end);
+
+		input.focus();
+		ReplaceText(pre_text + tag + selected_text + tag + post_text);
+	}
+
+	function InsertLinePrefix(prefix)
+	{
+		var input = document.getElementById("descriptionInput");
+		var text = input.value;
+		const start = input.selectionStart;
+		const end = input.selectionEnd;
+		var last_new_line = FindLastNewLineFromPos(text, start);
+
+		var pre_text = text.substring(0, last_new_line);
+		var selected_text = text.substring(last_new_line, end);
+		var post_text = text.substring(end);
+
+		selected_text = selected_text.replace(/\r?\n/g, "\n"+prefix);
+
+		input.focus();
+		ReplaceText(pre_text + prefix + selected_text + post_text);
+	}
+
+	function InsertCodeBlock()
+	{
+		var input = document.getElementById("descriptionInput");
+		var text = input.value;
+		const start = input.selectionStart;
+		const end = input.selectionEnd;
+		var last_new_line = FindLastNewLineFromPos(text, start);
+
+		var pre_text = text.substring(0, start);
+		var selected_text = text.substring(start, end);
+		var post_text = text.substring(end);
+
+		input.focus();
+		if (selected_text.includes("\n"))
+		{
+			ReplaceText(pre_text + "```\n" + selected_text +"\n```" + post_text);
+		}
+		else
+		{
+			ReplaceText(pre_text + "`" + selected_text +"`" + post_text);
+		}
+	}
+
+	function InsertOList()
+	{
+		var input = document.getElementById("descriptionInput");
+		var text = input.value;
+		const start = input.selectionStart;
+		const end = input.selectionEnd;
+		var last_new_line = FindLastNewLineFromPos(text, start);
+
+		var pre_text = text.substring(0, last_new_line);
+		var selected_text = text.substring(last_new_line, end);
+		var post_text = text.substring(end);
+
+		input.focus();
+		if (selected_text.includes("\n"))
+		{
+			var list_items = selected_text.split("\n");
+			var new_text = "";
+			console.log(list_items);
+			for(var i = 0; i < list_items.length; i++)
+			{
+				new_text = new_text + (i+1) + ". " + list_items[i];
+				if (i < list_items.length-1)
+				{
+					new_text = new_text + "\n";
+				}
+			}
+			ReplaceText(pre_text + new_text + post_text);
+		}
+		else
+		{
+			ReplaceText(pre_text + "1. " + selected_text + post_text);
+		}
+	}
+
+
 	// https://stackoverflow.com/a/10262019
 	const isWhitespaceString = str => !str.replace(/\s/g, '').length
 
@@ -324,6 +473,17 @@ return [[
 							'<li ng-repeat="pane in panes" ng-click="select(pane)" ng-class="{active:pane.selected}">' +
 								'<a href="">{{pane.title}}</a>' +
 							'</li>' +
+							// Yeah, I'd rather hardcode this here then learn this stupid js framework nonsense.
+							'<div id="toolbar">' +
+								'<button onclick="InsertHeading()">H</button>' +
+								'<button onclick="InsertTagsAroundText(\'**\')">B</button>' +
+								'<button onclick="InsertTagsAroundText(\'*\')">I</button>' +
+								'<button onclick="InsertLinePrefix(\'> \')">\></button>' +
+								'<button onclick="InsertCodeBlock()">\<\></button>' +
+								'<button onclick="InsertLinePrefix(\'- \')">-</button>' +
+								'<button onclick="InsertOList()">1.</button>' +
+								'<button onclick="InsertLinePrefix(\'- [ ] \')">[]</button>' +
+							'</div>' +
 						'</ul>' +
 						'<div class="tab-content" ng-transclude></div>' +
 					'</div>',
