@@ -113,10 +113,6 @@ return [[
 		--text-color: white;
 	}
 
-	html {
-		background-color: black;
-	}
-
 	:link, :visited
 	{
 		color: #58a6ff;
