@@ -477,7 +477,7 @@ return [[
 							'<div id="toolbar">' +
 								'<button onclick="InsertHeading()">H</button>' +
 								'<button onclick="InsertTagsAroundText(\'**\')">B</button>' +
-								'<button onclick="InsertTagsAroundText(\'*\')">I</button>' +
+								'<button onclick="InsertTagsAroundText(\'_\')">I</button>' +
 								'<button onclick="InsertLinePrefix(\'> \')">\></button>' +
 								'<button onclick="InsertCodeBlock()">\<\></button>' +
 								'<button onclick="InsertLinePrefix(\'- \')">-</button>' +
@@ -600,6 +600,17 @@ return [[
 		if (event.keyCode === 13 && IsGMod() && IsLinux())
 		{
 			document.execCommand('insertText', false /*no UI*/, "\n");
+		}
+		
+		if(event.ctrlKey && event.code == "KeyB")
+		{
+			InsertTagsAroundText("**");
+			event.preventDefault();
+		}
+		if(event.ctrlKey && event.code == "KeyI")
+		{
+			InsertTagsAroundText("_");
+			event.preventDefault();
 		}
 	}
 
