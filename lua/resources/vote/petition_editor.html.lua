@@ -130,7 +130,7 @@ return [[
 	#preview {
 		overflow: hidden;
 		width: 100%;
-		min-height: 10vh;
+		min-height: 25em;
 		margin: 0;
 		padding-left: 8px;
 		color: var(--text-color);
