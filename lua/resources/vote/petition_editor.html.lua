@@ -7,6 +7,7 @@ return [[
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
@@ -440,6 +441,26 @@ return [[
 		}
 	}
 
+	function InsertLink()
+	{
+		var input = document.getElementById("descriptionInput");
+		var text = input.value;
+		const start = input.selectionStart;
+		const end = input.selectionEnd;
+
+		var pre_text = text.substring(0, start);
+		var selected_text = text.substring(start, end);
+		var post_text = text.substring(end);
+
+		if (selected_text === "")
+		{
+			selected_text = "text";
+		}
+
+		input.focus();
+		ReplaceText(pre_text + "[" + selected_text + "](https://)" + post_text);
+	}
+
 
 	// https://stackoverflow.com/a/10262019
 	const isWhitespaceString = str => !str.replace(/\s/g, '').length
@@ -475,14 +496,15 @@ return [[
 							'</li>' +
 							// Yeah, I'd rather hardcode this here then learn this stupid js framework nonsense.
 							'<div id="toolbar">' +
-								'<button onclick="InsertHeading()">H</button>' +
-								'<button onclick="InsertTagsAroundText(\'**\')">B</button>' +
-								'<button onclick="InsertTagsAroundText(\'_\')">I</button>' +
-								'<button onclick="InsertLinePrefix(\'> \')">\></button>' +
-								'<button onclick="InsertCodeBlock()">\<\></button>' +
-								'<button onclick="InsertLinePrefix(\'- \')">-</button>' +
-								'<button onclick="InsertOList()">1.</button>' +
-								'<button onclick="InsertLinePrefix(\'- [ ] \')">[]</button>' +
+								'<button onclick="InsertHeading()" class="fa fa-header"></button>' +
+								'<button onclick="InsertTagsAroundText(\'**\')" class="fa fa-bold"></button>' +
+								'<button onclick="InsertTagsAroundText(\'_\')" class="fa fa-italic"></button>' +
+								'<button onclick="InsertLinePrefix(\'> \')" class="fa fa-quote-left"></button>' +
+								'<button onclick="InsertCodeBlock()" class="fa fa-code"></button>' +
+								'<button onclick="InsertLinePrefix(\'- \')" class="fa fa-list-ul"></button>' +
+								'<button onclick="InsertOList()" class="fa fa-list-ol"></button>' +
+								'<button onclick="InsertLinePrefix(\'- [ ] \')" class="fa fa-check"></button>' +
+								'<button onclick="InsertLink()" class="fa fa-link"></button>' +
 							'</div>' +
 						'</ul>' +
 						'<div class="tab-content" ng-transclude></div>' +
