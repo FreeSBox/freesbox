@@ -20,13 +20,12 @@ resource.AddWorkshop("3457996478") -- Glide // Conscript APC
 resource.AddWorkshop("3436601554") -- Glide // Hunter-Chopper
 resource.AddWorkshop("3448521354") -- Glide // Combine Gunship
 resource.AddWorkshop("3001397905") -- Media Player (Updated Edition)
-resource.AddWorkshop("2821862386") -- Simple Weapons: Base
-resource.AddWorkshop("2821865508") -- Simple Weapons: CS:S
-resource.AddWorkshop("2832566843") -- Simple Weapons: Half-Life 2 Extended
 resource.AddWorkshop("3542961565") -- Liberty City // GLIDE
 resource.AddWorkshop("104691717") -- PAC3
 resource.AddWorkshop("104548572") -- Playable Piano
 resource.AddWorkshop("2538387266") -- ActMod
 resource.AddWorkshop("2615656036") -- Base Anim-AM4
 resource.AddWorkshop("3567487307") -- [ActMod] More Emotes
+resource.AddWorkshop("3098824960") -- [ARC9] PolyArms Project - Anniversary!
+resource.AddWorkshop("2910505837") -- ARC9 Weapon Base
 --#endregion
