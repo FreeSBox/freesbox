@@ -73,10 +73,10 @@ local function getDraftText()
 end
 
 local function createPetition(name, description)
-	FSB.SendPetition({
+	FSB.SendPetitions({{
 		name=name,
 		description=description
-	})
+	}})
 	setDraftText("", "")
 	print("Sent new petition to server")
 end
@@ -280,45 +280,33 @@ end)
 --#region Networking
 
 net.Receive("petition_transmit", function(len, ply)
-	---@type petition
-	---@diagnostic disable-next-line: missing-fields
-	local petition = {}
-	assert(net.ReadBool(), "Server sent us a petition without an ID. What the fuck am I supposed to do with it?")
+	local counter = 0
+	while true do
+		if not net.ReadBool() then break end
 
-	petition.index = net.ReadUInt(PETITION_ID_BITS)
-	petition.name = net.ReadString()
-	if net.ReadBool() then -- include_votes
-		petition.num_likes       = net.ReadUInt(PETITION_VOTE_BITS)
-		petition.num_dislikes    = net.ReadUInt(PETITION_VOTE_BITS)
-		petition.our_vote_status = net.ReadUInt(2)
-	else
+		counter = counter + 1
+
+		local petition = FSB.ReadOnePetition()
+		assert(petition.index, "Server sent us a petition without an ID. What the fuck am I supposed to do with it?")
+
 		-- This must exist on the client, if it wasn't transmitted, fill it with default values.
-		petition.num_likes = 0
-		petition.num_dislikes = 0
-		petition.our_vote_status = eVoteStatus.NOT_VOTED
-	end
-	if net.ReadBool() then -- include_author_info
-		petition.author_name    = net.ReadString()
-		petition.author_steamid = net.ReadString()
-	end
-	if net.ReadBool() then -- include_time_info
-		petition.creation_time = net.ReadUInt(32)
-		petition.expire_time = net.ReadUInt(32)
+		if petition.num_likes == nil then
+			petition.num_likes = 0
+			petition.num_dislikes = 0
+			petition.our_vote_status = eVoteStatus.NOT_VOTED
+		end
+
+		petitions_cache[petition.index] = petition
+		petitions_available[petition.index] = true
+
+		if VoteWindowState == eWindowMode.Browse and VoteWindow ~= nil then
+			local html = getHTMLFromWindow(VoteWindow)
+			---@diagnostic disable-next-line: param-type-mismatch
+			addPetitionToHTML(html, petition)
+		end
 	end
 
-	local description_length = net.ReadUInt(19)
-	local description_compressed = net.ReadData(description_length)
-	---@diagnostic disable-next-line: assign-type-mismatch
-	petition.description = util.Decompress(description_compressed)
-
-	petitions_cache[petition.index] = petition
-	petitions_available[petition.index] = true
-
-	if VoteWindowState == eWindowMode.Browse and VoteWindow ~= nil then
-		local html = getHTMLFromWindow(VoteWindow)
-		---@diagnostic disable-next-line: param-type-mismatch
-		addPetitionToHTML(html, petition)
-	end
+	print("recieved " .. counter .. " petitions from server. Used " .. len .. " bits")
 end)
 
 net.Receive("petition_removed", function (len, ply)

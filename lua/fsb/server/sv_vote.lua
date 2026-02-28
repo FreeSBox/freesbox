@@ -731,14 +731,16 @@ net.Receive("petition_transmit", function(len, ply)
 		ply:SendLocalizedMessage("vote.ghostbanned")
 		return
 	end
+
+	--We only read one petition on the server
+	--I don't really see a point in creating MAX_PETITIONS_PER_DAY petitions with one request
+	--Why would anyone want to make a script like this?
+	if not net.ReadBool() then return end
+
 	---@type petition
 	---@diagnostic disable-next-line: missing-fields
-	local petition = {}
+	local petition = FSB.ReadOnePetition()
 
-	if net.ReadBool() then -- include_petition_id
-		net.ReadUInt(PETITION_ID_BITS) -- index
-	end
-	petition.name = net.ReadString()
 	local name_length = #petition.name
 	if name_length > PETITION_NAME_MAX_LENGTH then
 		ply:SendLocalizedMessage("vote.name_too_long", name_length, PETITION_NAME_MAX_LENGTH)
@@ -748,29 +750,8 @@ net.Receive("petition_transmit", function(len, ply)
 		ply:SendLocalizedMessage("vote.name_cant_be_empty")
 		return
 	end
-
-	if net.ReadBool() then -- include_votes
-		net.ReadUInt(PETITION_VOTE_BITS) -- num_likes
-		net.ReadUInt(PETITION_VOTE_BITS) -- num_dislikes
-		net.ReadUInt(2) -- vote_status
-	end
-
-	if net.ReadBool() then -- include_author_info
-		net.ReadString() -- author_name
-		net.ReadString() -- author_steamid
-	end
-
-	if net.ReadBool() then -- include_time_info
-		net.ReadUInt(32) -- creation_time
-		net.ReadUInt(32) -- expire_time
-	end
-
-	local description_length = net.ReadUInt(19)
-	local description_compressed = net.ReadData(description_length)
-	---@diagnostic disable-next-line: assign-type-mismatch
-	petition.description = util.Decompress(description_compressed)
 	if petition.description == nil or #petition.description > PETITION_DESCRIPTION_MAX_LENGTH then
-		ply:SendLocalizedMessage("vote.description_too_long", description_length, PETITION_NAME_MAX_LENGTH)
+		ply:SendLocalizedMessage("vote.description_too_long", #petition.description, PETITION_DESCRIPTION_MAX_LENGTH)
 		return
 	end
 	if string.IsOnlyWhiteSpace(petition.description) then
@@ -830,9 +811,7 @@ net.Receive("petition_request", function(len, ply)
 	end
 
 	local petitions = getPetitionsFromIndexes(petition_ids, ply)
-	for _, petition in ipairs(petitions) do
-		FSB.SendPetition(petition, ply)
-	end
+	FSB.SendPetitions(petitions, ply)
 end)
 
 net.Receive("petition_list_request", function(len, ply)
