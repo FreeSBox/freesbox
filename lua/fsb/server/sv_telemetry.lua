@@ -91,3 +91,13 @@ function FSB.TelemetryGCCExploit(ply)
 
 	FSB.TelemetryWrite("gcc_exploit", metric)
 end
+
+function FSB.TelemetryStart()
+	local metric = {}
+
+	metric["map"] = game.GetMap()
+
+	FSB.TelemetryWrite("start", metric)
+end
+
+hook.Add("Initialize", "telemetry_server_start", FSB.TelemetryStart)
