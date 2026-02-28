@@ -283,8 +283,8 @@ net.Receive("petition_transmit", function(len, ply)
 	local counter = 0
 	while true do
 		if not net.ReadBool() then break end
-
 		counter = counter + 1
+		assert(counter <= PETITION_MAX_PETITIONS_PER_REQUEST, "Recieved too many petitions from the server in one message")
 
 		local petition = FSB.ReadOnePetition()
 		assert(petition.index, "Server sent us a petition without an ID. What the fuck am I supposed to do with it?")
@@ -305,8 +305,6 @@ net.Receive("petition_transmit", function(len, ply)
 			addPetitionToHTML(html, petition)
 		end
 	end
-
-	print("recieved " .. counter .. " petitions from server. Used " .. len .. " bits")
 end)
 
 net.Receive("petition_removed", function (len, ply)
