@@ -510,15 +510,15 @@
 							// Yeah, I'd rather hardcode this here then learn this stupid js framework nonsense.
 							// Also I hardcoded the first pane to be the code editor, the edit buttons are hidden otherwise.
 							'<div class="toolbar" ng-class="{hide:!panes[0].selected}">' +
-								'<button onclick="InsertHeading()" class="fa fa-header"></button>' +
-								'<button onclick="InsertTagsAroundText(\'**\')" class="fa fa-bold"></button>' +
-								'<button onclick="InsertTagsAroundText(\'_\')" class="fa fa-italic"></button>' +
-								'<button onclick="InsertLinePrefix(\'> \')" class="fa fa-quote-left"></button>' +
-								'<button onclick="InsertCodeBlock()" class="fa fa-code"></button>' +
-								'<button onclick="InsertLinePrefix(\'- \')" class="fa fa-list-ul"></button>' +
-								'<button onclick="InsertOList()" class="fa fa-list-ol"></button>' +
-								'<button onclick="InsertLinePrefix(\'- [ ] \')" class="fa fa-check"></button>' +
-								'<button onclick="InsertLink()" class="fa fa-link"></button>' +
+								'<button title="Заголовок" onclick="InsertHeading()" class="fa fa-header"></button>' +
+								'<button title="Жирный" onclick="InsertTagsAroundText(\'**\')" class="fa fa-bold"></button>' +
+								'<button title="Курсив" onclick="InsertTagsAroundText(\'_\')" class="fa fa-italic"></button>' +
+								'<button title="Цитата" onclick="InsertLinePrefix(\'> \')" class="fa fa-quote-left"></button>' +
+								'<button title="Код" onclick="InsertCodeBlock()" class="fa fa-code"></button>' +
+								'<button title="Неупорядоченный список" onclick="InsertLinePrefix(\'- \')" class="fa fa-list-ul"></button>' +
+								'<button title="Упорядоченный список" onclick="InsertOList()" class="fa fa-list-ol"></button>' +
+								'<button title="Флажок, чекбокс, галочка" onclick="InsertLinePrefix(\'- [x] \')" class="fa fa-check"></button>' +
+								'<button title="Ссылка" onclick="InsertLink()" class="fa fa-link"></button>' +
 							'</div>' +
 						'</ul>' +
 						'<div class="tab-content" ng-transclude></div>' +
