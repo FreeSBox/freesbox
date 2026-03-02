@@ -4,12 +4,14 @@ PETITION_ID_BITS = 16
 PETITION_VOTE_BITS = 16
 
 --How many petiotions can the client request at once.
-PETITION_MAX_PETITIONS_PER_REQUEST = 16
+PETITION_MAX_PETITIONS_PER_REQUEST = 32
 
 PETITION_NAME_MAX_LENGTH = 128
-PETITION_DESCRIPTION_MAX_LENGTH = 60000
+PETITION_DESCRIPTION_MAX_LENGTH = 30000
 
 MAX_PETITIONS_PER_DAY = 2
+
+local NETMSG_MAX_BYTES = 65533
 
 ---@class petition
 ---@field index integer?
@@ -40,20 +42,30 @@ function FSB.GetInvalidPetition(index)
 	}
 end
 
----@param petition petition
+---@param petitions table<integer,petition> Petitions array.
 ---@param target_player Player? Only available on the server side.
----The server will discard all the data it can obtain itself, so don't bother trying to send it.
-function FSB.SendPetition(petition, target_player)
+---The server will discard all the data it can obtain itself, so don't bother trying to send it.  
+---The client can only send one petition at a time,
+---if you send more then one the server will discard everything after first petition.
+function FSB.SendPetitions(petitions, target_player)
+	assert(#petitions <= PETITION_MAX_PETITIONS_PER_REQUEST, "Tried to send too many petitions")
 
-	local description_compressed = util.Compress(petition.description)
-	local description_compressed_len = #description_compressed
-
-	local include_petition_id = SERVER
-	local include_votes = (petition.num_likes ~= nil or petition.num_dislikes ~= nil) and SERVER
-	local include_author_info = SERVER
-	local include_time_info = SERVER
+	local overflow_petitions = {}
 
 	net.Start("petition_transmit")
+	for _, petition in ipairs(petitions) do
+		local description_compressed = util.Compress(petition.description)
+		local description_compressed_len = #description_compressed
+		if NETMSG_MAX_BYTES-net.BytesWritten() <= description_compressed_len+PETITION_NAME_MAX_LENGTH+1000 then
+			overflow_petitions[#overflow_petitions+1] = petition
+			net.WriteBool(false) -- No petitions left
+			goto CONTINUE
+		end
+		net.WriteBool(true)
+		local include_petition_id = SERVER
+		local include_votes = (petition.num_likes ~= nil or petition.num_dislikes ~= nil) and SERVER
+		local include_author_info = SERVER
+		local include_time_info = SERVER
 		net.WriteBool(include_petition_id)
 		if include_petition_id then
 			net.WriteUInt(petition.index, PETITION_ID_BITS)
@@ -75,8 +87,19 @@ function FSB.SendPetition(petition, target_player)
 			net.WriteUInt(petition.creation_time, 32)
 			net.WriteUInt(petition.expire_time, 32)
 		end
+
 		net.WriteUInt(description_compressed_len, 19)
 		net.WriteData(description_compressed, description_compressed_len)
+
+		::CONTINUE::
+	end
+
+
+	if #overflow_petitions == 0 then
+		net.WriteBool(false)
+	end
+
+	local bytes_used = net.BytesWritten()
 
 	if SERVER then
 		if target_player ~= nil then
@@ -87,6 +110,48 @@ function FSB.SendPetition(petition, target_player)
 	else
 		net.SendToServer()
 	end
+
+	if #overflow_petitions > 0 then
+		MsgN(string.format("SendPetitions petitions packet too large, splitting. (%d petitions left to send, %d bytes written)", #overflow_petitions, bytes_used))
+		FSB.SendPetitions(overflow_petitions, target_player)
+	end
+end
+
+---**Internal** not intended for use outside petition networking code.
+---Reads 1 petition from the petition_transmit netmsg
+---@return petition
+function FSB.ReadOnePetition()
+	---@type petition
+	---@diagnostic disable-next-line: missing-fields
+	local petition = {}
+
+	if net.ReadBool() then -- include_petition_id
+		petition.index = net.ReadUInt(PETITION_ID_BITS)
+	end
+	petition.name = net.ReadString()
+
+	if net.ReadBool() then -- include_votes
+		petition.num_likes       = net.ReadUInt(PETITION_VOTE_BITS)
+		petition.num_dislikes    = net.ReadUInt(PETITION_VOTE_BITS)
+		petition.our_vote_status = net.ReadUInt(2)
+	end
+
+	if net.ReadBool() then -- include_author_info
+		petition.author_name    = net.ReadString()
+		petition.author_steamid = net.ReadString()
+	end
+
+	if net.ReadBool() then -- include_time_info
+		petition.creation_time = net.ReadUInt(32)
+		petition.expire_time   = net.ReadUInt(32)
+	end
+
+	local description_length = net.ReadUInt(19)
+	local description_compressed = net.ReadData(description_length)
+	---@diagnostic disable-next-line: assign-type-mismatch
+	petition.description = util.Decompress(description_compressed)
+
+	return petition
 end
 
 function string.IsOnlyWhiteSpace(inputStr)
