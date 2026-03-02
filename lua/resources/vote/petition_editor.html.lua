@@ -280,6 +280,28 @@ return [[
 		color: white;
 		cursor: pointer;
 	}
+
+	/*
+	Source - https://stackoverflow.com/questions/45456543/make-text-show-up-on-hover-over-button
+	Posted by null
+	Retrieved 2026-03-03, License - null
+	*/
+
+	.tooltip-text {
+		background-color: gray;
+		border-radius: 5px;
+		visibility: hidden;
+		text-align: center;
+		padding: 5px;
+		position: absolute;
+		pointer-events: none;
+		transform: translateX(-50%);
+	}
+
+	.tooltip-container:hover .tooltip-text {
+		visibility: visible;
+		opacity: 1;
+	}
 </style>
 <script>
 	// Sorry for using javascript.
@@ -508,15 +530,42 @@ return [[
 							// Yeah, I'd rather hardcode this here then learn this stupid js framework nonsense.
 							// Also I hardcoded the first pane to be the code editor, the edit buttons are hidden otherwise.
 							'<div class="toolbar" ng-class="{hide:!panes[0].selected}">' +
-								'<button title="Заголовок" onclick="InsertHeading()" class="fa fa-header"></button>' +
-								'<button title="Жирный" onclick="InsertTagsAroundText(\'**\')" class="fa fa-bold"></button>' +
-								'<button title="Курсив" onclick="InsertTagsAroundText(\'_\')" class="fa fa-italic"></button>' +
-								'<button title="Цитата" onclick="InsertLinePrefix(\'> \')" class="fa fa-quote-left"></button>' +
-								'<button title="Код" onclick="InsertCodeBlock()" class="fa fa-code"></button>' +
-								'<button title="Неупорядоченный список" onclick="InsertLinePrefix(\'- \')" class="fa fa-list-ul"></button>' +
-								'<button title="Упорядоченный список" onclick="InsertOList()" class="fa fa-list-ol"></button>' +
-								'<button title="Флажок, чекбокс, галочка" onclick="InsertLinePrefix(\'- [x] \')" class="fa fa-check"></button>' +
-								'<button title="Ссылка" onclick="InsertLink()" class="fa fa-link"></button>' +
+								'<div class="tooltip-container">' +
+									'<button onclick="InsertHeading()" class="fa fa-header"></button>' +
+									'<div class="tooltip-text">Заголовок</div>' +
+								'</div>' +
+								'<div class="tooltip-container">' +
+									'<button onclick="InsertTagsAroundText(\'**\')" class="fa fa-bold"></button>' +
+									'<div class="tooltip-text">Жирный</div>' +
+								'</div>' +
+								'<div class="tooltip-container">' +
+									'<button onclick="InsertTagsAroundText(\'_\')" class="fa fa-italic"></button>' +
+									'<div class="tooltip-text">Курсив</div>' +
+								'</div>' +
+								'<div class="tooltip-container">' +
+									'<button onclick="InsertLinePrefix(\'> \')" class="fa fa-quote-left"></button>' +
+									'<div class="tooltip-text">Цитата</div>' +
+								'</div>' +
+								'<div class="tooltip-container">' +
+									'<button onclick="InsertCodeBlock()" class="fa fa-code"></button>' +
+									'<div class="tooltip-text">Код</div>' +
+								'</div>' +
+								'<div class="tooltip-container">' +
+									'<button onclick="InsertLinePrefix(\'- \')" class="fa fa-list-ul"></button>' +
+									'<div class="tooltip-text">Неупорядоченный список</div>' +
+								'</div>' +
+								'<div class="tooltip-container">' +
+									'<button onclick="InsertOList()" class="fa fa-list-ol"></button>' +
+									'<div class="tooltip-text">Упорядоченный список</div>' +
+								'</div>' +
+								'<div class="tooltip-container">' +
+									'<button onclick="InsertLinePrefix(\'- [x] \')" class="fa fa-check"></button>' +
+									'<div class="tooltip-text">Флажок, чекбокс, галочка</div>' +
+								'</div>' +
+								'<div class="tooltip-container">' +
+									'<button onclick="InsertLink()" class="fa fa-link"></button>' +
+									'<div class="tooltip-text">Ссылка</div>' +
+								'</div>' +
 							'</div>' +
 						'</ul>' +
 						'<div class="tab-content" ng-transclude></div>' +
