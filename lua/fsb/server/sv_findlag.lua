@@ -65,6 +65,17 @@ concommand.Add("findlag", function (ply, cmd, args, arg_str)
 		elseif class == "starfall_processor" then
 			if not entity.instance then continue end
 			ent_score = ent_score + getSFCPUAverage(entity)*2000
+		elseif class == "gmod_wire_turret" then
+			if not entity.delay then continue end
+			if not entity.Firing then continue end
+
+			ent_score = ent_score + 0.05/entity.delay
+			if entity.sound then
+				ent_score = ent_score*10
+			end
+			if entity.numbullets > 5 then
+				ent_score = ent_score*(entity.numbullets/4)
+			end
 		end
 
 		lag_scores[owner] = lag_scores[owner] and lag_scores[owner] + ent_score or ent_score
