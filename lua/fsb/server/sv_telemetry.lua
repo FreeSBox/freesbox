@@ -101,3 +101,18 @@ function FSB.TelemetryStart()
 end
 
 hook.Add("Initialize", "telemetry_server_start", FSB.TelemetryStart)
+
+
+--#region Chip logging
+
+hook.Add("Expression2_CanCompile", "log_e2_spawn", function (ply, chip, buffer, filepath, files)
+	timer.Simple(0, function ()
+		Msg(string.format("%s compiled E2: %s\n", ply:Name(), tostring(chip.name)))
+	end)
+end)
+
+hook.Add("StarfallCanCompile", "log_sf_spawn", function (code, mainfile, ply, chip)
+	Msg(string.format("%s compiled SF: %s\n", ply:Name(), tostring(mainfile)))
+end)
+
+--#endregion
