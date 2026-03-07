@@ -118,7 +118,7 @@ local function getSFDataForPrint(chip, owner_name)
 	local name = chip.name and tostring(chip.name) or "errored"
 
 	if chip.instance ~= nil then
-		exec_time = getSFCPUAverage(chip)
+		exec_time = getSFCPUAverage(chip)*1000
 	end
 
 	return string.format("| %-24s | SF    | %-32s | %.1fms	|", owner_name, name, exec_time)
