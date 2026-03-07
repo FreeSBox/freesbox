@@ -68,7 +68,7 @@ if SERVER then
 			not ent:IsWeapon()
 	end
 
-	hook.Add("Think", "check_spawnzone_ents", function()
+	timer.Create("check_spawnzone_ents", 0.5, 0, function()
 		for _, ent in ipairs(ents.FindInBox(current_zone.min, current_zone.max)) do
 			if isEntityDisallowedAtSpawn(ent) then
 				print("Bad entity at spawn, removing:", ent)

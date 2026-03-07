@@ -18,12 +18,14 @@ if current_zone == nil then
 	return
 end
 
-hook.Add("Think", "check_skybox_ents", function()
+timer.Create("check_skybox_ents", 0.5, 0, function()
 	for _, ent in ipairs(ents.FindInBox(current_zone[1], current_zone[2])) do
-		if ent:IsPlayer() then
-			ent:Spawn()
-		elseif not ent:CreatedByMap() then
-			ent:Remove()
+		if not ent:CreatedByMap() then
+			if ent:IsPlayer() then
+				ent:Spawn()
+			else
+				ent:Remove()
+			end
 		end
 	end
 end)
