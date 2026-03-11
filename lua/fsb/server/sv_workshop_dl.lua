@@ -7,6 +7,7 @@ resource.AddWorkshop("2802133674") -- Petition swep content
 --#region Petitioned addons
 resource.AddWorkshop("3389728250") -- Glide
 resource.AddWorkshop("3389795738") -- Glide // GTAV: Helicopters
+resource.AddWorkshop("3620753374") -- Left 4 Dead // Glide
 resource.AddWorkshop("246756300") -- 3D Stream Radio
 resource.AddWorkshop("2675972006") -- Custom Loadout
 resource.AddWorkshop("3318060741") -- rRadio
@@ -23,6 +24,7 @@ resource.AddWorkshop("3001397905") -- Media Player (Updated Edition)
 resource.AddWorkshop("2821862386") -- Simple Weapons: Base
 resource.AddWorkshop("2821865508") -- Simple Weapons: CS:S
 resource.AddWorkshop("2832566843") -- Simple Weapons: Half-Life 2 Extended
+resource.AddWorkshop("2853242748") -- Simple Weapons: Entropy : Zero
 resource.AddWorkshop("3542961565") -- Liberty City // GLIDE
 resource.AddWorkshop("104691717") -- PAC3
 resource.AddWorkshop("104548572") -- Playable Piano
