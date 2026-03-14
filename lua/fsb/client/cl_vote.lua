@@ -62,6 +62,23 @@ local function addPetitionToHTML(html, petition)
 	)
 end
 
+---@param html DHTML
+---@param petition petition
+local function addCommentToHTML(html, petition)
+	html:QueueJavascript(string.format(
+			"addOrUpdateComment(%u, '%s', '%s', '%s', %u, %u, %u, %u)",
+			petition.index,
+			string.JavascriptSafe(petition.description),
+			string.JavascriptSafe(petition.author_name),
+			string.JavascriptSafe(petition.author_steamid),
+			petition.num_likes,
+			petition.num_dislikes,
+			petition.our_vote_status,
+			petition.creation_time
+		)
+	)
+end
+
 local draft_name = ""
 local draft_desc = ""
 local function setDraftText(name, desc)
@@ -73,12 +90,27 @@ local function getDraftText()
 end
 
 local function createPetition(name, description)
+	assert(isstring(name), "Tried to create a petition but the name is not a string")
+	assert(isstring(description), "Tried to create a petition but the description is not a string")
+
 	FSB.SendPetitions({{
 		name=name,
 		description=description
 	}})
 	setDraftText("", "")
-	print("Sent new petition to server")
+	Msg("Sent new petition to server\n")
+end
+
+local function createComment(parent, description)
+	assert(isnumber(parent), "Tried to create a comment but the parent is not a number")
+	assert(isstring(description), "Tried to create a comment but the description is not a string")
+
+	FSB.SendPetitions({{
+		name="comment",
+		description=description,
+		parent=parent
+	}})
+	Msg("Sent new comment to server\n")
 end
 
 ---@param petition_id integer
@@ -184,7 +216,9 @@ local function loadPetitionBrowserPage(html)
 		if VoteWindowState ~= eWindowMode.Browse then return end
 
 		for index, petition in pairs(petitions_cache) do
-			addPetitionToHTML(html, petition)
+			if petition.parent == nil then
+				addPetitionToHTML(html, petition)
+			end
 		end
 	end
 	VoteWindowState = eWindowMode.Browse
@@ -208,9 +242,20 @@ local function loadPetitionViewPage(html, petition_id)
 		if VoteWindowState ~= eWindowMode.View then return end
 
 		addPetitionToHTML(html, petitions_cache[petition_id])
+
+		for _, petition in ipairs(petitions_cache) do
+			if petition.parent == petition_id then
+				addCommentToHTML(html, petition)
+				break
+			end
+		end
 	end
 	VoteWindowState = eWindowMode.View
 	setAppropriateCurnerIcon()
+
+	net.Start("petition_children_request")
+	net.WriteUInt(petition_id, PETITION_ID_BITS)
+	net.SendToServer()
 end
 
 local function openPetition(petition_id)
@@ -235,6 +280,7 @@ local function openPetitionWindow()
 	--html:OpenURL("https://dvcs.w3.org/hg/d4e/raw-file/tip/key-event-test.html")
 	html.OnDocumentReady = function (self, url)
 		html:AddFunction("gmod", "CloseWindow", closeWindow)
+		html:AddFunction("gmod", "CreateComment", createComment)
 		html:AddFunction("gmod", "CreatePetition", createPetition)
 		html:AddFunction("gmod", "VoteOnPetition", voteOnPetition)
 		html:AddFunction("gmod", "OpenPetition", openPetition)
@@ -299,11 +345,20 @@ net.Receive("petition_transmit", function(len, ply)
 		petitions_cache[petition.index] = petition
 		petitions_available[petition.index] = true
 
+		if petition.parent and VoteWindowState == eWindowMode.View and VoteWindow ~= nil then
+			local html = getHTMLFromWindow(VoteWindow)
+			---@diagnostic disable-next-line: param-type-mismatch
+			addCommentToHTML(html, petition)
+			goto CONTITNUE
+		end
+
 		if VoteWindowState == eWindowMode.Browse and VoteWindow ~= nil then
 			local html = getHTMLFromWindow(VoteWindow)
 			---@diagnostic disable-next-line: param-type-mismatch
 			addPetitionToHTML(html, petition)
 		end
+
+		::CONTITNUE::
 	end
 end)
 
@@ -312,7 +367,7 @@ net.Receive("petition_removed", function (len, ply)
 	petitions_requested[index] = nil
 	petitions_available[index] = nil
 	petitions_cache[index] = nil
-	print("Server removed petition", index)
+	MsgN("Server removed petition: " .. index)
 end)
 
 net.Receive("petition_list_responce", function(len, ply)

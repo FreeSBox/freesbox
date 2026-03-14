@@ -15,16 +15,22 @@ util.AddNetworkString("petition_accepted")
 -- `server -> client`. Tells the client that it should delete this petition from the cache.
 util.AddNetworkString("petition_removed")
 
--- `client -> server`. The client whats to know what petitions are available.
+-- `client -> server`. The client wants to know the children of this petition.
+util.AddNetworkString("petition_children_request")
+
+-- `server -> client`. Petition comments.
+util.AddNetworkString("petition_children_responce")
+
+-- `client -> server`. The client wants to know what petitions are available.
 util.AddNetworkString("petition_list_request")
 
 -- `server -> client`. The petitions that are available.
 util.AddNetworkString("petition_list_responce")
 
--- `client -> server`. The client whats to get `petition_transmit`s with petitions in this array.
+-- `client -> server`. The client wants to get `petition_transmit`s with petitions in this array.
 util.AddNetworkString("petition_request")
 
--- `client -> server` The client whats to know how the likes/dislikes of a given petition.
+-- `client -> server` The client wants to know how the likes/dislikes of a given petition.
 util.AddNetworkString("petition_votes_request")
 
 -- `server -> client` The votes on the requested petition.
@@ -46,22 +52,24 @@ setmetatable( sql, { __newindex = function( table, k, v )
 	end
 end } )
 
-sql.Query([[CREATE TABLE IF NOT EXISTS petitions (
+sql.Query([[CREATE TABLE IF NOT EXISTS fsb_petitions (
 	id INTEGER PRIMARY KEY,
 	name TEXT,
-	description TEXT,
-	creation_time BIGINT,
+	description TEXT NOT NULL,
+	creation_time BIGINT NOT NULL,
 	expire_time BIGINT,
-	author_name TEXT,
-	author_steamid BIGINT
+	author_name TEXT NOT NULL,
+	author_steamid BIGINT NOT NULL,
+	parent INTEGER,
+	hidden INTEGER
 )]])
 
-sql.Query([[CREATE TABLE IF NOT EXISTS votes (
+sql.Query([[CREATE TABLE IF NOT EXISTS fsb_votes (
 	id INTEGER PRIMARY KEY,
-	petition_id INTEGER,
-	creation_time BIGINT,
-	vote_status INTEGER,
-	author_steamid BIGINT
+	petition_id INTEGER NOT NULL,
+	creation_time BIGINT NOT NULL,
+	vote_status INTEGER NOT NULL,
+	author_steamid BIGINT NOT NULL
 )]])
 
 --#endregion SQL
@@ -75,7 +83,7 @@ local function getVotesFromIndex(petition_id, steamid64)
 	local num_likes = 0
 	local num_dislikes = 0
 
-	local results = sql.QueryTyped("SELECT vote_status, author_steamid FROM votes WHERE petition_id = ?", petition_id)
+	local results = sql.QueryTyped("SELECT vote_status, author_steamid FROM fsb_votes WHERE petition_id = ?", petition_id)
 	assert(results ~= false, "The SQL Query is broken in 'getVotesFromIndex'")
 
 	local our_vote_status = eVoteStatus.NOT_VOTED
@@ -108,7 +116,7 @@ local function addVoteInfoToPetitions(petitions, steamid64)
 	end
 
 	local placeholders = string.rep("?,", num_petitions-1) .. "?"
-	local query = string.format("SELECT vote_status, author_steamid, petition_id FROM votes WHERE petition_id IN (%s)", placeholders)
+	local query = string.format("SELECT vote_status, author_steamid, petition_id FROM fsb_votes WHERE petition_id IN (%s)", placeholders)
 	local results = sql.QueryTyped(query, unpack(petition_ids))
 	assert(results ~= false, "The SQL Query is broken in 'addVoteInfoToPetitions'")
 
@@ -147,7 +155,9 @@ local function sqlDataToPetition(data)
 		author_name = data.author_name,
 		author_steamid = data.author_steamid,
 		creation_time = data.creation_time,
-		expire_time = data.expire_time
+		expire_time = data.expire_time,
+		parent = data.parent,
+		hidden = data.hidden
 	}
 end
 
@@ -159,7 +169,7 @@ local function getPetitionsFromIndexes(petition_ids, ply)
 	assert(num_ids <= PETITION_MAX_PETITIONS_PER_REQUEST, "Too many petitions requested")
 
 	local placeholders = string.rep("?,", num_ids-1) .. "?"
-	local query = string.format("SELECT * FROM petitions WHERE id IN (%s)", placeholders)
+	local query = string.format("SELECT * FROM fsb_petitions WHERE id IN (%s)", placeholders)
 	local results = sql.QueryTyped(query, unpack(petition_ids))
 	assert(results ~= false, "The SQL Query is broken in 'getPetitionsFromIndexes'")
 
@@ -690,7 +700,7 @@ function FSB.GenerateRandomPetition()
 		description = description .. " " .. randomWord()
 	end
 
-	sql.QueryTyped([[INSERT INTO petitions(
+	sql.QueryTyped([[INSERT INTO fsb_petitions(
 			name,
 			description,
 			creation_time,
@@ -712,8 +722,8 @@ end
 ---**There is no way to undo this!**
 ---@param id integer
 function FSB.RemovePetition(id)
-	sql.QueryTyped("DELETE FROM petitions WHERE id = ?", id)
-	sql.QueryTyped("DELETE FROM votes WHERE petition_id = ?", id)
+	sql.QueryTyped("DELETE FROM fsb_petitions WHERE id = ?", id)
+	sql.QueryTyped("DELETE FROM fsb_votes WHERE petition_id = ?", id)
 
 	net.Start("petition_removed")
 	net.WriteUInt(id, PETITION_ID_BITS)
@@ -750,42 +760,48 @@ net.Receive("petition_transmit", function(len, ply)
 		ply:SendLocalizedMessage("vote.name_cant_be_empty")
 		return
 	end
-	if petition.description == nil or #petition.description > PETITION_DESCRIPTION_MAX_LENGTH then
-		ply:SendLocalizedMessage("vote.description_too_long", #petition.description, PETITION_DESCRIPTION_MAX_LENGTH)
+	if petition.description == nil or string.IsOnlyWhiteSpace(petition.description) then
+		ply:SendLocalizedMessage("vote.description_cant_be_empty")
 		return
 	end
-	if string.IsOnlyWhiteSpace(petition.description) then
-		ply:SendLocalizedMessage("vote.description_cant_be_empty")
+	local max_length = petition.parent == nil and PETITION_DESCRIPTION_MAX_LENGTH or PETITION_COMMENT_MAX_LENGTH
+	if #petition.description > max_length then
+		ply:SendLocalizedMessage("vote.description_too_long", #petition.description, max_length)
 		return
 	end
 
 	petition.author_steamid = ply:OwnerSteamID64()
 
 	--TODO: Add automatic calculation of how long the petition should last.
-	local petition_expire_time = os.time() + 60*60*24*2
+	local petition_expire_time
 
-	local one_day_ago = os.time() - 60*60*24
-	local results = sql.QueryTyped("SELECT * FROM petitions WHERE creation_time > ? AND author_steamid = ?", one_day_ago, petition.author_steamid)
-	if #results >= MAX_PETITIONS_PER_DAY and not petition_no_limit:GetBool() then
-		ply:SendLocalizedMessage("vote.too_many_created", MAX_PETITIONS_PER_DAY)
-		return
+	if petition.parent == nil then
+		petition_expire_time = os.time() + 60*60*24*2
+		local one_day_ago = os.time() - 60*60*24
+		local results = sql.QueryTyped("SELECT * FROM fsb_petitions WHERE creation_time > ? AND author_steamid = ? AND parent IS NULL", one_day_ago, petition.author_steamid)
+		if #results >= MAX_PETITIONS_PER_DAY and not petition_no_limit:GetBool() then
+			ply:SendLocalizedMessage("vote.too_many_created", MAX_PETITIONS_PER_DAY)
+			return
+		end
 	end
 
-	sql.QueryTyped([[INSERT INTO petitions(
+	sql.QueryTyped([[INSERT INTO fsb_petitions(
 			name,
 			description,
 			creation_time,
 			author_name,
 			author_steamid,
-			expire_time
-		) VALUES (?, ?, ?, ?, ?, ?)
+			expire_time,
+			parent
+		) VALUES (?, ?, ?, ?, ?, ?, ?)
 		]],
 		petition.name,
 		petition.description,
 		os.time(),
 		ply:GetName(),
 		petition.author_steamid,
-		petition_expire_time
+		petition_expire_time,
+		petition.parent
 	)
 
 	local result = sql.QueryTyped("SELECT last_insert_rowid() AS id")
@@ -814,8 +830,22 @@ net.Receive("petition_request", function(len, ply)
 	FSB.SendPetitions(petitions, ply)
 end)
 
+net.Receive("petition_children_request", function(len, ply)
+	local parent_id = net.ReadUInt(PETITION_ID_BITS)
+	local results = sql.QueryTyped("SELECT * FROM fsb_petitions WHERE parent = ? AND (hidden IS NULL OR hidden = 0) ORDER BY creation_time", parent_id)
+	assert(results ~= false, "The SQL Query is broken in 'petition_children_request' handler")
+
+	local result = {}
+	---@diagnostic disable-next-line: param-type-mismatch
+	for _, sql_petition in ipairs(results) do
+		result[#result+1] = sqlDataToPetition(sql_petition)
+	end
+
+	FSB.SendPetitions(result, ply)
+end)
+
 net.Receive("petition_list_request", function(len, ply)
-	local results = sql.QueryTyped("SELECT id FROM petitions ORDER BY creation_time")
+	local results = sql.QueryTyped("SELECT id FROM fsb_petitions WHERE parent IS NULL AND (hidden IS NULL OR hidden = 0) ORDER BY creation_time")
 	assert(results ~= false, "The SQL Query is broken in 'petition_list_request' handler")
 
 	net.Start("petition_list_responce")
@@ -833,7 +863,7 @@ local function sendVoteResponce(petition_id, ply)
 
 	local players = ply and {ply} or player.GetAll()
 	for index, ply in ipairs(players) do
-		local results = sql.QueryTyped("SELECT vote_status FROM votes WHERE petition_id = ? AND author_steamid = ?", petition_id, ply:OwnerSteamID64())
+		local results = sql.QueryTyped("SELECT vote_status FROM fsb_votes WHERE petition_id = ? AND author_steamid = ?", petition_id, ply:OwnerSteamID64())
 		assert(results ~= false, "The SQL Query is broken in 'sendVoteResponce'")
 		local vote_status = eVoteStatus.NOT_VOTED
 		if #results == 1 then
@@ -871,14 +901,14 @@ net.Receive("petition_vote_on", function(len, ply)
 
 	local vote_status_ = dislike and eVoteStatus.DISLIKE or eVoteStatus.LIKE
 
-	local results = sql.QueryTyped("SELECT id FROM petitions WHERE id = ? AND author_steamid = ?", petition_id, player_id)
+	local results = sql.QueryTyped("SELECT id FROM fsb_petitions WHERE id = ? AND author_steamid = ?", petition_id, player_id)
 	if results == false then return end
 	if #results > 0 then
 		ply:SendLocalizedMessage("vote.vote_on_self")
 		return
 	end
 
-	local results = sql.QueryTyped("SELECT expire_time FROM petitions WHERE id = ?", petition_id)
+	local results = sql.QueryTyped("SELECT expire_time FROM fsb_petitions WHERE id = ?", petition_id)
 	if results == false then return end
 	if #results == 0 then
 		ply:SendLocalizedMessage("vote.invalid_vote", petition_id)
@@ -889,20 +919,20 @@ net.Receive("petition_vote_on", function(len, ply)
 		return
 	end
 
-	local results = sql.QueryTyped("SELECT vote_status FROM votes WHERE petition_id = ? AND author_steamid = ?", petition_id, player_id)
+	local results = sql.QueryTyped("SELECT vote_status FROM fsb_votes WHERE petition_id = ? AND author_steamid = ?", petition_id, player_id)
 	if results == false then return end
 	if #results >= 1 then
 		if results[1].vote_status == vote_status_ then
-			sql.QueryTyped("DELETE FROM votes WHERE petition_id = ? AND author_steamid = ?", petition_id, player_id)
+			sql.QueryTyped("DELETE FROM fsb_votes WHERE petition_id = ? AND author_steamid = ?", petition_id, player_id)
 		else
-			sql.QueryTyped("UPDATE votes SET vote_status = ? WHERE petition_id = ? AND author_steamid = ?", vote_status_, petition_id, player_id)
+			sql.QueryTyped("UPDATE fsb_votes SET vote_status = ? WHERE petition_id = ? AND author_steamid = ?", vote_status_, petition_id, player_id)
 		end
 
 		sendVoteResponce(petition_id, nil)
 		return
 	end
 
-	sql.QueryTyped([[INSERT INTO votes(
+	sql.QueryTyped([[INSERT INTO fsb_votes(
 			petition_id,
 			creation_time,
 			vote_status,
