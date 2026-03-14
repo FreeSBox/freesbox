@@ -4,10 +4,10 @@ return [[
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
@@ -32,8 +32,8 @@ return [[
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
 </head>
 <body ng-controller="petitionViewerController as petitionViewer">
-	<label>{{Petition.name}}</label>
-	<span style="float: right;">Автор: <a class="clickable" ng-click='authorClicked()'>{{Petition.author_name}}</a></span>
+	<span>{{Petition.name}}</span>
+	<span style="float: right;">Автор: <a class="clickable" ng-click='authorClicked(Petition)'>{{Petition.author_name}}</a></span>
 	<br>
 	<span style="float: right;">Index: {{Petition.index}}</span>
 	<br>
@@ -48,8 +48,12 @@ return [[
 	</div>
 
 	<hr>
+
 	<div id="preview"></div>
-	<hr>
+
+	<hr ng-class="{hide:Comments.length === 0}">
+
+	<span ng-class="{hide:Comments.length === 0}">Комментарии:</span>
 
 	<div infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check="false">
 		<div class="comment" ng-repeat="comment in Comments | orderBy:'-creation_time'">
@@ -66,7 +70,7 @@ return [[
 
 	<hr>
 
-		<tabs>
+	<tabs>
 		<pane title="Писать">
 			<textarea class="petition_input" id="descriptionInput" placeholder="Комментарий"></textarea>
 		</pane>
@@ -345,7 +349,7 @@ return [[
 	var mod;mod=angular.module("infinite-scroll",[]),mod.directive("infiniteScroll",["$rootScope","$window","$timeout",function(i,n,e){return{link:function(t,l,o){var r,c,f,a;return n=angular.element(n),f=0,null!=o.infiniteScrollDistance&&t.$watch(o.infiniteScrollDistance,function(i){return f=parseInt(i,10)}),a=!0,r=!1,null!=o.infiniteScrollDisabled&&t.$watch(o.infiniteScrollDisabled,function(i){return a=!i,a&&r?(r=!1,c()):void 0}),c=function(){var e,c,u,d;return d=n.height()+n.scrollTop(),e=l.offset().top+l.height(),c=e-d,u=n.height()*f>=c,u&&a?i.$$phase?t.$eval(o.infiniteScroll):t.$apply(o.infiniteScroll):u?r=!0:void 0},n.on("scroll",c),t.$on("$destroy",function(){return n.off("scroll",c)}),e(function(){return o.infiniteScrollImmediateCheck?t.$eval(o.infiniteScrollImmediateCheck)?c():void 0:c()},0)}}}]);
 </script>
 <script>
-		function IsGMod()
+	function IsGMod()
 	{
 		return typeof gmod !== "undefined";
 	}
@@ -653,8 +657,12 @@ return [[
 			$scope.Comments = [];
 			$scope.Notifications = [];
 
-			$scope.authorClicked = function () {
-				gmod.OpenURL("https://steamcommunity.com/profiles/" + gScope.Petition.author_steamid)
+			$scope.loadMore = debounce(() => {
+				gmod.RequestMoreComments(gScope.Petition.index)
+			}, 300);
+
+			$scope.authorClicked = function (petition) {
+				gmod.OpenURL("https://steamcommunity.com/profiles/" + petition.author_steamid)
 			}
 
 			$scope.likeClicked = function () {
@@ -735,18 +743,21 @@ return [[
 		return DOMPurify.sanitize(result);
 	}
 
-	function parseAndRenderEditor() {
+	function parseAndRenderEditor()
+	{
 		var textarea = $("#descriptionInput");
 		parseAndRender($("#comment_preview"), textarea.val());
-	};
-	function parseAndRender(target, description) {
+	}
+
+	function parseAndRender(target, description)
+	{
 		target.get(0).innerHTML = parseMarkdown(description);
 
 		if (IsGMod())
 		{
 			fixAncherTags();
 		}
-	};
+	}
 
 
 	function submit_petition()
@@ -823,6 +834,14 @@ return [[
 				UpdateDigest(gScope, 50);
 				return;
 			}
+		}
+
+		var description_input = $("#descriptionInput");
+		if (description_input.val() === description)
+		{
+			$('#createButton').removeAttr("disabled");
+			description_input.val("");
+			parseAndRenderEditor();
 		}
 
 		gScope.Comments.push(new_comment);

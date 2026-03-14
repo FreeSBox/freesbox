@@ -18,7 +18,7 @@ util.AddNetworkString("petition_removed")
 -- `client -> server`. The client wants to know the children of this petition.
 util.AddNetworkString("petition_children_request")
 
--- `server -> client`. Petition comments.
+-- `server -> client`. Petition comment ids.
 util.AddNetworkString("petition_children_responce")
 
 -- `client -> server`. The client wants to know what petitions are available.
@@ -780,6 +780,10 @@ net.Receive("petition_transmit", function(len, ply)
 	petition.author_steamid = ply:OwnerSteamID64()
 
 	--TODO: Add automatic calculation of how long the petition should last.
+	--Or maybe not, we seem fine with 2 days of vote time.
+	--Changining it now would cause more problems then it would solve.
+	--While there was a petition #333 that wants petitions to pass if they reach game.MaxPlayers() likes
+	--Again this would probably couse more problems then it would solve.
 	local petition_expire_time
 
 	if petition.parent == nil then
@@ -817,7 +821,9 @@ net.Receive("petition_transmit", function(len, ply)
 		net.WriteUInt(result[1].id, PETITION_ID_BITS)
 	net.Send(ply)
 
-	FSB.SendLocalizedMessage("vote.new_petitions", ply:Nick(), petition.name)
+	if petition.parent == nil then
+		FSB.SendLocalizedMessage("vote.new_petitions", ply:Nick(), petition.name)
+	end
 end)
 
 net.Receive("petition_request", function(len, ply)
@@ -839,16 +845,17 @@ end)
 
 net.Receive("petition_children_request", function(len, ply)
 	local parent_id = net.ReadUInt(PETITION_ID_BITS)
-	local results = sql.QueryTyped("SELECT * FROM fsb_petitions WHERE parent = ? AND (hidden IS NULL OR hidden = 0) ORDER BY creation_time", parent_id)
+	local results = sql.QueryTyped("SELECT id FROM fsb_petitions WHERE parent = ? AND (hidden IS NULL OR hidden = 0) ORDER BY creation_time", parent_id)
 	assert(results ~= false, "The SQL Query is broken in 'petition_children_request' handler")
 
-	local result = {}
-	---@diagnostic disable-next-line: param-type-mismatch
-	for _, sql_petition in ipairs(results) do
-		result[#result+1] = sqlDataToPetition(sql_petition)
-	end
-
-	FSB.SendPetitions(result, ply)
+	net.Start("petition_children_responce")
+		net.WriteUInt(parent_id, PETITION_ID_BITS)
+		net.WriteUInt(#results, PETITION_ID_BITS)
+		---@diagnostic disable-next-line: param-type-mismatch
+		for _, sql_petition in ipairs(results) do
+			net.WriteUInt(sql_petition["id"], PETITION_ID_BITS)
+		end
+	net.Send(ply)
 end)
 
 net.Receive("petition_list_request", function(len, ply)

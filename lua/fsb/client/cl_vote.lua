@@ -175,6 +175,35 @@ local function requestMorePetitions()
 	requestPetitions(request)
 end
 
+local function requestMoreComments(petition_id)
+	assert(petitions_cache[petition_id], "Cannot request comments on petition that isn't in the cache")
+	assert(petitions_cache[petition_id].children, "Cannot request comments on petition that doesn't have children populated")
+	local tmp_available = {}
+	local i = 1
+	for index, _ in pairs(petitions_cache[petition_id].children) do
+		tmp_available[i] = index
+		i = i + 1
+	end
+
+	table.sort(tmp_available, function (a, b)
+		return a > b
+	end)
+
+	local request = {}
+	for i = 1, #tmp_available do
+		local index = tmp_available[i]
+		if petitions_cache[index] ~= nil then goto CONTITNUE end
+		if #request >= PETITION_MAX_PETITIONS_PER_REQUEST then break end
+
+		request[#request+1] = index
+		::CONTITNUE::
+	end
+
+	if #request == 0 then return end
+
+	requestPetitions(request)
+end
+
 local function closeWindow()
 	VoteWindow:Remove();
 	VoteWindow=nil
@@ -243,10 +272,9 @@ local function loadPetitionViewPage(html, petition_id)
 
 		addPetitionToHTML(html, petitions_cache[petition_id])
 
-		for _, petition in ipairs(petitions_cache) do
+		for _, petition in pairs(petitions_cache) do
 			if petition.parent == petition_id then
 				addCommentToHTML(html, petition)
-				break
 			end
 		end
 	end
@@ -285,6 +313,7 @@ local function openPetitionWindow()
 		html:AddFunction("gmod", "VoteOnPetition", voteOnPetition)
 		html:AddFunction("gmod", "OpenPetition", openPetition)
 		html:AddFunction("gmod", "RequestMorePetitions", requestMorePetitions)
+		html:AddFunction("gmod", "RequestMoreComments", requestMoreComments)
 		html:AddFunction("gmod", "SetDraftText", setDraftText)
 		html:AddFunction("gmod", "GetDraftText", getDraftText)
 		html:AddFunction("gmod", "OpenURL", gui.OpenURL)
@@ -404,6 +433,24 @@ net.Receive("petition_votes_responce", function(len, ply)
 		local html = getHTMLFromWindow(VoteWindow)
 		updatePetitionVotesHTML(html, petitions_cache[petition_id])
 	end
+end)
+
+net.Receive("petition_children_responce", function (len, ply)
+	local petition_id = net.ReadUInt(PETITION_ID_BITS)
+	local num_petitions = net.ReadUInt(PETITION_ID_BITS)
+
+	if petitions_cache[petition_id] == nil then return end
+	if petitions_cache[petition_id].children == nil then
+		petitions_cache[petition_id].children = {}
+	end
+
+	local children = petitions_cache[petition_id].children
+
+	for i = 1, num_petitions do
+		children[net.ReadUInt(PETITION_ID_BITS)] = true
+	end
+
+	requestMoreComments(petition_id)
 end)
 
 net.Receive("petition_accepted", function(len, ply)
