@@ -731,7 +731,14 @@ function FSB.RemovePetition(id)
 end
 
 --#region NetMsg handling
+local ratelimit_table = {}
+local RATELIMIT = 5
 net.Receive("petition_transmit", function(len, ply)
+	if not FSB.Ratelimit(ratelimit_table, ply, RATELIMIT) then
+		ply:SendLocalizedMessage("ratelimit", RATELIMIT)
+		return
+	end
+
 	if not ply:IsFullyAuthenticated() then
 		-- We cannot verify this player's identity.
 		ply:SendLocalizedMessage("vote.not_fully_authed_p")
