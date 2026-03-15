@@ -8,6 +8,7 @@ PETITION_MAX_PETITIONS_PER_REQUEST = 32
 
 PETITION_NAME_MAX_LENGTH = 128
 PETITION_DESCRIPTION_MAX_LENGTH = 30000
+PETITION_COMMENT_MAX_LENGTH = 5000
 
 MAX_PETITIONS_PER_DAY = 2
 
@@ -24,6 +25,8 @@ local NETMSG_MAX_BYTES = 65533
 ---@field creation_time number?
 ---@field expire_time number? When can we no longer vote on the petition.
 ---@field our_vote_status number? Client side eVoteStatus.
+---@field parent integer? Index of the parent petiotion, if this is not nil then this is a comment.
+---@field children table<integer, boolean>? Available children. index, true or nil
 
 ---@param index integer
 ---@return petition
@@ -66,26 +69,52 @@ function FSB.SendPetitions(petitions, target_player)
 		local include_votes = (petition.num_likes ~= nil or petition.num_dislikes ~= nil) and SERVER
 		local include_author_info = SERVER
 		local include_time_info = SERVER
+		local include_parent_info = petition.parent ~= nil
+		local include_child_info = petition.children ~= nil
+
 		net.WriteBool(include_petition_id)
 		if include_petition_id then
 			net.WriteUInt(petition.index, PETITION_ID_BITS)
 		end
+
 		net.WriteString(petition.name)
+
 		net.WriteBool(include_votes)
 		if include_votes then
 			net.WriteUInt(petition.num_likes, PETITION_VOTE_BITS)
 			net.WriteUInt(petition.num_dislikes, PETITION_VOTE_BITS)
 			net.WriteUInt(petition.our_vote_status, 2)
 		end
+
 		net.WriteBool(include_author_info)
 		if include_author_info then
 			net.WriteString(petition.author_name)
 			net.WriteString(petition.author_steamid)
 		end
+
 		net.WriteBool(include_time_info)
 		if include_time_info then
 			net.WriteUInt(petition.creation_time, 32)
-			net.WriteUInt(petition.expire_time, 32)
+			net.WriteUInt(petition.expire_time or 0, 32)
+		end
+
+		net.WriteBool(include_parent_info)
+		if include_parent_info then
+			net.WriteUInt(petition.parent, PETITION_ID_BITS)
+		end
+
+		--While this theoretically works the database would need to
+		--do a lot of queries to get this info so we don't actually use this.
+		net.WriteBool(include_child_info)
+		if include_child_info then
+			local children = petition.children
+			---@diagnostic disable-next-line: param-type-mismatch
+			net.WriteUInt(table.Count(children), PETITION_ID_BITS)
+
+			---@diagnostic disable-next-line: param-type-mismatch
+			for child, _ in pairs(children) do
+				net.WriteUInt(child, PETITION_ID_BITS)
+			end
 		end
 
 		net.WriteUInt(description_compressed_len, 19)
@@ -128,6 +157,7 @@ function FSB.ReadOnePetition()
 	if net.ReadBool() then -- include_petition_id
 		petition.index = net.ReadUInt(PETITION_ID_BITS)
 	end
+
 	petition.name = net.ReadString()
 
 	if net.ReadBool() then -- include_votes
@@ -144,6 +174,20 @@ function FSB.ReadOnePetition()
 	if net.ReadBool() then -- include_time_info
 		petition.creation_time = net.ReadUInt(32)
 		petition.expire_time   = net.ReadUInt(32)
+	end
+
+	if net.ReadBool() then -- include_parent_info
+		petition.parent = net.ReadUInt(PETITION_ID_BITS)
+	end
+
+	if net.ReadBool() then -- include_child_info
+		local children = {}
+		local count = net.ReadUInt(PETITION_ID_BITS)
+		for i = 1, count do
+			children[net.ReadUInt(PETITION_ID_BITS)] = true
+		end
+
+		petition.children = children
 	end
 
 	local description_length = net.ReadUInt(19)
