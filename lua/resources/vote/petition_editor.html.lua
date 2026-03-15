@@ -483,7 +483,7 @@ display: none;
 }
 .notification {
 display: block;
-position: absolute;
+position: fixed;
 width: 290px;
 height: 90px;
 padding: 10px;
