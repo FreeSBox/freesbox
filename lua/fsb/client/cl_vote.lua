@@ -177,7 +177,8 @@ end
 
 local function requestMoreComments(petition_id)
 	assert(petitions_cache[petition_id], "Cannot request comments on petition that isn't in the cache")
-	assert(petitions_cache[petition_id].children, "Cannot request comments on petition that doesn't have children populated")
+	if petitions_cache[petition_id].children == nil then return end
+
 	local tmp_available = {}
 	local i = 1
 	for index, _ in pairs(petitions_cache[petition_id].children) do
