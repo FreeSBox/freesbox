@@ -58,7 +58,7 @@
 
 	<hr>
 
-	<div id="preview"></div>
+	<div class="markdown_rendered" id="preview"></div>
 
 	<hr ng-class="{hide:Comments.length === 0}">
 
@@ -73,7 +73,7 @@
 				<button ng-click="dislikeClicked(comment)" id="like_button" ng-class="{btn_active: comment.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{comment.dislikes}}</button>
 			</div>
 			<br>
-			<div ng-bind-html="comment.description_html"></div>
+			<div class="markdown_rendered" ng-bind-html="comment.description_html"></div>
 		</div>
 	</div>
 
@@ -84,7 +84,7 @@
 			<textarea class="petition_input" id="descriptionInput" placeholder="Комментарий"></textarea>
 		</pane>
 		<pane title="Предпросмотр">
-			<div class="petition_input" id="comment_preview"></div>
+			<div class="petition_input markdown_rendered" id="comment_preview"></div>
 		</pane>
 		<input id="createButton" type="submit" value="Создать" onclick="submitPetition()">
 	</tabs>
