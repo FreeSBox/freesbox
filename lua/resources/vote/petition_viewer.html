@@ -65,7 +65,7 @@
 	<span ng-class="{hide:Comments.length === 0}">Комментарии:</span>
 
 	<div infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check="false">
-		<div class="comment" ng-repeat="comment in Comments | orderBy:'-creation_time'">
+		<div class="comment" ng-repeat="comment in Comments | orderBy:'+creation_time'">
 			<a class="clickable" ng-click='authorClicked(comment)'>{{comment.author_name}}</a>
 			<span> {{comment.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
 			<div id="vote_menu">

@@ -186,7 +186,7 @@ local function requestMoreComments(petition_id)
 	end
 
 	table.sort(tmp_available, function (a, b)
-		return a > b
+		return a < b
 	end)
 
 	local request = {}
