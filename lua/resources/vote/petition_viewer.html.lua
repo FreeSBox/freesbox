@@ -721,6 +721,13 @@ margin-top: 5px;
 			return;
 		}
 
+		if (getWordCount(description_text) < 4)
+		{
+			gScope.Notifications.push({text: "Слишком скучный комментарий"});
+			UpdateDigest(gScope, 50);
+			return;
+		}
+
 		$('#createButton').attr('disabled','disabled');
 		if (IsGMod())
 		{
