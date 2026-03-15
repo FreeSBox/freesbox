@@ -13,6 +13,12 @@
 <!-- not_in_lua --> <script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
 <!-- not_in_lua --> <script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
 <!-- not_in_lua --> <script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
+
+<!-- not_in_lua --> <script type="text/javascript" src="./gscripts.js"></script>
+<!-- include_js ./gscripts.js -->
+
+<!-- not_in_lua --> <link rel="stylesheet" href="./gstyle.css">
+<!-- include_css ./gstyle.css -->
 </head>
 <body>
 	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
@@ -38,56 +44,6 @@
 		</div>
 	</div>
 </body>
-<style>
-	:root {
-		--main-color: rgb(31, 31, 31);
-		--text-darker-color: gray;
-		--text-color: white
-	}
-
-	:link, :visited
-	{
-		color: #58a6ff;
-	}
-
-	.petition {
-		color: var(--text-color);
-		background-color: var(--main-color);
-		border-radius: 25px;
-		padding: 15px;
-		width: 100%;
-		box-sizing: border-box;
-		margin-top: 1mm;
-		font-family: "Inter", Tahoma, Geneva, Verdana, sans-serif;
-	}
-
-	#like_button {
-		background-color: black;
-	}
-	#like_button:disabled {
-		background-color:rgb(62, 62, 62);
-	}
-	#like_button:not(.btn_active) {
-		color: darkgrey;
-	}
-	#like_button:disabled.btn_won {
-		background-color:rgb(69, 85, 56);
-	}
-	#like_button:disabled.btn_lost {
-		background-color:rgb(85, 56, 56);
-	}
-	.btn_active {
-		color: var(--text-color);
-	}
-
-	.clickable {
-		cursor: pointer;
-	}
-
-	#vote_menu {
-		float: right;
-	}
-</style>
 <script>
 	/* ng-infinite-scroll - v1.0.0 - 2013-02-23 */
 	var mod;mod=angular.module("infinite-scroll",[]),mod.directive("infiniteScroll",["$rootScope","$window","$timeout",function(i,n,e){return{link:function(t,l,o){var r,c,f,a;return n=angular.element(n),f=0,null!=o.infiniteScrollDistance&&t.$watch(o.infiniteScrollDistance,function(i){return f=parseInt(i,10)}),a=!0,r=!1,null!=o.infiniteScrollDisabled&&t.$watch(o.infiniteScrollDisabled,function(i){return a=!i,a&&r?(r=!1,c()):void 0}),c=function(){var e,c,u,d;return d=n.height()+n.scrollTop(),e=l.offset().top+l.height(),c=e-d,u=n.height()*f>=c,u&&a?i.$$phase?t.$eval(o.infiniteScroll):t.$apply(o.infiniteScroll):u?r=!0:void 0},n.on("scroll",c),t.$on("$destroy",function(){return n.off("scroll",c)}),e(function(){return o.infiniteScrollImmediateCheck?t.$eval(o.infiniteScrollImmediateCheck)?c():void 0:c()},0)}}}]);

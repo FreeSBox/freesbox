@@ -6,6 +6,30 @@ Run this file from the freesbox directory, not from the build_scripts directory.
 Unix only, Windows will not work, because lua sucks and can't iterate files.
 ]]
 
+---Takes a file path and returns a path to the directory this file is in.
+---@param path string
+local function getPathWithoutFile(path)
+	return string.match(path, "(.+)%/.+$")
+end
+
+local function includeScript(file_path, relative_include_path)
+	local include_file_path = getPathWithoutFile(file_path) .. "/" .. relative_include_path
+	local include_file = io.open(include_file_path, "rb")
+	assert(include_file, "Tried to include " .. include_file_path .. " but this file doesn't exist")
+	return "<script>\n" .. include_file:read("*a") .. "</script>\n"
+end
+local function includeCSS(file_path, relative_include_path)
+	local include_file_path = getPathWithoutFile(file_path) .. "/" .. relative_include_path
+	local include_file = io.open(include_file_path, "rb")
+	assert(include_file, "Tried to include " .. include_file_path .. " but this file doesn't exist")
+	local file_content = include_file:read("*a")
+
+	--TODO Minify css
+	--file_content = string.gsub(file_content, "%s", "")
+
+	return "<style>\n" .. file_content .. "\n</style>\n"
+end
+
 for file_path in io.popen([[find -type f -iname "*.html"]]):lines() do
 	local input_file = io.open(file_path, "rb")
 	local output_file = io.open(file_path .. ".lua", "wb")
@@ -15,7 +39,21 @@ for file_path in io.popen([[find -type f -iname "*.html"]]):lines() do
 	local output_buffer = ""
 
 	for line in input_file:lines("*L") do
-		if string.find(line, "<!-- not_in_lua -->", 1, true) == nil then
+		local skip_this_line = string.find(line, "<!-- not_in_lua -->", 1, true) ~= nil
+
+		local include_path = string.match(line, "!-- include_js (%g+) --")
+		if include_path ~= nil then
+			output_buffer = output_buffer .. includeScript(file_path, include_path)
+			skip_this_line = true
+		end
+
+		local include_path = string.match(line, "!-- include_css (%g+) --")
+		if include_path ~= nil then
+			output_buffer = output_buffer .. includeCSS(file_path, include_path)
+			skip_this_line = true
+		end
+
+		if not skip_this_line then
 			output_buffer = output_buffer .. line
 		end
 	end
