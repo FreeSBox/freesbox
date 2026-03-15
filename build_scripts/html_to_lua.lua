@@ -16,7 +16,11 @@ local function includeScript(file_path, relative_include_path)
 	local include_file_path = getPathWithoutFile(file_path) .. "/" .. relative_include_path
 	local include_file = io.open(include_file_path, "rb")
 	assert(include_file, "Tried to include " .. include_file_path .. " but this file doesn't exist")
-	return "<script>\n" .. include_file:read("*a") .. "</script>\n"
+	local file_content = include_file:read("*a")
+	file_content = string.gsub(file_content, "\t", "")
+	file_content = string.gsub(file_content, "\n\n", "\n")
+
+	return "<script>\n" .. file_content .. "</script>\n"
 end
 local function includeCSS(file_path, relative_include_path)
 	local include_file_path = getPathWithoutFile(file_path) .. "/" .. relative_include_path
@@ -24,8 +28,8 @@ local function includeCSS(file_path, relative_include_path)
 	assert(include_file, "Tried to include " .. include_file_path .. " but this file doesn't exist")
 	local file_content = include_file:read("*a")
 
-	--TODO Minify css
-	--file_content = string.gsub(file_content, "%s", "")
+	file_content = string.gsub(file_content, "\t", "")
+	file_content = string.gsub(file_content, "\n\n", "\n")
 
 	return "<style>\n" .. file_content .. "\n</style>\n"
 end

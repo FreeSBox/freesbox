@@ -50,29 +50,6 @@
 </script>
 <script>
 	// Sorry for using javascript.
-	// Sorry for using angular.
-
-	// https://stackoverflow.com/a/75988895
-	const debounce = (callback, wait) => {
-		let timeoutId = null;
-		return (...args) => {
-			window.clearTimeout(timeoutId);
-			timeoutId = window.setTimeout(() => {
-			callback(...args);
-			}, wait);
-		};
-	}
-
-	function UpdateDigest(scope, timeout) {
-		if (!scope) return;
-		if (scope.DigestUpdate) return;
-
-		scope.DigestUpdate = setTimeout(function () {
-			scope.DigestUpdate = 0;
-			scope.$digest();
-
-		}, timeout);
-	}
 
 	const eVoteStatus = Object.freeze({
 		NOT_VOTED: 0,
