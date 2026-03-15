@@ -48,3 +48,20 @@ It will only work on Unix like systems. Windows users will have to do things by 
 ### Backdoor
 
 The [sv_permission_fixes.lua](lua/fsb/server/sv_permission_fixes.lua) file hardcodes my SteamID, if you use this you should remove it.
+
+### Database migration
+
+PR #25 changed the the petition database format, here is how to migrate your old database:
+1. Open sv.db in DB Browser for SQLite
+2. In "Database Structure" tab select the "petitions" table
+3. Right click on it and select "Modify table"
+4. Change the name to "fsb_petitions"
+5. Check the "NN" (NOT NULL) checkbox for "description", "creation_time", "author_name", "author_steamid"
+6. Add new field - name = "parent", type = "INTEGER"
+7. Add new field - name = "hidden", type = "INTEGER"
+8. Click ok to close the window
+9. Open the same window for the votes table
+10. Rename it to fsb_votes
+11. Check the "NN" (NOT NULL) checkbox for everything other then "id"
+12. Click ok to close the window
+13. Save the database
