@@ -250,6 +250,8 @@
 		UpdateDigest(gScope, 50);
 	}
 
+	const debounceFixTags = debounce(fixAncherTags, 200)
+
 	function addOrUpdateComment(index, description, author_name, author_steamid, likes, dislikes, our_vote_status, creation_time)
 	{
 		var new_comment = {
@@ -262,6 +264,11 @@
 			our_vote_status: our_vote_status,
 			creation_time: creation_time
 		};
+
+		if (IsGMod())
+		{
+			debounceFixTags();
+		}
 
 		var comments = gScope.Comments;
 		var comments_length = comments.length;
