@@ -1,5 +1,37 @@
 return [[
-<!--SorryforusingHTML--><!DOCTYPEhtml><html><head><metahttp-equiv="Content-Type"content="text/html;charset=UTF-8"/><linkrel="preconnect"href="https://fonts.googleapis.com"><linkrel="preconnect"href="https://fonts.gstatic.com"crossorigin><linkrel="stylesheet"href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"><linkrel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"><scripttype="text/javascript"src="asset://garrysmod/html/js/thirdparty/jquery.js"></script><scripttype="text/javascript"src="asset://garrysmod/html/js/thirdparty/angular.js"></script><scripttype="text/javascript"src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script><scripttype="text/javascript"src="asset://garrysmod/html/js/lua.js"></script><script>//https://javascript.plainenglish.io/how-this-simple-method-turned-my-array-code-from-messy-to-neat-3bba8f25e991//SeemsAIgenerated,butwhocares,I'mnotimplementingthisinjavascriptmyself.if(!Array.prototype.at){Array.prototype.at=function(n){if(this==null)thrownewTypeError("Calledonnullorundefined");constlen=this.length>>>0;n=Number(n);if(isNaN(n))n=0;n=n<0?Math.ceil(n):Math.floor(n);//manualtruncationif(n<0)n+=len;if(n<0||n>=len)returnundefined;returnthis[n];};}</script><scripttype="text/javascript"src="https://cdn.jsdelivr.net/npm/dompurify@3.3.1/dist/purify.min.js"></script><scripttype="text/javascript"src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script><script>
+<!--Sorry for using HTML-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
+<script>
+	// https://javascript.plainenglish.io/how-this-simple-method-turned-my-array-code-from-messy-to-neat-3bba8f25e991
+	// Seems AI generated, but who cares, I'm not implementing this in javascript myself.
+	if (!Array.prototype.at) {
+		Array.prototype.at = function (n) {
+			if (this == null) throw new TypeError("Called on null or undefined");
+			const len = this.length >>> 0;
+			n = Number(n);
+			if (isNaN(n)) n = 0;
+			n = n < 0 ? Math.ceil(n) : Math.floor(n); // manual truncation
+			if (n < 0) n += len;
+			if (n < 0 || n >= len) return undefined;
+			return this[n];
+		};
+	}
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/dompurify@3.3.1/dist/purify.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
+
+<script>
 // Sorry for using javascript.
 // Sorry for using angular.
 // https://stackoverflow.com/a/75988895
@@ -302,7 +334,7 @@ box-sizing: border-box;
 margin-top: 1mm;
 font-family: "Inter", Tahoma, Geneva, Verdana, sans-serif;
 }
-.petition_input {
+.markdown_input {
 border: 1px solid gray;
 border-bottom-left-radius: 4px;
 border-bottom-right-radius: 4px;
@@ -320,15 +352,30 @@ background-color: var(--main-color);
 button {
 background-color: var(--main-color);
 }
-#preview {
+.markdown_input {
+min-height: 12em;
+}
+.markdown_rendered {
 overflow: hidden;
 width: 100%;
-min-height: 10em;
 margin: 0;
 padding-left: 8px;
 color: var(--text-color);
 box-sizing: border-box;
 word-wrap: break-word;
+}
+textarea.petition_input {
+min-height: 30em;
+}
+#preview {
+min-height: 25em;
+}
+#comment_preview {
+min-height: 10em;
+}
+img {
+max-width: 75%;
+height: auto;
 }
 code {
 background-color: var(--main-color);
@@ -508,5 +555,199 @@ padding: 5px;
 margin-top: 5px;
 }
 </style>
-</head><body><label>Название:<inputid="nameInput"type="text"></label><hr><tabs><panetitle="Писать"><textareaclass="petition_input"id="descriptionInput"placeholder="Опишитездесьсвоюпетицию.#Заголовок##Заголовокноменьше*курсив***жирный**`код`[гиперссылка](https://example.com)![картинкаилиGIF'ка](https://imgur.com/TxuGT4W.gif)>Цитата1.Упорядоченный2.Список-Неупорядоченный-Список---"></textarea></pane><panetitle="Предпросмотр"><divclass="petition_input"id="preview"></div></pane><inputid="createButton"type="submit"value="Создать"onclick="submitPetition()"><details><summary>Какписатьпетиции</summary><divid="petition_writing_wiki"></div></details></tabs><divid="notification_list"ng-controller="petitionCreatorControllerasnotificationList"><divclass="notification"ng-repeat="notificationinNotifications"><span>{{notification.text}}</span><divclass="notificationCloseButton"onclick="gScope.Notifications=[];UpdateDigest(gScope,50)">X</div></div></div></body><script>//Sorryforusingjavascript.//Sorryforusingangular.vargScope=null;angular.module("petitionCreator",['components']).controller('petitionCreatorController',function($scope){gScope=$scope;varnotificationList=this;$scope.Notifications=[];});functionparseAndRender(){vartextarea=$("#descriptionInput");varresult=marked.parse(textarea.val().replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/,""));varpreview=$("#preview");preview.get(0).innerHTML=DOMPurify.sanitize(result);if(IsGMod()){varnameinput=$("#nameInput")gmod.SetDraftText(nameinput.val(),textarea.val());fixAncherTags();}};functionsubmitPetition(){varname=($("#nameInput").val());if(isWhitespaceString(name)){gScope.Notifications.push({text:"Названиенеможетбытьпустым"});UpdateDigest(gScope,50);return;}vardescription_text=$("#descriptionInput").val();if(isWhitespaceString(description_text)){gScope.Notifications.push({text:"Описаниенеможетбытьпустым"});UpdateDigest(gScope,50);return;}if(name==description_text||getWordCount(description_text)<10){gScope.Notifications.push({text:"Читай\"Какписатьпетиции\""});UpdateDigest(gScope,50);return;}$('#createButton').attr('disabled','disabled');if(IsGMod()){gmod.CreatePetition(name,description_text);}else{console.log("Imaginethatanewpetitionwascreated",name,description_text);}}//Dirtyhackfortextinputignoringenteronlinux.functionkeydown(event){if(event.keyCode===13&&IsGMod()&&IsLinux()){document.execCommand('insertText',false/*noUI*/,"\n");}if(event.ctrlKey&&event.code=="KeyB"){InsertTagsAroundText("**");event.preventDefault();}if(event.ctrlKey&&event.code=="KeyI"){InsertTagsAroundText("_");event.preventDefault();}}angular.element(document).ready(function(){//Manuallybootstrapangularjsbecauseotherwiseitwillcomplainaboutdocument.location.originangular.bootstrap(document.body,['petitionCreator']);vartextarea=$("#descriptionInput");textarea.bind("inputpropertychange",debounce(parseAndRender,200));textarea.keydown(keydown);if(IsGMod()){gmod.GetDraftText(function(name,desc){$("#descriptionInput").val(desc);$("#nameInput").val(name);if(!isWhitespaceString(desc)){parseAndRender();}});}//Thisisawfulbutit'sbetterthecopypastingthewikiandmaintainingitintwoplaces.//Thisisalsobetterthentheusernotreadingitatall.fetch("https://raw.githubusercontent.com/FreeSBox/freesbox.github.io/refs/heads/master/content/docs/writing_petitions.md").then(res=>res.text()).then(text=>{//regexmagictoremovehugoheadertext=text.replace(/---(.|\n)*?---/,"");//regexmagictoredirectthelinkstothepublicwikitext=text.replace(/\/docs\//,"https://freesbox.github.io/docs/");varresult=marked.parse(text);varwiki=$("#petition_writing_wiki");wiki.get(0).innerHTML=result;if(IsGMod()){fixAncherTags();}}).catch(err=>console.log(err));});</script></html>
+
+</head>
+<body>
+	<label>Название: <input id="nameInput" type="text"></label>
+
+	<hr>
+
+	<tabs>
+		<pane title="Писать">
+			<textarea class="markdown_input petition_input" id="descriptionInput" placeholder="Опишите здесь свою петицию.
+# Заголовок
+## Заголовок но меньше
+
+*курсив*
+**жирный**
+`код`
+
+[гипер ссылка](https://example.com)
+![картинка или GIF'ка](https://imgur.com/TxuGT4W.gif)
+
+> Цитата
+
+1. Упорядоченный
+2. Список
+
+- Неупорядоченный
+- Список
+
+---
+
+"></textarea>
+		</pane>
+		<pane title="Предпросмотр">
+			<div class="markdown_input petition_input markdown_rendered" id="preview"></div>
+		</pane>
+
+		<input id="createButton" type="submit" value="Создать" onclick="submitPetition()">
+
+		<details>
+			<summary>Как писать петиции</summary>
+			<div id="petition_writing_wiki"></div>
+		</details>
+	</tabs>
+
+	<div id="notification_list" ng-controller="petitionCreatorController as notificationList">
+		<div class="notification" ng-repeat="notification in Notifications">
+			<span>{{notification.text}}</span>
+			<div class="notificationCloseButton" onclick="gScope.Notifications = []; UpdateDigest(gScope, 50)">X</div>
+		</div>
+	</div>
+</body>
+<script>
+	// Sorry for using javascript.
+	// Sorry for using angular.
+
+	var gScope = null;
+
+	angular.module("petitionCreator", ['components'])
+		.controller('petitionCreatorController', function ($scope) {
+			gScope = $scope;
+
+			var notificationList = this;
+			$scope.Notifications = [];
+		});
+
+
+	function parseAndRender()
+	{
+		var textarea = $("#descriptionInput");
+		var result = marked.parse(textarea.val().replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/,""));
+		var preview = $("#preview");
+		preview.get(0).innerHTML = DOMPurify.sanitize(result);
+		
+		if (IsGMod())
+		{
+			var nameinput = $("#nameInput")
+			gmod.SetDraftText(nameinput.val(), textarea.val());
+
+			fixAncherTags();
+		}
+	};
+
+
+	function submitPetition()
+	{
+		var name = ($("#nameInput").val());
+
+		if (isWhitespaceString(name))
+		{
+			gScope.Notifications.push({text: "Название не может быть пустым"});
+			UpdateDigest(gScope, 50);
+			return;
+		}
+		
+		var description_text = $("#descriptionInput").val();
+		if (isWhitespaceString(description_text))
+		{
+			gScope.Notifications.push({text: "Описание не может быть пустым"});
+			UpdateDigest(gScope, 50);
+			return;
+		}
+
+		if (name == description_text || getWordCount(description_text) < 10)
+		{
+			gScope.Notifications.push({text: "Читай \"Как писать петиции\""});
+			UpdateDigest(gScope, 50);
+			return;
+		}
+
+		$('#createButton').attr('disabled','disabled');
+		if (IsGMod())
+		{
+			gmod.CreatePetition(name, description_text);
+		}
+		else
+		{
+			console.log("Imagine that a new petition was created", name, description_text);
+		}
+
+		setTimeout(() => {
+			$('#createButton').removeAttr("disabled");
+			gScope.Notifications.push({text: "Сервер не согласен, читай чат"});
+			UpdateDigest(gScope, 50);
+		}, 5000);
+	}
+
+	// Dirty hack for text input ignoring enter on linux.
+	function keydown(event)
+	{
+		if (event.keyCode === 13 && IsGMod() && IsLinux())
+		{
+			document.execCommand('insertText', false /*no UI*/, "\n");
+		}
+		
+		if(event.ctrlKey && event.code == "KeyB")
+		{
+			InsertTagsAroundText("**");
+			event.preventDefault();
+		}
+		if(event.ctrlKey && event.code == "KeyI")
+		{
+			InsertTagsAroundText("_");
+			event.preventDefault();
+		}
+	}
+
+	angular.element(document).ready(function () {
+		// Manually bootstrap angularjs because otherwise it will complain about document.location.origin
+		angular.bootstrap(document.body, ['petitionCreator']);
+
+		var textarea = $("#descriptionInput");
+		textarea.bind(
+			"input propertychange",
+			debounce(parseAndRender, 200)
+		);
+
+		textarea.keydown(keydown);
+
+		if (IsGMod())
+		{
+			gmod.GetDraftText(function(name, desc)
+			{
+				$("#descriptionInput").val(desc);
+				$("#nameInput").val(name);
+
+				if (!isWhitespaceString(desc))
+				{
+					parseAndRender();
+				}
+			});
+		}
+
+		// This is awful but it's better the copypasting the wiki and maintaining it in two places.
+		// This is also better then the user not reading it at all.
+		fetch("https://raw.githubusercontent.com/FreeSBox/freesbox.github.io/refs/heads/master/content/docs/writing_petitions.md")
+		.then(res => res.text())
+		.then(text => {
+			// regex magic to remove hugo header
+			text = text.replace(/---(.|\n)*?---/, "");
+			// regex magic to redirect the links to the public wiki
+			text = text.replace(/\/docs\//, "https://freesbox.github.io/docs/");
+
+			var result = marked.parse(text);
+			var wiki = $("#petition_writing_wiki");
+			wiki.get(0).innerHTML = result;
+
+			if (IsGMod())
+			{
+				fixAncherTags();
+			}
+		})
+		.catch(err => console.log(err));
+	});
+</script>
+</html>
 ]]

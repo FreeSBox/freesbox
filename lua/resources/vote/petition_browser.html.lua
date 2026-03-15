@@ -1,5 +1,18 @@
 return [[
-<!--SorryforusingHTML--><!DOCTYPEhtml><html><head><metahttp-equiv="Content-Type"content="text/html;charset=UTF-8"/><linkrel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"><linkrel="preconnect"href="https://fonts.googleapis.com"><linkrel="preconnect"href="https://fonts.gstatic.com"crossorigin><linkhref="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"rel="stylesheet"><scripttype="text/javascript"src="asset://garrysmod/html/js/thirdparty/jquery.js"></script><scripttype="text/javascript"src="asset://garrysmod/html/js/thirdparty/angular.js"></script><scripttype="text/javascript"src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script><script>
+<!--Sorry for using HTML-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
+
+<script>
 // Sorry for using javascript.
 // Sorry for using angular.
 // https://stackoverflow.com/a/75988895
@@ -270,6 +283,7 @@ replace: true
 };
 });
 </script>
+
 <style>
 :root {
 --main-color: rgb(31, 31, 31);
@@ -302,7 +316,7 @@ box-sizing: border-box;
 margin-top: 1mm;
 font-family: "Inter", Tahoma, Geneva, Verdana, sans-serif;
 }
-.petition_input {
+.markdown_input {
 border: 1px solid gray;
 border-bottom-left-radius: 4px;
 border-bottom-right-radius: 4px;
@@ -320,15 +334,30 @@ background-color: var(--main-color);
 button {
 background-color: var(--main-color);
 }
-#preview {
+.markdown_input {
+min-height: 12em;
+}
+.markdown_rendered {
 overflow: hidden;
 width: 100%;
-min-height: 10em;
 margin: 0;
 padding-left: 8px;
 color: var(--text-color);
 box-sizing: border-box;
 word-wrap: break-word;
+}
+textarea.petition_input {
+min-height: 30em;
+}
+#preview {
+min-height: 25em;
+}
+#comment_preview {
+min-height: 10em;
+}
+img {
+max-width: 75%;
+height: auto;
 }
 code {
 background-color: var(--main-color);
@@ -508,5 +537,139 @@ padding: 5px;
 margin-top: 5px;
 }
 </style>
-</head><body><divid="petition_list"ng-controller="petitionBrowserControlleraspetitionList"><!--Ifthereisabugwheretherearen'tenoughpetitionstofillthescreen,soweneverrequestmore-removeinfinite-scroll-immediate-checkButthisshouldneverhappen,sinceweareusinga800x600windowforpetitionswith16petitionsperrequest.--><divinfinite-scroll='loadMore()'infinite-scroll-distance='1'infinite-scroll-immediate-check="false"><divclass="petition"ng-repeat="petitioninPetitions|orderBy:'-creation_time'"><aclass="clickable"ng-click='petitionClicked(petition)'>{{petition.name}}</a><spanstyle="float:right;">Автор:<aclass="clickable"ng-click='authorClicked(petition)'>{{petition.author_name}}</a></span><br><br><span>Добавлено:{{petition.creation_time*1000|date:'d.M.yyH:mm'}}</span><br><span>Открытодо:{{petition.expire_time*1000|date:'d.M.yyH:mm'}}</span><divid="vote_menu"><buttonng-disabled="petition.expired"ng-click="likeClicked(petition)"id="like_button"ng-class="{btn_active:petition.our_vote_status==1,btn_won:petition.expired&&petition.likes>petition.dislikes}"><iclass="fafa-thumbs-up"></i>{{petition.likes}}</button><buttonng-disabled="petition.expired"ng-click="dislikeClicked(petition)"id="like_button"ng-class="{btn_active:petition.our_vote_status==2,btn_lost:petition.expired&&petition.dislikes>=petition.likes}"><iclass="fafa-thumbs-down"></i>{{petition.dislikes}}</button></div><br></div></div></div></body><script>/*ng-infinite-scroll-v1.0.0-2013-02-23*/varmod;mod=angular.module("infinite-scroll",[]),mod.directive("infiniteScroll",["$rootScope","$window","$timeout",function(i,n,e){return{link:function(t,l,o){varr,c,f,a;returnn=angular.element(n),f=0,null!=o.infiniteScrollDistance&&t.$watch(o.infiniteScrollDistance,function(i){returnf=parseInt(i,10)}),a=!0,r=!1,null!=o.infiniteScrollDisabled&&t.$watch(o.infiniteScrollDisabled,function(i){returna=!i,a&&r?(r=!1,c()):void0}),c=function(){vare,c,u,d;returnd=n.height()+n.scrollTop(),e=l.offset().top+l.height(),c=e-d,u=n.height()*f>=c,u&&a?i.$$phase?t.$eval(o.infiniteScroll):t.$apply(o.infiniteScroll):u?r=!0:void0},n.on("scroll",c),t.$on("$destroy",function(){returnn.off("scroll",c)}),e(function(){returno.infiniteScrollImmediateCheck?t.$eval(o.infiniteScrollImmediateCheck)?c():void0:c()},0)}}}]);</script><script>//Sorryforusingjavascript.consteVoteStatus=Object.freeze({NOT_VOTED:0,LIKE:1,DISLIKE:2});vargScope=null;angular.module("petitionBrowser",["infinite-scroll"]).controller('petitionBrowserController',function($scope){gScope=$scope;varpetitionList=this;$scope.Petitions=[];$scope.loadMore=debounce(()=>{gmod.RequestMorePetitions()},300);$scope.petitionClicked=function(petition){gmod.OpenPetition(petition.index)}$scope.authorClicked=function(petition){gmod.OpenURL("https://steamcommunity.com/profiles/"+petition.author_steamid)}$scope.likeClicked=function(petition){gmod.VoteOnPetition(petition.index,false)}$scope.dislikeClicked=function(petition){gmod.VoteOnPetition(petition.index,true)}});//Manuallybootstrapangularjsbecauseotherwiseitwillcomplainaboutdocument.location.originangular.element(document).ready(function(){angular.bootstrap(document.body,['petitionBrowser']);});functionaddPetition(index,name,author_name,author_steamid,likes,dislikes,our_vote_status,creation_time,expire_time){varexpired=expire_time*1000<=Date.now()gScope.Petitions.push({index:index,name:name,author_name:author_name,author_steamid:author_steamid,likes:likes,dislikes:dislikes,our_vote_status:our_vote_status,creation_time:creation_time,expire_time:expire_time,expired:expired});UpdateDigest(gScope,50);};functionupdatePetition(index,name,author_name,author_steamid,likes,dislikes,our_vote_status,creation_time,expire_time){varpetitions=gScope.Petitions;varpetitions_length=petitions.length;varexpired=expire_time*1000<=Date.now()for(vari=0;i<petitions_length;i++){if(petitions[i].index==index){petitions[i].name=name;petitions[i].author_name=author_name;petitions[i].author_steamid=author_steamid;petitions[i].likes=likes;petitions[i].dislikes=dislikes;petitions[i].our_vote_status=our_vote_status;petitions[i].creation_time=creation_time;petitions[i].expire_time=expire_time;petitions[i].expired=expired;UpdateDigest(gScope,50);returntrue;}}returnfalse;};functionaddOrUpdatePetition(index,name,description,author_name,author_steamid,likes,dislikes,our_vote_status,creation_time,expire_time){if(!updatePetition(index,name,author_name,author_steamid,likes,dislikes,our_vote_status,creation_time,expire_time)){addPetition(index,name,author_name,author_steamid,likes,dislikes,our_vote_status,creation_time,expire_time);}};functionupdatePetitionVotes(index,likes,dislikes,our_vote_status){varpetitions=gScope.Petitions;varpetitions_length=petitions.length;for(vari=0;i<petitions_length;i++){if(petitions[i].index==index){petitions[i].likes=likes;petitions[i].dislikes=dislikes;petitions[i].our_vote_status=our_vote_status;UpdateDigest(gScope,50);returntrue;}}returnfalse;};functionclearPetitions(){gScope.Petitions=[];UpdateDigest(gScope,50);};</script></html>
+</head>
+<body>
+	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
+		<!--
+			If there is a bug where there aren't enough petitions to fill the screen, so we never request more - remove infinite-scroll-immediate-check
+			But this should never happen, since we are using a 800x600 window for petitions with 16 petitions per request.
+		-->
+		<div infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check="false">
+			<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
+				<a class="clickable" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
+				<span style="float: right;">Автор: <a class="clickable" ng-click='authorClicked(petition)'>{{petition.author_name}}</a></span>
+				<br>
+				<br>
+				<span>Добавлено: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+				<br>
+				<span>Открыто до: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
+				<div id="vote_menu">
+					<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" id="like_button" ng-class="{btn_active: petition.our_vote_status == 1, btn_won: petition.expired && petition.likes > petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
+					<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" id="like_button" ng-class="{btn_active: petition.our_vote_status == 2, btn_lost: petition.expired && petition.dislikes >= petition.likes}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+				</div>
+				<br>
+			</div>
+		</div>
+	</div>
+</body>
+<script>
+	/* ng-infinite-scroll - v1.0.0 - 2013-02-23 */
+	var mod;mod=angular.module("infinite-scroll",[]),mod.directive("infiniteScroll",["$rootScope","$window","$timeout",function(i,n,e){return{link:function(t,l,o){var r,c,f,a;return n=angular.element(n),f=0,null!=o.infiniteScrollDistance&&t.$watch(o.infiniteScrollDistance,function(i){return f=parseInt(i,10)}),a=!0,r=!1,null!=o.infiniteScrollDisabled&&t.$watch(o.infiniteScrollDisabled,function(i){return a=!i,a&&r?(r=!1,c()):void 0}),c=function(){var e,c,u,d;return d=n.height()+n.scrollTop(),e=l.offset().top+l.height(),c=e-d,u=n.height()*f>=c,u&&a?i.$$phase?t.$eval(o.infiniteScroll):t.$apply(o.infiniteScroll):u?r=!0:void 0},n.on("scroll",c),t.$on("$destroy",function(){return n.off("scroll",c)}),e(function(){return o.infiniteScrollImmediateCheck?t.$eval(o.infiniteScrollImmediateCheck)?c():void 0:c()},0)}}}]);
+</script>
+<script>
+	// Sorry for using javascript.
+
+	const eVoteStatus = Object.freeze({
+		NOT_VOTED: 0,
+		LIKE: 1,
+		DISLIKE: 2
+	});
+
+	var gScope = null;
+
+	angular.module("petitionBrowser", ["infinite-scroll"])
+		.controller('petitionBrowserController', function ($scope) {
+			gScope = $scope;
+
+			var petitionList = this;
+			$scope.Petitions = [];
+
+
+			$scope.loadMore = debounce(() => {
+				gmod.RequestMorePetitions()
+			}, 300);
+
+			$scope.petitionClicked = function (petition) {
+				gmod.OpenPetition(petition.index)
+			}
+			$scope.authorClicked = function (petition) {
+				gmod.OpenURL("https://steamcommunity.com/profiles/" + petition.author_steamid)
+			}
+
+			$scope.likeClicked = function (petition) {
+				gmod.VoteOnPetition(petition.index, false)
+			}
+			$scope.dislikeClicked = function (petition) {
+				gmod.VoteOnPetition(petition.index, true)
+			}
+		});
+	// Manually bootstrap angularjs because otherwise it will complain about document.location.origin
+	angular.element(document).ready(function () {
+		angular.bootstrap(document.body, ['petitionBrowser']);
+	});
+
+	function addPetition(index, name, author_name, author_steamid, likes, dislikes, our_vote_status, creation_time, expire_time) {
+		var expired = expire_time*1000 <= Date.now()
+		gScope.Petitions.push({
+			index: index,
+			name: name,
+			author_name: author_name,
+			author_steamid: author_steamid,
+			likes: likes,
+			dislikes: dislikes,
+			our_vote_status: our_vote_status,
+			creation_time: creation_time,
+			expire_time: expire_time,
+			expired: expired
+		});
+		UpdateDigest(gScope, 50);
+	};
+	function updatePetition(index, name, author_name, author_steamid, likes, dislikes, our_vote_status, creation_time, expire_time) {
+		var petitions = gScope.Petitions;
+		var petitions_length = petitions.length;
+		var expired = expire_time*1000 <= Date.now()
+		for (var i = 0; i < petitions_length; i++) {
+			if (petitions[i].index == index) {
+				petitions[i].name = name;
+				petitions[i].author_name = author_name;
+				petitions[i].author_steamid = author_steamid;
+				petitions[i].likes = likes;
+				petitions[i].dislikes = dislikes;
+				petitions[i].our_vote_status = our_vote_status;
+				petitions[i].creation_time = creation_time;
+				petitions[i].expire_time = expire_time;
+				petitions[i].expired = expired;
+				UpdateDigest(gScope, 50);
+				return true;
+			}
+		}
+		return false;
+	};
+	function addOrUpdatePetition(index, name, description, author_name, author_steamid, likes, dislikes, our_vote_status, creation_time, expire_time) {
+		if (!updatePetition(index, name, author_name, author_steamid, likes, dislikes, our_vote_status, creation_time, expire_time)) {
+			addPetition(index, name, author_name, author_steamid, likes, dislikes, our_vote_status, creation_time, expire_time);
+		}
+	};
+	function updatePetitionVotes(index, likes, dislikes, our_vote_status) {
+		var petitions = gScope.Petitions;
+		var petitions_length = petitions.length;
+		for (var i = 0; i < petitions_length; i++) {
+			if (petitions[i].index == index) {
+				petitions[i].likes = likes;
+				petitions[i].dislikes = dislikes;
+				petitions[i].our_vote_status = our_vote_status;
+				UpdateDigest(gScope, 50);
+				return true;
+			}
+		}
+		return false;
+	};
+
+	function clearPetitions() {
+		gScope.Petitions = [];
+		UpdateDigest(gScope, 50);
+	};
+</script>
+
+</html>
 ]]

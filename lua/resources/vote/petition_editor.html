@@ -46,7 +46,7 @@
 
 	<tabs>
 		<pane title="Писать">
-			<textarea class="petition_input" id="descriptionInput" placeholder="Опишите здесь свою петицию.
+			<textarea class="markdown_input petition_input" id="descriptionInput" placeholder="Опишите здесь свою петицию.
 # Заголовок
 ## Заголовок но меньше
 
@@ -70,7 +70,7 @@
 "></textarea>
 		</pane>
 		<pane title="Предпросмотр">
-			<div class="petition_input markdown_rendered" id="preview"></div>
+			<div class="markdown_input petition_input markdown_rendered" id="preview"></div>
 		</pane>
 
 		<input id="createButton" type="submit" value="Создать" onclick="submitPetition()">
@@ -155,6 +155,12 @@
 		{
 			console.log("Imagine that a new petition was created", name, description_text);
 		}
+
+		setTimeout(() => {
+			$('#createButton').removeAttr("disabled");
+			gScope.Notifications.push({text: "Сервер не согласен, читай чат"});
+			UpdateDigest(gScope, 50);
+		}, 5000);
 	}
 
 	// Dirty hack for text input ignoring enter on linux.

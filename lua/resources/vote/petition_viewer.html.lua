@@ -1,5 +1,37 @@
 return [[
-<!--SorryforusingHTML--><!DOCTYPEhtml><html><head><metahttp-equiv="Content-Type"content="text/html;charset=UTF-8"/><linkrel="preconnect"href="https://fonts.googleapis.com"><linkrel="preconnect"href="https://fonts.gstatic.com"crossorigin><linkrel="stylesheet"href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"><linkrel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"><scripttype="text/javascript"src="asset://garrysmod/html/js/thirdparty/jquery.js"></script><scripttype="text/javascript"src="asset://garrysmod/html/js/thirdparty/angular.js"></script><scripttype="text/javascript"src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script><scripttype="text/javascript"src="asset://garrysmod/html/js/lua.js"></script><script>//https://javascript.plainenglish.io/how-this-simple-method-turned-my-array-code-from-messy-to-neat-3bba8f25e991//SeemsAIgenerated,butwhocares,I'mnotimplementingthisinjavascriptmyself.if(!Array.prototype.at){Array.prototype.at=function(n){if(this==null)thrownewTypeError("Calledonnullorundefined");constlen=this.length>>>0;n=Number(n);if(isNaN(n))n=0;n=n<0?Math.ceil(n):Math.floor(n);//manualtruncationif(n<0)n+=len;if(n<0||n>=len)returnundefined;returnthis[n];};}</script><scripttype="text/javascript"src="https://cdn.jsdelivr.net/npm/dompurify@3.3.1/dist/purify.min.js"></script><scripttype="text/javascript"src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script><script>
+<!--Sorry for using HTML-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
+<script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
+<script>
+	// https://javascript.plainenglish.io/how-this-simple-method-turned-my-array-code-from-messy-to-neat-3bba8f25e991
+	// Seems AI generated, but who cares, I'm not implementing this in javascript myself.
+	if (!Array.prototype.at) {
+		Array.prototype.at = function (n) {
+			if (this == null) throw new TypeError("Called on null or undefined");
+			const len = this.length >>> 0;
+			n = Number(n);
+			if (isNaN(n)) n = 0;
+			n = n < 0 ? Math.ceil(n) : Math.floor(n); // manual truncation
+			if (n < 0) n += len;
+			if (n < 0 || n >= len) return undefined;
+			return this[n];
+		};
+	}
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/dompurify@3.3.1/dist/purify.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
+
+<script>
 // Sorry for using javascript.
 // Sorry for using angular.
 // https://stackoverflow.com/a/75988895
@@ -270,6 +302,7 @@ replace: true
 };
 });
 </script>
+
 <style>
 :root {
 --main-color: rgb(31, 31, 31);
@@ -302,7 +335,7 @@ box-sizing: border-box;
 margin-top: 1mm;
 font-family: "Inter", Tahoma, Geneva, Verdana, sans-serif;
 }
-.petition_input {
+.markdown_input {
 border: 1px solid gray;
 border-bottom-left-radius: 4px;
 border-bottom-right-radius: 4px;
@@ -320,15 +353,30 @@ background-color: var(--main-color);
 button {
 background-color: var(--main-color);
 }
-#preview {
+.markdown_input {
+min-height: 12em;
+}
+.markdown_rendered {
 overflow: hidden;
 width: 100%;
-min-height: 10em;
 margin: 0;
 padding-left: 8px;
 color: var(--text-color);
 box-sizing: border-box;
 word-wrap: break-word;
+}
+textarea.petition_input {
+min-height: 30em;
+}
+#preview {
+min-height: 25em;
+}
+#comment_preview {
+min-height: 10em;
+}
+img {
+max-width: 75%;
+height: auto;
 }
 code {
 background-color: var(--main-color);
@@ -508,5 +556,259 @@ padding: 5px;
 margin-top: 5px;
 }
 </style>
-</head><bodyng-controller="petitionViewerControlleraspetitionViewer"><span>{{Petition.name}}</span><spanstyle="float:right;">Автор:<aclass="clickable"ng-click='authorClicked(Petition)'>{{Petition.author_name}}</a></span><br><spanstyle="float:right;">Index:{{Petition.index}}</span><br><span>Добавлено:{{Petition.creation_time*1000|date:'d.M.yyH:mm'}}</span><br><span>Открытодо:{{Petition.expire_time*1000|date:'d.M.yyH:mm'}}</span><divid="vote_menu"><buttonng-disabled="Petition.expired"ng-click="likeClicked()"id="like_button"ng-class="{btn_active:Petition.our_vote_status==1,btn_won:Petition.expired&&Petition.likes>Petition.dislikes}"><iclass="fafa-thumbs-up"></i>{{Petition.likes}}</button><buttonng-disabled="Petition.expired"ng-click="dislikeClicked()"id="like_button"ng-class="{btn_active:Petition.our_vote_status==2,btn_lost:Petition.expired&&Petition.dislikes>=Petition.likes}"><iclass="fafa-thumbs-down"></i>{{Petition.dislikes}}</button></div><hr><divid="preview"></div><hrng-class="{hide:Comments.length===0}"><spanng-class="{hide:Comments.length===0}">Комментарии:</span><divinfinite-scroll='loadMore()'infinite-scroll-distance='1'infinite-scroll-immediate-check="false"><divclass="comment"ng-repeat="commentinComments|orderBy:'-creation_time'"><aclass="clickable"ng-click='authorClicked(comment)'>{{comment.author_name}}</a><span>{{comment.creation_time*1000|date:'d.M.yyH:mm'}}</span><divid="vote_menu"><buttonng-click="likeClicked(comment)"id="like_button"ng-class="{btn_active:comment.our_vote_status==1}"><iclass="fafa-thumbs-up"></i>{{comment.likes}}</button><buttonng-click="dislikeClicked(comment)"id="like_button"ng-class="{btn_active:comment.our_vote_status==2}"><iclass="fafa-thumbs-down"></i>{{comment.dislikes}}</button></div><br><divng-bind-html="comment.description_html"></div></div></div><hr><tabs><panetitle="Писать"><textareaclass="petition_input"id="descriptionInput"placeholder="Комментарий"></textarea></pane><panetitle="Предпросмотр"><divclass="petition_input"id="comment_preview"></div></pane><inputid="createButton"type="submit"value="Создать"onclick="submitPetition()"></tabs><divclass="notification"ng-repeat="notificationinNotifications"><span>{{notification.text}}</span><divclass="notificationCloseButton"onclick="gScope.Notifications=[];UpdateDigest(gScope,50)">X</div></div></body><script>/*ng-infinite-scroll-v1.0.0-2013-02-23*/varmod;mod=angular.module("infinite-scroll",[]),mod.directive("infiniteScroll",["$rootScope","$window","$timeout",function(i,n,e){return{link:function(t,l,o){varr,c,f,a;returnn=angular.element(n),f=0,null!=o.infiniteScrollDistance&&t.$watch(o.infiniteScrollDistance,function(i){returnf=parseInt(i,10)}),a=!0,r=!1,null!=o.infiniteScrollDisabled&&t.$watch(o.infiniteScrollDisabled,function(i){returna=!i,a&&r?(r=!1,c()):void0}),c=function(){vare,c,u,d;returnd=n.height()+n.scrollTop(),e=l.offset().top+l.height(),c=e-d,u=n.height()*f>=c,u&&a?i.$$phase?t.$eval(o.infiniteScroll):t.$apply(o.infiniteScroll):u?r=!0:void0},n.on("scroll",c),t.$on("$destroy",function(){returnn.off("scroll",c)}),e(function(){returno.infiniteScrollImmediateCheck?t.$eval(o.infiniteScrollImmediateCheck)?c():void0:c()},0)}}}]);</script><script>consteVoteStatus=Object.freeze({NOT_VOTED:0,LIKE:1,DISLIKE:2});vargScope=null;angular.module("petitionViewer",["infinite-scroll","components"]).controller('petitionViewerController',function($scope){gScope=$scope;$scope.Petition={};$scope.Comments=[];$scope.Notifications=[];$scope.loadMore=debounce(()=>{gmod.RequestMoreComments(gScope.Petition.index)},300);$scope.authorClicked=function(petition){gmod.OpenURL("https://steamcommunity.com/profiles/"+petition.author_steamid)}$scope.likeClicked=function(){gmod.VoteOnPetition(gScope.Petition.index,false)}$scope.dislikeClicked=function(){gmod.VoteOnPetition(gScope.Petition.index,true)}}).config(function($sceProvider){//Theymaysaythisisn'tsafebutIdon'tcaretobehonest.//I'mnotgoingtosithereandfigureouthowtousethisshit,//alsowealreadysanitizeuserinput.$sceProvider.enabled(false);});//Manuallybootstrapangularjsbecauseotherwiseitwillcomplainaboutdocument.location.originangular.element(document).ready(function(){angular.bootstrap(document.body,['petitionViewer']);vartextarea=$("#descriptionInput");textarea.bind("inputpropertychange",debounce(parseAndRenderEditor,200));textarea.keydown(keydown);});//Dirtyhackfortextinputignoringenteronlinux.functionkeydown(event){if(event.keyCode===13&&IsGMod()&&IsLinux()){document.execCommand('insertText',false/*noUI*/,"\n");}if(event.ctrlKey&&event.code=="KeyB"){InsertTagsAroundText("**");event.preventDefault();}if(event.ctrlKey&&event.code=="KeyI"){InsertTagsAroundText("_");event.preventDefault();}}functionparseMarkdown(description){varresult=marked.parse(description.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/,""));returnDOMPurify.sanitize(result);}functionparseAndRenderEditor(){vartextarea=$("#descriptionInput");parseAndRender($("#comment_preview"),textarea.val());}functionparseAndRender(target,description){target.get(0).innerHTML=parseMarkdown(description);if(IsGMod()){fixAncherTags();}}functionsubmitPetition(){vardescription_text=$("#descriptionInput").val();if(isWhitespaceString(description_text)){gScope.Notifications.push({text:"Описаниенеможетбытьпустым"});UpdateDigest(gScope,50);return;}$('#createButton').attr('disabled','disabled');if(IsGMod()){gmod.CreateComment(gScope.Petition.index,description_text);}else{addOrUpdateComment(gScope.Petition.index+1,description_text,"browser_editor","0",0,0,0,Date.now()/1000);console.log("Imaginethatanewcommentwascreatedontheserver",description_text);}}functionaddOrUpdatePetition(index,name,description,author_name,author_steamid,likes,dislikes,our_vote_status,creation_time,expire_time){parseAndRender($("#preview"),description);varexpired=expire_time*1000<=Date.now();gScope.Petition.index=indexgScope.Petition.name=name;gScope.Petition.author_name=author_name;gScope.Petition.author_steamid=author_steamid;gScope.Petition.likes=likes;gScope.Petition.dislikes=dislikes;gScope.Petition.our_vote_status=our_vote_status;gScope.Petition.creation_time=creation_time;gScope.Petition.expire_time=expire_time;gScope.Petition.expired=expired;UpdateDigest(gScope,50);};functionupdatePetitionVotes(index,likes,dislikes,our_vote_status){if(gScope.Petition.index!=index){return}gScope.Petition.likes=likes;gScope.Petition.dislikes=dislikes;gScope.Petition.our_vote_status=our_vote_status;UpdateDigest(gScope,50);}functionaddOrUpdateComment(index,description,author_name,author_steamid,likes,dislikes,our_vote_status,creation_time){varnew_comment={index:index,description_html:parseMarkdown(description),author_name:author_name,author_steamid:author_steamid,likes:likes,dislikes:dislikes,our_vote_status:our_vote_status,creation_time:creation_time};varcomments=gScope.Comments;varcomments_length=comments.length;for(vari=0;i<comments_length;i++){if(comments[i].index===index){comments[i]=new_comment;UpdateDigest(gScope,50);return;}}vardescription_input=$("#descriptionInput");if(description_input.val()===description){$('#createButton').removeAttr("disabled");description_input.val("");parseAndRenderEditor();}gScope.Comments.push(new_comment);UpdateDigest(gScope,50);return;}</script></html>
+
+</head>
+<body ng-controller="petitionViewerController as petitionViewer">
+	<span>{{Petition.name}}</span>
+	<span style="float: right;">Автор: <a class="clickable" ng-click='authorClicked(Petition)'>{{Petition.author_name}}</a></span>
+	<br>
+	<span style="float: right;">Index: {{Petition.index}}</span>
+	<br>
+
+	<span>Добавлено: {{Petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+	<br>
+	<span>Открыто до: {{Petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
+
+	<div id="vote_menu">
+		<button ng-disabled="Petition.expired" ng-click="likeClicked()" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 1, btn_won: Petition.expired && Petition.likes > Petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{Petition.likes}}</button>
+		<button ng-disabled="Petition.expired" ng-click="dislikeClicked()" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 2, btn_lost: Petition.expired && Petition.dislikes >= Petition.likes}"><i class="fa fa-thumbs-down"></i> {{Petition.dislikes}}</button>
+	</div>
+
+	<hr>
+
+	<div class="markdown_rendered" id="preview"></div>
+
+	<hr ng-class="{hide:Comments.length === 0}">
+
+	<span ng-class="{hide:Comments.length === 0}">Комментарии:</span>
+
+	<div infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check="false">
+		<div class="comment" ng-repeat="comment in Comments | orderBy:'-creation_time'">
+			<a class="clickable" ng-click='authorClicked(comment)'>{{comment.author_name}}</a>
+			<span> {{comment.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+			<div id="vote_menu">
+				<button ng-click="likeClicked(comment)" id="like_button" ng-class="{btn_active: comment.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{comment.likes}}</button>
+				<button ng-click="dislikeClicked(comment)" id="like_button" ng-class="{btn_active: comment.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{comment.dislikes}}</button>
+			</div>
+			<br>
+			<div class="markdown_rendered" ng-bind-html="comment.description_html"></div>
+		</div>
+	</div>
+
+	<hr>
+
+	<tabs>
+		<pane title="Писать">
+			<textarea class="markdown_input" id="descriptionInput" placeholder="Комментарий"></textarea>
+		</pane>
+		<pane title="Предпросмотр">
+			<div class="markdown_input markdown_rendered" id="comment_preview"></div>
+		</pane>
+		<input id="createButton" type="submit" value="Создать" onclick="submitPetition()">
+	</tabs>
+
+	<div class="notification" ng-repeat="notification in Notifications">
+		<span>{{notification.text}}</span>
+		<div class="notificationCloseButton" onclick="gScope.Notifications = []; UpdateDigest(gScope, 50)">X</div>
+	</div>
+</body>
+<script>
+	/* ng-infinite-scroll - v1.0.0 - 2013-02-23 */
+	var mod;mod=angular.module("infinite-scroll",[]),mod.directive("infiniteScroll",["$rootScope","$window","$timeout",function(i,n,e){return{link:function(t,l,o){var r,c,f,a;return n=angular.element(n),f=0,null!=o.infiniteScrollDistance&&t.$watch(o.infiniteScrollDistance,function(i){return f=parseInt(i,10)}),a=!0,r=!1,null!=o.infiniteScrollDisabled&&t.$watch(o.infiniteScrollDisabled,function(i){return a=!i,a&&r?(r=!1,c()):void 0}),c=function(){var e,c,u,d;return d=n.height()+n.scrollTop(),e=l.offset().top+l.height(),c=e-d,u=n.height()*f>=c,u&&a?i.$$phase?t.$eval(o.infiniteScroll):t.$apply(o.infiniteScroll):u?r=!0:void 0},n.on("scroll",c),t.$on("$destroy",function(){return n.off("scroll",c)}),e(function(){return o.infiniteScrollImmediateCheck?t.$eval(o.infiniteScrollImmediateCheck)?c():void 0:c()},0)}}}]);
+</script>
+<script>
+	const eVoteStatus = Object.freeze({
+		NOT_VOTED: 0,
+		LIKE: 1,
+		DISLIKE: 2
+	});
+
+	var gScope = null;
+	var gTimeout = null;
+
+	angular.module("petitionViewer", ["infinite-scroll", "components"])
+		.controller('petitionViewerController', function ($scope) {
+			gScope = $scope;
+
+			$scope.Petition = {};
+			$scope.Comments = [];
+			$scope.Notifications = [];
+
+			$scope.loadMore = debounce(() => {
+				gmod.RequestMoreComments(gScope.Petition.index)
+			}, 300);
+
+			$scope.authorClicked = function (petition) {
+				gmod.OpenURL("https://steamcommunity.com/profiles/" + petition.author_steamid)
+			}
+
+			$scope.likeClicked = function () {
+				gmod.VoteOnPetition(gScope.Petition.index, false)
+			}
+			$scope.dislikeClicked = function () {
+				gmod.VoteOnPetition(gScope.Petition.index, true)
+			}
+		})
+		.config(function($sceProvider) {
+			// They may say this isn't safe but I don't care to be honest.
+			// I'm not going to sit here and figure out how to use this shit,
+			// also we already sanitize user input.
+			$sceProvider.enabled(false);
+		});
+	
+	// Manually bootstrap angularjs because otherwise it will complain about document.location.origin
+	angular.element(document).ready(function () {
+		angular.bootstrap(document.body, ['petitionViewer']);
+
+		var textarea = $("#descriptionInput");
+		textarea.bind(
+			"input propertychange",
+			debounce(parseAndRenderEditor, 200)
+		);
+
+		textarea.keydown(keydown);
+	});
+
+	// Dirty hack for text input ignoring enter on linux.
+	function keydown(event)
+	{
+		if (event.keyCode === 13 && IsGMod() && IsLinux())
+		{
+			document.execCommand('insertText', false /*no UI*/, "\n");
+		}
+		
+		if(event.ctrlKey && event.code == "KeyB")
+		{
+			InsertTagsAroundText("**");
+			event.preventDefault();
+		}
+		if(event.ctrlKey && event.code == "KeyI")
+		{
+			InsertTagsAroundText("_");
+			event.preventDefault();
+		}
+	}
+
+	function parseMarkdown(description)
+	{
+		var result = marked.parse(description.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/,""));
+		return DOMPurify.sanitize(result);
+	}
+
+	function parseAndRenderEditor()
+	{
+		var textarea = $("#descriptionInput");
+		parseAndRender($("#comment_preview"), textarea.val());
+	}
+
+	function parseAndRender(target, description)
+	{
+		target.get(0).innerHTML = parseMarkdown(description);
+
+		if (IsGMod())
+		{
+			fixAncherTags();
+		}
+	}
+
+	function submitPetition()
+	{
+		var description_text = $("#descriptionInput").val();
+		if (isWhitespaceString(description_text))
+		{
+			gScope.Notifications.push({text: "Описание не может быть пустым"});
+			UpdateDigest(gScope, 50);
+			return;
+		}
+
+		$('#createButton').attr('disabled','disabled');
+		if (IsGMod())
+		{
+			gmod.CreateComment(gScope.Petition.index, description_text);
+			gTimeout = setTimeout(() => {
+				$('#createButton').removeAttr("disabled");
+				gScope.Notifications.push({text: "Сервер не согласен, читай чат"});
+				UpdateDigest(gScope, 50);
+			}, 5000);
+		}
+		else
+		{
+			addOrUpdateComment(gScope.Petition.index+1, description_text, "browser_editor", "0", 0,0,0,Date.now()/1000);
+			console.log("Imagine that a new comment was created on the server", description_text);
+		}
+	}
+
+	function addOrUpdatePetition(index, name, description, author_name, author_steamid, likes, dislikes, our_vote_status, creation_time, expire_time) {
+		parseAndRender($("#preview"), description);
+
+		var expired = expire_time*1000 <= Date.now();
+
+		gScope.Petition.index = index
+		gScope.Petition.name = name;
+		gScope.Petition.author_name = author_name;
+		gScope.Petition.author_steamid = author_steamid;
+		gScope.Petition.likes = likes;
+		gScope.Petition.dislikes = dislikes;
+		gScope.Petition.our_vote_status = our_vote_status;
+		gScope.Petition.creation_time = creation_time;
+		gScope.Petition.expire_time = expire_time;
+		gScope.Petition.expired = expired;
+		UpdateDigest(gScope, 50);
+	};
+
+	function updatePetitionVotes(index, likes, dislikes, our_vote_status)
+	{
+		if (gScope.Petition.index != index)
+		{
+			return
+		}
+		gScope.Petition.likes = likes;
+		gScope.Petition.dislikes = dislikes;
+		gScope.Petition.our_vote_status = our_vote_status;
+		UpdateDigest(gScope, 50);
+	}
+
+	function addOrUpdateComment(index, description, author_name, author_steamid, likes, dislikes, our_vote_status, creation_time)
+	{
+		var new_comment = {
+			index: index,
+			description_html: parseMarkdown(description),
+			author_name: author_name,
+			author_steamid: author_steamid,
+			likes: likes,
+			dislikes: dislikes,
+			our_vote_status: our_vote_status,
+			creation_time: creation_time
+		};
+
+		var comments = gScope.Comments;
+		var comments_length = comments.length;
+		for (var i = 0; i < comments_length; i++) {
+			if (comments[i].index === index)
+			{
+				comments[i] = new_comment;
+				UpdateDigest(gScope, 50);
+				return;
+			}
+		}
+
+		var description_input = $("#descriptionInput");
+		if (description_input.val() === description)
+		{
+			$('#createButton').removeAttr("disabled");
+			description_input.val("");
+			parseAndRenderEditor();
+			if (gTimeout)
+			{
+				clearTimeout(gTimeout);
+			}
+		}
+
+		gScope.Comments.push(new_comment);
+		UpdateDigest(gScope, 50);
+		return;
+	}
+
+</script>
+</html>
 ]]

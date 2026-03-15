@@ -81,10 +81,10 @@
 
 	<tabs>
 		<pane title="Писать">
-			<textarea class="petition_input" id="descriptionInput" placeholder="Комментарий"></textarea>
+			<textarea class="markdown_input" id="descriptionInput" placeholder="Комментарий"></textarea>
 		</pane>
 		<pane title="Предпросмотр">
-			<div class="petition_input markdown_rendered" id="comment_preview"></div>
+			<div class="markdown_input markdown_rendered" id="comment_preview"></div>
 		</pane>
 		<input id="createButton" type="submit" value="Создать" onclick="submitPetition()">
 	</tabs>
@@ -106,6 +106,7 @@
 	});
 
 	var gScope = null;
+	var gTimeout = null;
 
 	angular.module("petitionViewer", ["infinite-scroll", "components"])
 		.controller('petitionViewerController', function ($scope) {
@@ -206,6 +207,11 @@
 		if (IsGMod())
 		{
 			gmod.CreateComment(gScope.Petition.index, description_text);
+			gTimeout = setTimeout(() => {
+				$('#createButton').removeAttr("disabled");
+				gScope.Notifications.push({text: "Сервер не согласен, читай чат"});
+				UpdateDigest(gScope, 50);
+			}, 5000);
 		}
 		else
 		{
@@ -274,6 +280,10 @@
 			$('#createButton').removeAttr("disabled");
 			description_input.val("");
 			parseAndRenderEditor();
+			if (gTimeout)
+			{
+				clearTimeout(gTimeout);
+			}
 		}
 
 		gScope.Comments.push(new_comment);
