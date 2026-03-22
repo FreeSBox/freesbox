@@ -432,7 +432,11 @@ net.Receive("petition_votes_responce", function(len, ply)
 
 	if (VoteWindowState == eWindowMode.Browse or VoteWindowState == eWindowMode.View) and VoteWindow ~= nil then
 		local html = getHTMLFromWindow(VoteWindow)
-		updatePetitionVotesHTML(html, petitions_cache[petition_id])
+		if petitions_cache[petition_id].parent == nil then
+			updatePetitionVotesHTML(html, petitions_cache[petition_id])
+		else
+			addCommentToHTML(html, petitions_cache[petition_id])
+		end
 	end
 end)
 

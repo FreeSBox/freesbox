@@ -5,7 +5,7 @@
 	--light-color: rgb(50, 50, 50);
 }
 
-* {
+body {
 	color: var(--text-color);
 }
 
@@ -208,6 +208,10 @@ a:active {
 	display: flex;
 }
 
+.toolbar-button {
+	color: var(--text-color);
+}
+
 .hide {
 	display: none;
 }
@@ -259,23 +263,23 @@ a:active {
 	opacity: 1;
 }
 
-#like_button {
+.like_button {
 	background-color: black;
 }
 
-#like_button:disabled {
+.like_button:disabled {
 	background-color: rgb(62, 62, 62);
 }
 
-#like_button:not(.btn_active) {
+.like_button:not(.btn_active) {
 	color: darkgrey;
 }
 
-#like_button:disabled.btn_won {
+.like_button:disabled.btn_won {
 	background-color: rgb(69, 85, 56);
 }
 
-#like_button:disabled.btn_lost {
+.like_button:disabled.btn_lost {
 	background-color: rgb(85, 56, 56);
 }
 
