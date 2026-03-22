@@ -225,39 +225,39 @@ template:
 // Also I hardcoded the first pane to be the code editor, the edit buttons are hidden otherwise.
 '<div class="toolbar" ng-class="{hide:!panes[0].selected}">' +
 '<div class="tooltip-container">' +
-'<button onclick="InsertHeading()" class="fa fa-header"></button>' +
+'<button onclick="InsertHeading()" class="fa fa-header toolbar-button"></button>' +
 '<div class="tooltip-text">Заголовок</div>' +
 '</div>' +
 '<div class="tooltip-container">' +
-'<button onclick="InsertTagsAroundText(\'**\')" class="fa fa-bold"></button>' +
+'<button onclick="InsertTagsAroundText(\'**\')" class="fa fa-bold toolbar-button"></button>' +
 '<div class="tooltip-text">Жирный</div>' +
 '</div>' +
 '<div class="tooltip-container">' +
-'<button onclick="InsertTagsAroundText(\'_\')" class="fa fa-italic"></button>' +
+'<button onclick="InsertTagsAroundText(\'_\')" class="fa fa-italic toolbar-button"></button>' +
 '<div class="tooltip-text">Курсив</div>' +
 '</div>' +
 '<div class="tooltip-container">' +
-'<button onclick="InsertLinePrefix(\'> \')" class="fa fa-quote-left"></button>' +
+'<button onclick="InsertLinePrefix(\'> \')" class="fa fa-quote-left toolbar-button"></button>' +
 '<div class="tooltip-text">Цитата</div>' +
 '</div>' +
 '<div class="tooltip-container">' +
-'<button onclick="InsertCodeBlock()" class="fa fa-code"></button>' +
+'<button onclick="InsertCodeBlock()" class="fa fa-code toolbar-button"></button>' +
 '<div class="tooltip-text">Код</div>' +
 '</div>' +
 '<div class="tooltip-container">' +
-'<button onclick="InsertLinePrefix(\'- \')" class="fa fa-list-ul"></button>' +
+'<button onclick="InsertLinePrefix(\'- \')" class="fa fa-list-ul toolbar-button"></button>' +
 '<div class="tooltip-text">Неупорядоченный список</div>' +
 '</div>' +
 '<div class="tooltip-container">' +
-'<button onclick="InsertOList()" class="fa fa-list-ol"></button>' +
+'<button onclick="InsertOList()" class="fa fa-list-ol toolbar-button"></button>' +
 '<div class="tooltip-text">Упорядоченный список</div>' +
 '</div>' +
 '<div class="tooltip-container">' +
-'<button onclick="InsertLinePrefix(\'- [x] \')" class="fa fa-check"></button>' +
+'<button onclick="InsertLinePrefix(\'- [x] \')" class="fa fa-check toolbar-button"></button>' +
 '<div class="tooltip-text">Флажок, чекбокс, галочка</div>' +
 '</div>' +
 '<div class="tooltip-container">' +
-'<button onclick="InsertLink()" class="fa fa-link"></button>' +
+'<button onclick="InsertLink()" class="fa fa-link toolbar-button"></button>' +
 '<div class="tooltip-text">Ссылка</div>' +
 '</div>' +
 '</div>' +
@@ -291,7 +291,7 @@ replace: true
 --text-darker-color: gray;
 --light-color: rgb(50, 50, 50);
 }
-* {
+body {
 color: var(--text-color);
 }
 :link,
@@ -460,6 +460,9 @@ justify-content: right;
 padding: 8px;
 display: flex;
 }
+.toolbar-button {
+color: var(--text-color);
+}
 .hide {
 display: none;
 }
@@ -504,19 +507,19 @@ transform: translateX(-50%);
 visibility: visible;
 opacity: 1;
 }
-#like_button {
+.like_button {
 background-color: black;
 }
-#like_button:disabled {
+.like_button:disabled {
 background-color: rgb(62, 62, 62);
 }
-#like_button:not(.btn_active) {
+.like_button:not(.btn_active) {
 color: darkgrey;
 }
-#like_button:disabled.btn_won {
+.like_button:disabled.btn_won {
 background-color: rgb(69, 85, 56);
 }
-#like_button:disabled.btn_lost {
+.like_button:disabled.btn_lost {
 background-color: rgb(85, 56, 56);
 }
 .btn_active {
@@ -554,8 +557,8 @@ margin-top: 5px;
 				<br>
 				<span>Открыто до: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
 				<div id="vote_menu">
-					<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" id="like_button" ng-class="{btn_active: petition.our_vote_status == 1, btn_won: petition.expired && petition.likes > petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
-					<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" id="like_button" ng-class="{btn_active: petition.our_vote_status == 2, btn_lost: petition.expired && petition.dislikes >= petition.likes}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+					<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 1, btn_won: petition.expired && petition.likes > petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
+					<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 2, btn_lost: petition.expired && petition.dislikes >= petition.likes}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
 				</div>
 				<br>
 			</div>

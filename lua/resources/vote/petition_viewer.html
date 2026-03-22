@@ -52,8 +52,8 @@
 	<span>Открыто до: {{Petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
 
 	<div id="vote_menu">
-		<button ng-disabled="Petition.expired" ng-click="likeClicked(Petition)" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 1, btn_won: Petition.expired && Petition.likes > Petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{Petition.likes}}</button>
-		<button ng-disabled="Petition.expired" ng-click="dislikeClicked(Petition)" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 2, btn_lost: Petition.expired && Petition.dislikes >= Petition.likes}"><i class="fa fa-thumbs-down"></i> {{Petition.dislikes}}</button>
+		<button ng-disabled="Petition.expired" ng-click="likeClicked(Petition)" class="like_button" ng-class="{btn_active: Petition.our_vote_status == 1, btn_won: Petition.expired && Petition.likes > Petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{Petition.likes}}</button>
+		<button ng-disabled="Petition.expired" ng-click="dislikeClicked(Petition)" class="like_button" ng-class="{btn_active: Petition.our_vote_status == 2, btn_lost: Petition.expired && Petition.dislikes >= Petition.likes}"><i class="fa fa-thumbs-down"></i> {{Petition.dislikes}}</button>
 	</div>
 
 	<hr>
@@ -69,8 +69,8 @@
 			<a class="clickable" ng-click='authorClicked(comment)'>{{comment.author_name}}</a>
 			<span> {{comment.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
 			<div id="vote_menu">
-				<button ng-click="likeClicked(comment)" id="like_button" ng-class="{btn_active: comment.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{comment.likes}}</button>
-				<button ng-click="dislikeClicked(comment)" id="like_button" ng-class="{btn_active: comment.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{comment.dislikes}}</button>
+				<button ng-click="likeClicked(comment)" class="like_button" ng-class="{btn_active: comment.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{comment.likes}}</button>
+				<button ng-click="dislikeClicked(comment)" class="like_button" ng-class="{btn_active: comment.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{comment.dislikes}}</button>
 			</div>
 			<br>
 			<div class="markdown_rendered" ng-bind-html="comment.description_html"></div>
