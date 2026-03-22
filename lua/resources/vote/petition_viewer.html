@@ -52,8 +52,8 @@
 	<span>Открыто до: {{Petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
 
 	<div id="vote_menu">
-		<button ng-disabled="Petition.expired" ng-click="likeClicked()" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 1, btn_won: Petition.expired && Petition.likes > Petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{Petition.likes}}</button>
-		<button ng-disabled="Petition.expired" ng-click="dislikeClicked()" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 2, btn_lost: Petition.expired && Petition.dislikes >= Petition.likes}"><i class="fa fa-thumbs-down"></i> {{Petition.dislikes}}</button>
+		<button ng-disabled="Petition.expired" ng-click="likeClicked(Petition)" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 1, btn_won: Petition.expired && Petition.likes > Petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{Petition.likes}}</button>
+		<button ng-disabled="Petition.expired" ng-click="dislikeClicked(Petition)" id="like_button" ng-class="{btn_active: Petition.our_vote_status == 2, btn_lost: Petition.expired && Petition.dislikes >= Petition.likes}"><i class="fa fa-thumbs-down"></i> {{Petition.dislikes}}</button>
 	</div>
 
 	<hr>
@@ -124,11 +124,11 @@
 				gmod.OpenURL("https://steamcommunity.com/profiles/" + petition.author_steamid)
 			}
 
-			$scope.likeClicked = function () {
-				gmod.VoteOnPetition(gScope.Petition.index, false)
+			$scope.likeClicked = function (petition) {
+				gmod.VoteOnPetition(petition.index, false)
 			}
-			$scope.dislikeClicked = function () {
-				gmod.VoteOnPetition(gScope.Petition.index, true)
+			$scope.dislikeClicked = function (petition) {
+				gmod.VoteOnPetition(petition.index, true)
 			}
 		})
 		.config(function($sceProvider) {
