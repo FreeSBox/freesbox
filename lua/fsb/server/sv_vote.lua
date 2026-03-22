@@ -928,7 +928,7 @@ net.Receive("petition_vote_on", function(len, ply)
 		ply:SendLocalizedMessage("vote.invalid_vote", petition_id)
 		return
 	end
-	if results[1].expire_time < os.time() then
+	if results[1].expire_time and results[1].expire_time < os.time() then
 		ply:SendLocalizedMessage("vote.expired_vote")
 		return
 	end
