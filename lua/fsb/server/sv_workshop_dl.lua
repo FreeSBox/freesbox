@@ -9,6 +9,8 @@ resource.AddWorkshop("3389728250") -- Glide
 resource.AddWorkshop("3389795738") -- Glide // GTAV: Helicopters
 resource.AddWorkshop("3673232532") -- Glide // Extra Details
 resource.AddWorkshop("3656294025") -- Glide // Combine APC
+resource.AddWorkshop("3656920709") -- Glide // Combine Dropship
+resource.AddWorkshop("3619647699") -- MEKANIK - An Expansion to Glide (beta)
 resource.AddWorkshop("3620753374") -- Left 4 Dead // Glide
 resource.AddWorkshop("246756300") -- 3D Stream Radio
 resource.AddWorkshop("2675972006") -- Custom Loadout
@@ -31,4 +33,5 @@ resource.AddWorkshop("2615656036") -- Base Anim-AM4
 resource.AddWorkshop("3567487307") -- [ActMod] More Emotes
 resource.AddWorkshop("2143558752") -- xdReanimsBase (GMod) Anim Mods base
 resource.AddWorkshop("3654569000") -- [xdR/wOS] CSS Player Animations
+resource.AddWorkshop("2588031232") -- [TacRP] Tactical RP Weapons
 --#endregion
