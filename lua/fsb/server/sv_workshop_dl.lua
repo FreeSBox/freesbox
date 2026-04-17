@@ -33,5 +33,6 @@ resource.AddWorkshop("2615656036") -- Base Anim-AM4
 resource.AddWorkshop("3567487307") -- [ActMod] More Emotes
 resource.AddWorkshop("2143558752") -- xdReanimsBase (GMod) Anim Mods base
 resource.AddWorkshop("3654569000") -- [xdR/wOS] CSS Player Animations
-resource.AddWorkshop("2588031232") -- [TacRP] Tactical RP Weapons
+resource.AddWorkshop("3484716425") -- TF2 Weapon Collection
+resource.AddWorkshop("2817879135") -- RagMod Reworked
 --#endregion
