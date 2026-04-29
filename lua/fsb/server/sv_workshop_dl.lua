@@ -35,4 +35,6 @@ resource.AddWorkshop("2143558752") -- xdReanimsBase (GMod) Anim Mods base
 resource.AddWorkshop("3654569000") -- [xdR/wOS] CSS Player Animations
 resource.AddWorkshop("2840031720") -- TFA Base
 resource.AddWorkshop("2529785777") -- [TFA][AT] Rust Firearms
+resource.AddWorkshop("2840032487") -- TFA Insurgency: Shared Parts
+resource.AddWorkshop("3265261753") -- [TFA] S.T.A.L.K.E.R. Weapons Pack
 --#endregion
