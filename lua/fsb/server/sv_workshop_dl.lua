@@ -33,8 +33,8 @@ resource.AddWorkshop("2615656036") -- Base Anim-AM4
 resource.AddWorkshop("3567487307") -- [ActMod] More Emotes
 resource.AddWorkshop("2143558752") -- xdReanimsBase (GMod) Anim Mods base
 resource.AddWorkshop("3654569000") -- [xdR/wOS] CSS Player Animations
-resource.AddWorkshop("2840031720") -- TFA Base
-resource.AddWorkshop("2529785777") -- [TFA][AT] Rust Firearms
-resource.AddWorkshop("2840032487") -- TFA Insurgency: Shared Parts
-resource.AddWorkshop("3265261753") -- [TFA] S.T.A.L.K.E.R. Weapons Pack
+resource.AddWorkshop("2821862386") -- Simple Weapons: Base
+resource.AddWorkshop("2821865508") -- Simple Weapons: CS:S
+resource.AddWorkshop("2832566843") -- Simple Weapons: Half-Life 2 Extended
+resource.AddWorkshop("2853242748") -- Simple Weapons: Entropy : Zero
 --#endregion
