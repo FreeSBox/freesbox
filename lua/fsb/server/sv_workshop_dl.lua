@@ -33,8 +33,6 @@ resource.AddWorkshop("2615656036") -- Base Anim-AM4
 resource.AddWorkshop("3567487307") -- [ActMod] More Emotes
 resource.AddWorkshop("2143558752") -- xdReanimsBase (GMod) Anim Mods base
 resource.AddWorkshop("3654569000") -- [xdR/wOS] CSS Player Animations
-resource.AddWorkshop("2821862386") -- Simple Weapons: Base
-resource.AddWorkshop("2821865508") -- Simple Weapons: CS:S
-resource.AddWorkshop("2832566843") -- Simple Weapons: Half-Life 2 Extended
-resource.AddWorkshop("2853242748") -- Simple Weapons: Entropy : Zero
+resource.AddWorkshop("173482196") -- SProps Workshop Edition
+resource.AddWorkshop("2810980825") -- ULTRA GUNS: MOD BIG MONEY - BASE
 --#endregion
