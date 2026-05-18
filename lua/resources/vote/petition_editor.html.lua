@@ -322,6 +322,7 @@ background-color: rgb(21, 21, 21);
 tab-size: 4;
 }
 #nameInput {
+color: var(--text-color);
 background-color: var(--main-color);
 }
 .petition {
