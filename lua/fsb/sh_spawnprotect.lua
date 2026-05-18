@@ -83,7 +83,7 @@ if SERVER then
 		end
 	end)
 
-	hook.Add("EntityTakeDamage", "block_spawn_in_spawnzone", function(target, dmg)
+	hook.Add("EntityTakeDamage", "block_damage_in_spawnzone", function(target, dmg)
 		local attacker = dmg:GetAttacker()
 		if attacker:IsPlayer() and attacker:GetPos():WithinAABox(current_zone.min, current_zone.max) then
 			return true
