@@ -33,6 +33,7 @@ resource.AddWorkshop("3567487307") -- [ActMod] More Emotes
 resource.AddWorkshop("2143558752") -- xdReanimsBase (GMod) Anim Mods base
 resource.AddWorkshop("3654569000") -- [xdR/wOS] CSS Player Animations
 resource.AddWorkshop("173482196") -- SProps Workshop Edition
-resource.AddWorkshop("2810980825") -- ULTRA GUNS: MOD BIG MONEY - BASE
+resource.AddWorkshop("2821862386") -- Simple Weapons: Base
+resource.AddWorkshop("2821865508") -- Simple Weapons: CS:S
 resource.AddWorkshop("2775687029") -- [ ULTRA GUNS ] ГАНТЕЛЯ 2-4 КИЛЛОГРАММА!!!!!! swep
 --#endregion
