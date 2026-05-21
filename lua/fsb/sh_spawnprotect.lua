@@ -77,10 +77,16 @@ if SERVER then
 		end
 	end)
 
-	hook.Add("PlayerSpawnObject", "block_spawn_in_spawnzone", function(ply, model, skin)
-		if ply:GetPos():WithinAABox(current_zone.min, current_zone.max) then
-			return false
-		end
+	--HACK: For some reason this hook doesn't work until we reload the file.
+	--I don't know why, but this is an attemt to make it work adding this hook on a loaded server.
+	--Every other hook in this file works fine. What the fuck?
+	hook.Add("PlayerInitialSpawn", "init_block_check", function (player, transition)
+		hook.Remove("PlayerInitialSpawn", "init_block_check")
+		hook.Add("PlayerSpawnObject", "block_spawn_in_spawnzone", function(ply, model, skin)
+			if ply:GetPos():WithinAABox(current_zone.min, current_zone.max) then
+				return false
+			end
+		end)
 	end)
 
 	hook.Add("EntityTakeDamage", "block_damage_in_spawnzone", function(target, dmg)
