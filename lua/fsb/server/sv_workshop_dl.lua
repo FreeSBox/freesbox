@@ -30,8 +30,6 @@ resource.AddWorkshop("104548572") -- Playable Piano
 resource.AddWorkshop("2538387266") -- ActMod
 resource.AddWorkshop("2615656036") -- Base Anim-AM4
 resource.AddWorkshop("3567487307") -- [ActMod] More Emotes
-resource.AddWorkshop("2143558752") -- xdReanimsBase (GMod) Anim Mods base
-resource.AddWorkshop("3654569000") -- [xdR/wOS] CSS Player Animations
 resource.AddWorkshop("173482196") -- SProps Workshop Edition
 resource.AddWorkshop("2821862386") -- Simple Weapons: Base
 resource.AddWorkshop("2821865508") -- Simple Weapons: CS:S
