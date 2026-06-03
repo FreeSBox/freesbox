@@ -90,6 +90,9 @@ return {
 		["scoreboard.kill_count"] = "Kills: %i",
 		["scoreboard.death_count"] = "Deaths: %i",
 		["scoreboard.joining"] = "Joining: %02i:%02i",
+		["scoreboard.balance"] = "Balance: %.2f$",
+
+		["money.transfer"] = "%s transferred %i$ to %s",
 	},
 	["ru"] =
 	{
@@ -181,5 +184,7 @@ return {
 		["scoreboard.kill_count"] = "Убийств: %i",
 		["scoreboard.death_count"] = "Смертей: %i",
 		["scoreboard.joining"] = "Заходит: %02i:%02i",
+
+		["money.transfer"] = "%s перевёл %i$ %s",
 	}
 }
