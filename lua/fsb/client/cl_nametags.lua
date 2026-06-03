@@ -137,9 +137,9 @@ hook.Add("PreDrawTranslucentRenderables", "player_name_tags", function()
 				if timing_out then
 					draw_SimpleText("[ Timing Out ]", "AFKFont", 6, -100, Color(255,0,0), TEXT_ALIGN_CENTER)
 				end
-				local focus_loss_time = ply:GetFocusLossTime()
-				if not timing_out and focus_loss_time ~= 0 then
-					local afk_time = cur_time-focus_loss_time
+				local last_activity_time = ply:GetLastActiveTime()
+				if not timing_out and last_activity_time ~= 0 then
+					local afk_time = cur_time-last_activity_time
 					local afk_time_table = string.FormattedTime(afk_time)
 					local text = ""
 					if afk_time_table.h == 0 then
