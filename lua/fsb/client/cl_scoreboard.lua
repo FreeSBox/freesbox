@@ -182,11 +182,11 @@ function scoreboard:ReloadPlayerList()
 			surface.SetTextPos(AVATAR_SIZE+PLAYER_PADDING*2+markup:GetWidth(), PLAYER_HEIGHT/2-NICK_FONT_SIZE/2)
 			surface.SetTextColor(255,0,0)
 
-			local focus_loss_time = self.ply:GetFocusLossTime()
+			local last_activity_time = self.ply:GetLastActiveTime()
 			if self.ply:IsTimingOut() then
 				surface.DrawText(" | Timing Out")
-			elseif focus_loss_time ~= 0 then
-				local afk_time = CurTime()-focus_loss_time
+			elseif last_activity_time ~= 0 then
+				local afk_time = CurTime()-last_activity_time
 				local afk_time_table = string.FormattedTime(afk_time)
 				local afk_text
 				if afk_time_table.h == 0 then
