@@ -340,7 +340,6 @@ if SERVER then
 			attacker = attacker:CPPIGetOwner()
 		end
 		if attacker == target then return end
-		if dmg:IsFallDamage() then return end
 
 		if not target:InPVPMode() then
 			return true
