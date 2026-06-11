@@ -40,15 +40,15 @@
 
 </head>
 <body>
-	<label>Название: <input id="nameInput" type="text"></label>
+	<input id="nameInput" type="text" placeholder="Введите название...">
 
 	<hr>
 
 	<tabs>
-		<pane title="Писать">
+		<pane title="Редактор">
 			<textarea class="markdown_input petition_input" id="descriptionInput" placeholder="Опишите здесь свою петицию.
 # Заголовок
-## Заголовок но меньше
+## Подзаголовок
 
 *курсив*
 **жирный**
@@ -59,11 +59,11 @@
 
 > Цитата
 
-1. Упорядоченный
-2. Список
+1. Первый
+2. Второй
 
-- Неупорядоченный
-- Список
+- Пункт
+- Ещё пункт
 
 ---
 
@@ -73,7 +73,7 @@
 			<div class="markdown_input petition_input markdown_rendered" id="preview"></div>
 		</pane>
 
-		<input id="createButton" type="submit" value="Создать" onclick="submitPetition()">
+		<input id="createButton" type="submit" value="Создать петицию" onclick="submitPetition()">
 
 		<details>
 			<summary>Как писать петиции</summary>

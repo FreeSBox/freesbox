@@ -3,10 +3,10 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
@@ -28,18 +28,19 @@
 		-->
 		<div infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check="false">
 			<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
-				<a class="clickable" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
-				<span style="float: right;">Автор: <a class="clickable" ng-click='authorClicked(petition)'>{{petition.author_name}}</a></span>
-				<br>
-				<br>
-				<span>Добавлено: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
-				<br>
-				<span>Открыто до: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
-				<div id="vote_menu">
-					<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 1, btn_won: petition.expired && petition.likes > petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
-					<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 2, btn_lost: petition.expired && petition.dislikes >= petition.likes}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+				<div style="margin-bottom: 5px;">
+					<a class="clickable" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
+					<span style="float: right;"><a class="clickable" ng-click='authorClicked(petition)'>{{petition.author_name}}</a></span>
 				</div>
-				<br>
+				<div class="petition-meta">
+					<span>Добавлено: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+					<br>
+					<span>Открыто до: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
+					<div id="vote_menu">
+						<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 1, btn_won: petition.expired && petition.likes > petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
+						<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 2, btn_lost: petition.expired && petition.dislikes >= petition.likes}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

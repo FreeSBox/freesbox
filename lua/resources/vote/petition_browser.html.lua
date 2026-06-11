@@ -4,10 +4,10 @@ return [[
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
@@ -306,6 +306,13 @@ tab-size: 4;
 #nameInput {
 color: var(--text-color);
 background-color: var(--main-color);
+width: 100%;
+padding: 5px;
+border: 1px solid #444;
+border-radius: 4px;
+font-size: 16px;
+margin-top: 5px;
+box-sizing: border-box;
 }
 .petition {
 color: var(--text-color);
@@ -317,6 +324,19 @@ box-sizing: border-box;
 margin-top: 1mm;
 font-family: "Inter", Tahoma, Geneva, Verdana, sans-serif;
 }
+.petition-title {
+font-size: 1.2em;
+font-weight: 600;
+padding-bottom: 10px;
+color: white;
+margin-top: 0;
+margin-bottom: 0;
+}
+.petition-meta {
+font-size: 0.9em;
+color: var(--text-darker-color);
+}
+
 .markdown_input {
 border: 1px solid gray;
 border-bottom-left-radius: 4px;
@@ -401,9 +421,10 @@ border-collapse: collapse;
 background-color: green;
 border-radius: 5px;
 float: right;
-width: 8em;
 height: 2em;
 cursor: pointer;
+color: white;
+font-weight: bolder;
 }
 #createButton:disabled {
 cursor: not-allowed;
@@ -533,12 +554,18 @@ cursor: pointer;
 float: right;
 }
 .comment {
-border: gray;
+border: solid gray;
 border-radius: 5px;
-border-width: 5px;
-background-color: var(--main-color);
-padding: 5px;
+border-width: 1px;
+background-color: var(--light-color);
 margin-top: 5px;
+}
+.comment_content {
+background-color: var(--main-color);
+}
+.comment_header {
+border-radius: 5px;
+padding: 5px;
 }
 </style>
 </head>
@@ -550,18 +577,19 @@ margin-top: 5px;
 		-->
 		<div infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check="false">
 			<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
-				<a class="clickable" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
-				<span style="float: right;">Автор: <a class="clickable" ng-click='authorClicked(petition)'>{{petition.author_name}}</a></span>
-				<br>
-				<br>
-				<span>Добавлено: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
-				<br>
-				<span>Открыто до: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
-				<div id="vote_menu">
-					<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 1, btn_won: petition.expired && petition.likes > petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
-					<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 2, btn_lost: petition.expired && petition.dislikes >= petition.likes}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+				<div style="margin-bottom: 5px;">
+					<a class="clickable" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
+					<span style="float: right;"><a class="clickable" ng-click='authorClicked(petition)'>{{petition.author_name}}</a></span>
 				</div>
-				<br>
+				<div class="petition-meta">
+					<span>Добавлено: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+					<br>
+					<span>Открыто до: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
+					<div id="vote_menu">
+						<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 1, btn_won: petition.expired && petition.likes > petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
+						<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 2, btn_lost: petition.expired && petition.dislikes >= petition.likes}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
