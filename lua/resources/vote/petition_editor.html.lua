@@ -324,6 +324,13 @@ tab-size: 4;
 #nameInput {
 color: var(--text-color);
 background-color: var(--main-color);
+width: 100%;
+padding: 5px;
+border: 1px solid #444;
+border-radius: 4px;
+font-size: 16px;
+margin-top: 5px;
+box-sizing: border-box;
 }
 .petition {
 color: var(--text-color);
@@ -335,6 +342,19 @@ box-sizing: border-box;
 margin-top: 1mm;
 font-family: "Inter", Tahoma, Geneva, Verdana, sans-serif;
 }
+.petition-title {
+font-size: 1.2em;
+font-weight: 600;
+padding-bottom: 10px;
+color: white;
+margin-top: 0;
+margin-bottom: 0;
+}
+.petition-meta {
+font-size: 0.9em;
+color: var(--text-darker-color);
+}
+
 .markdown_input {
 border: 1px solid gray;
 border-bottom-left-radius: 4px;
@@ -419,9 +439,10 @@ border-collapse: collapse;
 background-color: green;
 border-radius: 5px;
 float: right;
-width: 8em;
 height: 2em;
 cursor: pointer;
+color: white;
+font-weight: bolder;
 }
 #createButton:disabled {
 cursor: not-allowed;
@@ -551,26 +572,32 @@ cursor: pointer;
 float: right;
 }
 .comment {
-border: gray;
+border: solid gray;
 border-radius: 5px;
-border-width: 5px;
-background-color: var(--main-color);
-padding: 5px;
+border-width: 1px;
+background-color: var(--light-color);
 margin-top: 5px;
+}
+.comment_content {
+background-color: var(--main-color);
+}
+.comment_header {
+border-radius: 5px;
+padding: 5px;
 }
 </style>
 
 </head>
 <body>
-	<label>Название: <input id="nameInput" type="text"></label>
+	<input id="nameInput" type="text" placeholder="Введите название...">
 
 	<hr>
 
 	<tabs>
-		<pane title="Писать">
+		<pane title="Редактор">
 			<textarea class="markdown_input petition_input" id="descriptionInput" placeholder="Опишите здесь свою петицию.
 # Заголовок
-## Заголовок но меньше
+## Подзаголовок
 
 *курсив*
 **жирный**
@@ -581,11 +608,11 @@ margin-top: 5px;
 
 > Цитата
 
-1. Упорядоченный
-2. Список
+1. Первый
+2. Второй
 
-- Неупорядоченный
-- Список
+- Пункт
+- Ещё пункт
 
 ---
 
@@ -595,7 +622,7 @@ margin-top: 5px;
 			<div class="markdown_input petition_input markdown_rendered" id="preview"></div>
 		</pane>
 
-		<input id="createButton" type="submit" value="Создать" onclick="submitPetition()">
+		<input id="createButton" type="submit" value="Создать петицию" onclick="submitPetition()">
 
 		<details>
 			<summary>Как писать петиции</summary>

@@ -325,6 +325,13 @@ tab-size: 4;
 #nameInput {
 color: var(--text-color);
 background-color: var(--main-color);
+width: 100%;
+padding: 5px;
+border: 1px solid #444;
+border-radius: 4px;
+font-size: 16px;
+margin-top: 5px;
+box-sizing: border-box;
 }
 .petition {
 color: var(--text-color);
@@ -336,6 +343,19 @@ box-sizing: border-box;
 margin-top: 1mm;
 font-family: "Inter", Tahoma, Geneva, Verdana, sans-serif;
 }
+.petition-title {
+font-size: 1.2em;
+font-weight: 600;
+padding-bottom: 10px;
+color: white;
+margin-top: 0;
+margin-bottom: 0;
+}
+.petition-meta {
+font-size: 0.9em;
+color: var(--text-darker-color);
+}
+
 .markdown_input {
 border: 1px solid gray;
 border-bottom-left-radius: 4px;
@@ -420,9 +440,10 @@ border-collapse: collapse;
 background-color: green;
 border-radius: 5px;
 float: right;
-width: 8em;
 height: 2em;
 cursor: pointer;
+color: white;
+font-weight: bolder;
 }
 #createButton:disabled {
 cursor: not-allowed;
@@ -552,31 +573,42 @@ cursor: pointer;
 float: right;
 }
 .comment {
-border: gray;
+border: solid gray;
 border-radius: 5px;
-border-width: 5px;
-background-color: var(--main-color);
-padding: 5px;
+border-width: 1px;
+background-color: var(--light-color);
 margin-top: 5px;
+}
+.comment_content {
+background-color: var(--main-color);
+}
+.comment_header {
+border-radius: 5px;
+padding: 5px;
 }
 </style>
 
 </head>
 <body ng-controller="petitionViewerController as petitionViewer">
-	<span>{{Petition.name}}</span>
-	<span style="float: right;">Автор: <a class="clickable" ng-click='authorClicked(Petition)'>{{Petition.author_name}}</a></span>
-	<br>
-	<span style="float: right;">Index: {{Petition.index}}</span>
-	<br>
-
-	<span>Добавлено: {{Petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
-	<br>
-	<span>Открыто до: {{Petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
+	<div>
+		<span style="float: right; margin-top: 6px"><a class="clickable" ng-click='authorClicked(Petition)'>{{Petition.author_name}}</a></span>
+		<h1 class="petition-title">{{Petition.name}}</h1>
+	</div>
+	
+	<div class="petition-meta">
+		<div style="float: right;margin-top: -4px">
+			
+			<div>ID: {{Petition.index}}</div>
+		</div>
+		<div>Добавлено: {{Petition.creation_time*1000 | date:'d.M.yy H:mm'}}</div>
+		<div>Открыто до: {{Petition.expire_time*1000 | date:'d.M.yy H:mm'}}</div>
+	</div>
 
 	<div id="vote_menu">
 		<button ng-disabled="Petition.expired" ng-click="likeClicked(Petition)" class="like_button" ng-class="{btn_active: Petition.our_vote_status == 1, btn_won: Petition.expired && Petition.likes > Petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{Petition.likes}}</button>
 		<button ng-disabled="Petition.expired" ng-click="dislikeClicked(Petition)" class="like_button" ng-class="{btn_active: Petition.our_vote_status == 2, btn_lost: Petition.expired && Petition.dislikes >= Petition.likes}"><i class="fa fa-thumbs-down"></i> {{Petition.dislikes}}</button>
 	</div>
+	<br>
 
 	<hr>
 
@@ -588,27 +620,29 @@ margin-top: 5px;
 
 	<div infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check="false">
 		<div class="comment" ng-repeat="comment in Comments | orderBy:'+creation_time'">
-			<a class="clickable" ng-click='authorClicked(comment)'>{{comment.author_name}}</a>
-			<span> {{comment.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
-			<div id="vote_menu">
-				<button ng-click="likeClicked(comment)" class="like_button" ng-class="{btn_active: comment.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{comment.likes}}</button>
-				<button ng-click="dislikeClicked(comment)" class="like_button" ng-class="{btn_active: comment.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{comment.dislikes}}</button>
+			<div class="comment_header">
+				<a class="clickable" ng-click='authorClicked(comment)'>{{comment.author_name}}</a>
+				<span>{{comment.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+				<div id="vote_menu">
+					<button ng-click="likeClicked(comment)" class="like_button" ng-class="{btn_active: comment.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{comment.likes}}</button>
+					<button ng-click="dislikeClicked(comment)" class="like_button" ng-class="{btn_active: comment.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{comment.dislikes}}</button>
+				</div>
+				<br>
 			</div>
-			<br>
-			<div class="markdown_rendered" ng-bind-html="comment.description_html"></div>
+			<div class="markdown_rendered comment_content" ng-bind-html="comment.description_html"></div>
 		</div>
 	</div>
 
 	<hr>
 
 	<tabs>
-		<pane title="Писать">
-			<textarea class="markdown_input" id="descriptionInput" placeholder="Комментарий"></textarea>
+		<pane title="Редактор">
+			<textarea class="markdown_input" id="descriptionInput" placeholder="Напишите ваш комментарий здесь..."></textarea>
 		</pane>
 		<pane title="Предпросмотр">
 			<div class="markdown_input markdown_rendered" id="comment_preview"></div>
 		</pane>
-		<input id="createButton" type="submit" value="Создать" onclick="submitPetition()">
+		<input id="createButton" type="submit" value="Отправить комментарий" onclick="submitPetition()">
 	</tabs>
 
 	<div class="notification" ng-repeat="notification in Notifications">
