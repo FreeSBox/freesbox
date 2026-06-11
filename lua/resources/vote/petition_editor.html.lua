@@ -335,8 +335,8 @@ box-sizing: border-box;
 .petition {
 color: var(--text-color);
 background-color: var(--main-color);
-border-radius: 25px;
-padding: 15px;
+border-radius: 15px;
+padding: 10px;
 width: 100%;
 box-sizing: border-box;
 margin-top: 1mm;
@@ -349,6 +349,9 @@ padding-bottom: 10px;
 color: white;
 margin-top: 0;
 margin-bottom: 0;
+}
+.petition_index {
+color: var(--text-darker-color);
 }
 .petition-meta {
 font-size: 0.9em;

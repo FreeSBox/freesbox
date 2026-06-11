@@ -317,8 +317,8 @@ box-sizing: border-box;
 .petition {
 color: var(--text-color);
 background-color: var(--main-color);
-border-radius: 25px;
-padding: 15px;
+border-radius: 15px;
+padding: 10px;
 width: 100%;
 box-sizing: border-box;
 margin-top: 1mm;
@@ -331,6 +331,9 @@ padding-bottom: 10px;
 color: white;
 margin-top: 0;
 margin-bottom: 0;
+}
+.petition_index {
+color: var(--text-darker-color);
 }
 .petition-meta {
 font-size: 0.9em;
@@ -578,17 +581,19 @@ padding: 5px;
 		<div infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check="false">
 			<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
 				<div style="margin-bottom: 5px;">
-					<a class="clickable" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
-					<span style="float: right;"><a class="clickable" ng-click='authorClicked(petition)'>{{petition.author_name}}</a></span>
+					<a class="clickable" ng-click='petitionClicked(petition)'>{{petition.name}} <span class="petition_index">#{{petition.index}}</span></a>
 				</div>
 				<div class="petition-meta">
-					<span>Добавлено: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
-					<br>
-					<span>Открыто до: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
-					<div id="vote_menu">
-						<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 1, btn_won: petition.expired && petition.likes > petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
-						<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 2, btn_lost: petition.expired && petition.dislikes >= petition.likes}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+					<div style="float: right;">
+						<a class="clickable" ng-click='authorClicked(Petition)'>Автор: {{petition.author_name}}</a>
+						<br>
+						<div id="vote_menu" style="margin-top: 2px;">
+							<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 1, btn_won: petition.expired && petition.likes > petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
+							<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 2, btn_lost: petition.expired && petition.dislikes >= petition.likes}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
+						</div>
 					</div>
+					<div>Добавлено: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</div>
+					<div>Открыто до: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</div>
 				</div>
 			</div>
 		</div>
