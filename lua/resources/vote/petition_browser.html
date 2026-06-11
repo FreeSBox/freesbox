@@ -22,24 +22,20 @@
 </head>
 <body>
 	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
-		<!--
-			If there is a bug where there aren't enough petitions to fill the screen, so we never request more - remove infinite-scroll-immediate-check
-			But this should never happen, since we are using a 800x600 window for petitions with 16 petitions per request.
-		-->
 		<div infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check="false">
 			<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
-				<a class="clickable" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
+				<h2 style="margin: 0 0 10px 0; font-size: 1.3em;">
+					<a class="clickable" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
+				</h2>
 				<span style="float: right;">Автор: <a class="clickable" ng-click='authorClicked(petition)'>{{petition.author_name}}</a></span>
 				<br>
+				<span style="font-size: 0.9em; color: gray;">Добавлено: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
 				<br>
-				<span>Добавлено: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
-				<br>
-				<span>Открыто до: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
+				<span style="font-size: 0.9em; color: gray;">Открыто до: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
 				<div id="vote_menu">
 					<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 1, btn_won: petition.expired && petition.likes > petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
 					<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 2, btn_lost: petition.expired && petition.dislikes >= petition.likes}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
 				</div>
-				<br>
 			</div>
 		</div>
 	</div>
@@ -49,8 +45,6 @@
 	var mod;mod=angular.module("infinite-scroll",[]),mod.directive("infiniteScroll",["$rootScope","$window","$timeout",function(i,n,e){return{link:function(t,l,o){var r,c,f,a;return n=angular.element(n),f=0,null!=o.infiniteScrollDistance&&t.$watch(o.infiniteScrollDistance,function(i){return f=parseInt(i,10)}),a=!0,r=!1,null!=o.infiniteScrollDisabled&&t.$watch(o.infiniteScrollDisabled,function(i){return a=!i,a&&r?(r=!1,c()):void 0}),c=function(){var e,c,u,d;return d=n.height()+n.scrollTop(),e=l.offset().top+l.height(),c=e-d,u=n.height()*f>=c,u&&a?i.$$phase?t.$eval(o.infiniteScroll):t.$apply(o.infiniteScroll):u?r=!0:void 0},n.on("scroll",c),t.$on("$destroy",function(){return n.off("scroll",c)}),e(function(){return o.infiniteScrollImmediateCheck?t.$eval(o.infiniteScrollImmediateCheck)?c():void 0:c()},0)}}}]);
 </script>
 <script>
-	// Sorry for using javascript.
-
 	const eVoteStatus = Object.freeze({
 		NOT_VOTED: 0,
 		LIKE: 1,
@@ -65,7 +59,6 @@
 
 			var petitionList = this;
 			$scope.Petitions = [];
-
 
 			$scope.loadMore = debounce(() => {
 				gmod.RequestMorePetitions()
@@ -85,7 +78,6 @@
 				gmod.VoteOnPetition(petition.index, true)
 			}
 		});
-	// Manually bootstrap angularjs because otherwise it will complain about document.location.origin
 	angular.element(document).ready(function () {
 		angular.bootstrap(document.body, ['petitionBrowser']);
 	});
@@ -152,5 +144,4 @@
 		UpdateDigest(gScope, 50);
 	};
 </script>
-
 </html>
