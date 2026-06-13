@@ -13,13 +13,15 @@ return [[
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
 <script>
+	// https://javascript.plainenglish.io/how-this-simple-method-turned-my-array-code-from-messy-to-neat-3bba8f25e991
+	// Seems AI generated, but who cares, I'm not implementing this in javascript myself.
 	if (!Array.prototype.at) {
 		Array.prototype.at = function (n) {
 			if (this == null) throw new TypeError("Called on null or undefined");
 			const len = this.length >>> 0;
 			n = Number(n);
 			if (isNaN(n)) n = 0;
-			n = n < 0 ? Math.ceil(n) : Math.floor(n);
+			n = n < 0 ? Math.ceil(n) : Math.floor(n); // manual truncation
 			if (n < 0) n += len;
 			if (n < 0 || n >= len) return undefined;
 			return this[n];
@@ -238,6 +240,8 @@ template:
 '<li ng-repeat="pane in panes" ng-click="select(pane)" ng-class="{active:pane.selected}">' +
 '<a href="">{{pane.title}}</a>' +
 '</li>' +
+// Yeah, I'd rather hardcode this here then learn this stupid js framework nonsense.
+// Also I hardcoded the first pane to be the code editor, the edit buttons are hidden otherwise.
 '<div class="toolbar" ng-class="{hide:!panes[0].selected}">' +
 '<div class="tooltip-container">' +
 '<button onclick="InsertHeading()" class="fa fa-header toolbar-button"></button>' +
@@ -298,6 +302,7 @@ replace: true
 };
 });
 </script>
+
 <style>
 :root {
 --main-color: rgb(31, 31, 31);
@@ -307,9 +312,6 @@ replace: true
 }
 body {
 color: var(--text-color);
-background-color: var(--main-color);
-margin: 0;
-padding: 20px;
 }
 :link,
 :visited {
@@ -320,95 +322,14 @@ font-family: "Inter", Tahoma, Geneva, Verdana, sans-serif;
 background-color: rgb(21, 21, 21);
 tab-size: 4;
 }
-.petition-title {
-font-size: 1.8em;
-font-weight: 600;
-border-bottom: 2px solid #58a6ff;
-padding-bottom: 10px;
-margin: 0 0 15px 0;
-color: white;
-}
-.petition-meta {
-background-color: #252525;
-padding: 12px 15px;
-border-radius: 8px;
-margin: 15px 0;
-border-left: 4px solid #58a6ff;
-}
-.meta-line {
-margin: 5px 0;
-font-size: 0.9em;
-color: #aaa;
-}
-.comment {
-border-left: 4px solid #58a6ff;
-border-radius: 0 8px 8px 0;
-background-color: #252525;
-padding: 12px;
-margin-top: 10px;
-}
-.comment-header {
-margin-bottom: 8px;
-padding-bottom: 5px;
-border-bottom: 1px solid #444;
-}
-.comment-author {
-font-weight: bold;
-color: #58a6ff;
-}
-.comment-date {
-font-size: 0.8em;
-color: gray;
-margin-left: 10px;
-}
-hr {
-border: none;
-border-top: 1px solid #444;
-margin: 20px 0;
-}
-.comments-header {
-font-size: 1.2em;
-font-weight: 600;
-margin: 15px 0;
-}
-#vote_menu {
-float: right;
-}
-.like_button {
-background-color: #252525;
-border: 1px solid #444;
-border-radius: 6px;
-padding: 6px 12px;
-margin-left: 5px;
-cursor: pointer;
-color: white;
-}
-.like_button:hover {
-border-color: #58a6ff;
-}
-.btn_active {
-background-color: #58a6ff;
-color: white;
-}
-.btn_won {
-background-color: #2d5a2d;
-}
-.btn_lost {
-background-color: #8b3a3a;
-}
 #nameInput {
 color: var(--text-color);
 background-color: var(--main-color);
-border: 1px solid #444;
-padding: 8px;
-width: 100%;
-box-sizing: border-box;
 }
 .petition {
 color: var(--text-color);
-background-color: #252525;
-border-left: 4px solid #58a6ff;
-border-radius: 0 12px 12px 0;
+background-color: var(--main-color);
+border-radius: 25px;
 padding: 15px;
 width: 100%;
 box-sizing: border-box;
@@ -429,7 +350,6 @@ resize: vertical;
 box-sizing: border-box;
 color: var(--text-color);
 background-color: var(--main-color);
-border: 1px solid #444;
 }
 button {
 background-color: var(--main-color);
@@ -497,22 +417,15 @@ table {
 border-collapse: collapse;
 }
 #createButton {
-background-color: #58a6ff;
-border: none;
+background-color: green;
 border-radius: 5px;
 float: right;
 width: 8em;
 height: 2em;
 cursor: pointer;
-color: white;
-font-weight: bold;
-}
-#createButton:hover {
-background-color: #4793e0;
 }
 #createButton:disabled {
 cursor: not-allowed;
-background-color: #444;
 }
 /*Tabs*/
 a,
@@ -527,7 +440,7 @@ color: var(--text-color);
 }
 .nav-tabs {
 overflow: hidden;
-background-color: #252525;
+background-color: var(--light-color);
 padding-left: 10px;
 margin-top: 0;
 margin-bottom: -1px;
@@ -569,15 +482,6 @@ display: flex;
 }
 .toolbar-button {
 color: var(--text-color);
-background-color: #252525;
-border: 1px solid #444;
-border-radius: 4px;
-padding: 5px;
-margin: 0 2px;
-cursor: pointer;
-}
-.toolbar-button:hover {
-background-color: #58a6ff;
 }
 .hide {
 display: none;
@@ -604,6 +508,11 @@ padding: 5px;
 color: white;
 cursor: pointer;
 }
+/*
+Source - https://stackoverflow.com/questions/45456543/make-text-show-up-on-hover-over-button
+Posted by null
+Retrieved 2026-03-03, License - null
+*/
 .tooltip-text {
 background-color: gray;
 border-radius: 5px;
@@ -618,64 +527,88 @@ transform: translateX(-50%);
 visibility: visible;
 opacity: 1;
 }
+.like_button {
+background-color: black;
+}
+.like_button:disabled {
+background-color: rgb(62, 62, 62);
+}
+.like_button:not(.btn_active) {
+color: darkgrey;
+}
+.like_button:disabled.btn_won {
+background-color: rgb(69, 85, 56);
+}
+.like_button:disabled.btn_lost {
+background-color: rgb(85, 56, 56);
+}
+.btn_active {
+color: var(--text-color);
+}
 .clickable {
 cursor: pointer;
 }
+#vote_menu {
+float: right;
+}
+.comment {
+border: gray;
+border-radius: 5px;
+border-width: 5px;
+background-color: var(--main-color);
+padding: 5px;
+margin-top: 5px;
+}
 </style>
+
 </head>
 <body ng-controller="petitionViewerController as petitionViewer">
-	<h1 class="petition-title">{{Petition.name}}</h1>
-	
-	<div style="float: right; margin-top: -50px;">
-		<a class="clickable" ng-click='authorClicked(Petition)' style="color: #58a6ff;">{{Petition.author_name}}</a>
-	</div>
-	
-	<div class="petition-meta">
-		<div class="meta-line">📅 Добавлено: {{Petition.creation_time*1000 | date:'d.M.yy H:mm'}}</div>
-		<div class="meta-line">⏰ Открыто до: {{Petition.expire_time*1000 | date:'d.M.yy H:mm'}}</div>
-		<div class="meta-line">🔢 ID: {{Petition.index}}</div>
-	</div>
+	<span>{{Petition.name}}</span>
+	<span style="float: right;">Автор: <a class="clickable" ng-click='authorClicked(Petition)'>{{Petition.author_name}}</a></span>
+	<br>
+	<span style="float: right;">Index: {{Petition.index}}</span>
+	<br>
 
-	<div id="vote_menu" style="margin-bottom: 15px;">
+	<span>Добавлено: {{Petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+	<br>
+	<span>Открыто до: {{Petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
+
+	<div id="vote_menu">
 		<button ng-disabled="Petition.expired" ng-click="likeClicked(Petition)" class="like_button" ng-class="{btn_active: Petition.our_vote_status == 1, btn_won: Petition.expired && Petition.likes > Petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{Petition.likes}}</button>
 		<button ng-disabled="Petition.expired" ng-click="dislikeClicked(Petition)" class="like_button" ng-class="{btn_active: Petition.our_vote_status == 2, btn_lost: Petition.expired && Petition.dislikes >= Petition.likes}"><i class="fa fa-thumbs-down"></i> {{Petition.dislikes}}</button>
 	</div>
 
-	<div style="clear: both;"></div>
-	
-	<div class="markdown_rendered" id="preview" style="background-color: #1f1f1f; padding: 15px; border-radius: 8px;"></div>
+	<hr>
+
+	<div class="markdown_rendered" id="preview"></div>
 
 	<hr ng-class="{hide:Comments.length === 0}">
 
-	<div class="comments-header" ng-class="{hide:Comments.length === 0}">💬 Комментарии ({{Comments.length}})</div>
+	<span ng-class="{hide:Comments.length === 0}">Комментарии:</span>
 
 	<div infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check="false">
 		<div class="comment" ng-repeat="comment in Comments | orderBy:'+creation_time'">
-			<div class="comment-header">
-				<span class="comment-author">
-					<a class="clickable" ng-click='authorClicked(comment)' style="color: #58a6ff;">{{comment.author_name}}</a>
-				</span>
-				<span class="comment-date">{{comment.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
-				<div style="float: right;">
-					<button ng-click="likeClicked(comment)" class="like_button" ng-class="{btn_active: comment.our_vote_status == 1}" style="padding: 2px 8px; font-size: 12px;"><i class="fa fa-thumbs-up"></i> {{comment.likes}}</button>
-					<button ng-click="dislikeClicked(comment)" class="like_button" ng-class="{btn_active: comment.our_vote_status == 2}" style="padding: 2px 8px; font-size: 12px;"><i class="fa fa-thumbs-down"></i> {{comment.dislikes}}</button>
-				</div>
-				<div style="clear: both;"></div>
+			<a class="clickable" ng-click='authorClicked(comment)'>{{comment.author_name}}</a>
+			<span> {{comment.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+			<div id="vote_menu">
+				<button ng-click="likeClicked(comment)" class="like_button" ng-class="{btn_active: comment.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{comment.likes}}</button>
+				<button ng-click="dislikeClicked(comment)" class="like_button" ng-class="{btn_active: comment.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{comment.dislikes}}</button>
 			</div>
-			<div class="markdown_rendered" ng-bind-html="comment.description_html" style="margin-top: 8px;"></div>
+			<br>
+			<div class="markdown_rendered" ng-bind-html="comment.description_html"></div>
 		</div>
 	</div>
 
 	<hr>
 
 	<tabs>
-		<pane title="✏️ Написать комментарий">
-			<textarea class="markdown_input" id="descriptionInput" placeholder="Напишите ваш комментарий здесь..."></textarea>
+		<pane title="Писать">
+			<textarea class="markdown_input" id="descriptionInput" placeholder="Комментарий"></textarea>
 		</pane>
-		<pane title="👁️ Предпросмотр">
+		<pane title="Предпросмотр">
 			<div class="markdown_input markdown_rendered" id="comment_preview"></div>
 		</pane>
-		<input id="createButton" type="submit" value="Отправить комментарий" onclick="submitPetition()">
+		<input id="createButton" type="submit" value="Создать" onclick="submitPetition()">
 	</tabs>
 
 	<div class="notification" ng-repeat="notification in Notifications">
@@ -721,9 +654,13 @@ cursor: pointer;
 			}
 		})
 		.config(function($sceProvider) {
+			// They may say this isn't safe but I don't care to be honest.
+			// I'm not going to sit here and figure out how to use this shit,
+			// also we already sanitize user input.
 			$sceProvider.enabled(false);
 		});
 	
+	// Manually bootstrap angularjs because otherwise it will complain about document.location.origin
 	angular.element(document).ready(function () {
 		angular.bootstrap(document.body, ['petitionViewer']);
 
@@ -736,11 +673,12 @@ cursor: pointer;
 		textarea.keydown(keydown);
 	});
 
+	// Dirty hack for text input ignoring enter on linux.
 	function keydown(event)
 	{
 		if (event.keyCode === 13 && IsGMod() && IsLinux())
 		{
-			document.execCommand('insertText', false, "\n");
+			document.execCommand('insertText', false /*no UI*/, "\n");
 		}
 		
 		if(event.ctrlKey && event.code == "KeyB")
@@ -888,6 +826,7 @@ cursor: pointer;
 		UpdateDigest(gScope, 50);
 		return;
 	}
+
 </script>
 </html>
 ]]

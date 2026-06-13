@@ -13,13 +13,15 @@ return [[
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/lua.js"></script>
 <script>
+	// https://javascript.plainenglish.io/how-this-simple-method-turned-my-array-code-from-messy-to-neat-3bba8f25e991
+	// Seems AI generated, but who cares, I'm not implementing this in javascript myself.
 	if (!Array.prototype.at) {
 		Array.prototype.at = function (n) {
 			if (this == null) throw new TypeError("Called on null or undefined");
 			const len = this.length >>> 0;
 			n = Number(n);
 			if (isNaN(n)) n = 0;
-			n = n < 0 ? Math.ceil(n) : Math.floor(n);
+			n = n < 0 ? Math.ceil(n) : Math.floor(n); // manual truncation
 			if (n < 0) n += len;
 			if (n < 0 || n >= len) return undefined;
 			return this[n];
@@ -238,6 +240,8 @@ template:
 '<li ng-repeat="pane in panes" ng-click="select(pane)" ng-class="{active:pane.selected}">' +
 '<a href="">{{pane.title}}</a>' +
 '</li>' +
+// Yeah, I'd rather hardcode this here then learn this stupid js framework nonsense.
+// Also I hardcoded the first pane to be the code editor, the edit buttons are hidden otherwise.
 '<div class="toolbar" ng-class="{hide:!panes[0].selected}">' +
 '<div class="tooltip-container">' +
 '<button onclick="InsertHeading()" class="fa fa-header toolbar-button"></button>' +
@@ -307,9 +311,6 @@ replace: true
 }
 body {
 color: var(--text-color);
-background-color: var(--main-color);
-margin: 0;
-padding: 20px;
 }
 :link,
 :visited {
@@ -323,57 +324,11 @@ tab-size: 4;
 #nameInput {
 color: var(--text-color);
 background-color: var(--main-color);
-border: 1px solid #444;
-padding: 8px;
-width: 100%;
-box-sizing: border-box;
-}
-label {
-display: block;
-margin-bottom: 15px;
-font-weight: 500;
-color: var(--text-color);
-}
-#nameInput {
-width: 100%;
-padding: 10px;
-background-color: var(--main-color);
-border: 1px solid #444;
-border-radius: 6px;
-color: var(--text-color);
-font-size: 16px;
-margin-top: 5px;
-box-sizing: border-box;
-}
-#nameInput:focus {
-outline: none;
-border-color: #58a6ff;
-}
-hr {
-border: none;
-border-top: 1px solid #444;
-margin: 20px 0;
-}
-details {
-background-color: #252525;
-padding: 10px 15px;
-margin: 15px 0;
-border-radius: 10px;
-border: 1px solid #444;
-}
-details summary {
-cursor: pointer;
-color: #58a6ff;
-font-weight: bold;
-}
-details summary:hover {
-text-decoration: underline;
 }
 .petition {
 color: var(--text-color);
-background-color: #252525;
-border-left: 4px solid #58a6ff;
-border-radius: 0 12px 12px 0;
+background-color: var(--main-color);
+border-radius: 25px;
 padding: 15px;
 width: 100%;
 box-sizing: border-box;
@@ -394,7 +349,6 @@ resize: vertical;
 box-sizing: border-box;
 color: var(--text-color);
 background-color: var(--main-color);
-border: 1px solid #444;
 }
 button {
 background-color: var(--main-color);
@@ -462,22 +416,15 @@ table {
 border-collapse: collapse;
 }
 #createButton {
-background-color: #58a6ff;
-border: none;
+background-color: green;
 border-radius: 5px;
 float: right;
 width: 8em;
 height: 2em;
 cursor: pointer;
-color: white;
-font-weight: bold;
-}
-#createButton:hover {
-background-color: #4793e0;
 }
 #createButton:disabled {
 cursor: not-allowed;
-background-color: #444;
 }
 /*Tabs*/
 a,
@@ -492,7 +439,7 @@ color: var(--text-color);
 }
 .nav-tabs {
 overflow: hidden;
-background-color: #252525;
+background-color: var(--light-color);
 padding-left: 10px;
 margin-top: 0;
 margin-bottom: -1px;
@@ -534,15 +481,6 @@ display: flex;
 }
 .toolbar-button {
 color: var(--text-color);
-background-color: #252525;
-border: 1px solid #444;
-border-radius: 4px;
-padding: 5px;
-margin: 0 2px;
-cursor: pointer;
-}
-.toolbar-button:hover {
-background-color: #58a6ff;
 }
 .hide {
 display: none;
@@ -569,6 +507,11 @@ padding: 5px;
 color: white;
 cursor: pointer;
 }
+/*
+Source - https://stackoverflow.com/questions/45456543/make-text-show-up-on-hover-over-button
+Posted by null
+Retrieved 2026-03-03, License - null
+*/
 .tooltip-text {
 background-color: gray;
 border-radius: 5px;
@@ -584,19 +527,10 @@ visibility: visible;
 opacity: 1;
 }
 .like_button {
-background-color: #252525;
-border: 1px solid #444;
-border-radius: 4px;
-padding: 5px 10px;
-cursor: pointer;
-color: white;
-}
-.like_button:hover {
-border-color: #58a6ff;
+background-color: black;
 }
 .like_button:disabled {
 background-color: rgb(62, 62, 62);
-cursor: not-allowed;
 }
 .like_button:not(.btn_active) {
 color: darkgrey;
@@ -608,8 +542,7 @@ background-color: rgb(69, 85, 56);
 background-color: rgb(85, 56, 56);
 }
 .btn_active {
-background-color: #58a6ff;
-color: white;
+color: var(--text-color);
 }
 .clickable {
 cursor: pointer;
@@ -618,42 +551,41 @@ cursor: pointer;
 float: right;
 }
 .comment {
-border-left: 4px solid #58a6ff;
-border-radius: 0 8px 8px 0;
-background-color: #252525;
-padding: 10px;
+border: gray;
+border-radius: 5px;
+border-width: 5px;
+background-color: var(--main-color);
+padding: 5px;
 margin-top: 5px;
 }
 </style>
+
 </head>
 <body>
-	<label>Название петиции
-		<input id="nameInput" type="text" placeholder="Введите название...">
-	</label>
+	<label>Название: <input id="nameInput" type="text"></label>
 
 	<hr>
 
 	<tabs>
-		<pane title="Редактор">
+		<pane title="Писать">
 			<textarea class="markdown_input petition_input" id="descriptionInput" placeholder="Опишите здесь свою петицию.
-
 # Заголовок
-## Подзаголовок
+## Заголовок но меньше
 
 *курсив*
 **жирный**
 `код`
 
-[ссылка](https://example.com)
-![картинка](https://imgur.com/TxuGT4W.gif)
+[гипер ссылка](https://example.com)
+![картинка или GIF'ка](https://imgur.com/TxuGT4W.gif)
 
 > Цитата
 
-1. Первый
-2. Второй
+1. Упорядоченный
+2. Список
 
-- Пункт
-- Ещё пункт
+- Неупорядоченный
+- Список
 
 ---
 
@@ -663,10 +595,10 @@ margin-top: 5px;
 			<div class="markdown_input petition_input markdown_rendered" id="preview"></div>
 		</pane>
 
-		<input id="createButton" type="submit" value="Создать петицию" onclick="submitPetition()">
+		<input id="createButton" type="submit" value="Создать" onclick="submitPetition()">
 
 		<details>
-			<summary>📖 Как писать петиции</summary>
+			<summary>Как писать петиции</summary>
 			<div id="petition_writing_wiki"></div>
 		</details>
 	</tabs>
@@ -679,14 +611,19 @@ margin-top: 5px;
 	</div>
 </body>
 <script>
+	// Sorry for using javascript.
+	// Sorry for using angular.
+
 	var gScope = null;
 
 	angular.module("petitionCreator", ['components'])
 		.controller('petitionCreatorController', function ($scope) {
 			gScope = $scope;
+
 			var notificationList = this;
 			$scope.Notifications = [];
 		});
+
 
 	function parseAndRender()
 	{
@@ -699,9 +636,11 @@ margin-top: 5px;
 		{
 			var nameinput = $("#nameInput")
 			gmod.SetDraftText(nameinput.val(), textarea.val());
+
 			fixAncherTags();
 		}
 	};
+
 
 	function submitPetition()
 	{
@@ -746,11 +685,12 @@ margin-top: 5px;
 		}, 5000);
 	}
 
+	// Dirty hack for text input ignoring enter on linux.
 	function keydown(event)
 	{
 		if (event.keyCode === 13 && IsGMod() && IsLinux())
 		{
-			document.execCommand('insertText', false, "\n");
+			document.execCommand('insertText', false /*no UI*/, "\n");
 		}
 		
 		if(event.ctrlKey && event.code == "KeyB")
@@ -766,10 +706,15 @@ margin-top: 5px;
 	}
 
 	angular.element(document).ready(function () {
+		// Manually bootstrap angularjs because otherwise it will complain about document.location.origin
 		angular.bootstrap(document.body, ['petitionCreator']);
 
 		var textarea = $("#descriptionInput");
-		textarea.bind("input propertychange", debounce(parseAndRender, 200));
+		textarea.bind(
+			"input propertychange",
+			debounce(parseAndRender, 200)
+		);
+
 		textarea.keydown(keydown);
 
 		if (IsGMod())
@@ -786,14 +731,20 @@ margin-top: 5px;
 			});
 		}
 
+		// This is awful but it's better the copypasting the wiki and maintaining it in two places.
+		// This is also better then the user not reading it at all.
 		fetch("https://raw.githubusercontent.com/FreeSBox/freesbox.github.io/refs/heads/master/content/docs/writing_petitions.md")
 		.then(res => res.text())
 		.then(text => {
+			// regex magic to remove hugo header
 			text = text.replace(/---(.|\n)*?---/, "");
+			// regex magic to redirect the links to the public wiki
 			text = text.replace(/\/docs\//, "https://freesbox.github.io/docs/");
+
 			var result = marked.parse(text);
 			var wiki = $("#petition_writing_wiki");
 			wiki.get(0).innerHTML = result;
+
 			if (IsGMod())
 			{
 				fixAncherTags();

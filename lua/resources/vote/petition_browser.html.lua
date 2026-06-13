@@ -221,6 +221,8 @@ template:
 '<li ng-repeat="pane in panes" ng-click="select(pane)" ng-class="{active:pane.selected}">' +
 '<a href="">{{pane.title}}</a>' +
 '</li>' +
+// Yeah, I'd rather hardcode this here then learn this stupid js framework nonsense.
+// Also I hardcoded the first pane to be the code editor, the edit buttons are hidden otherwise.
 '<div class="toolbar" ng-class="{hide:!panes[0].selected}">' +
 '<div class="tooltip-container">' +
 '<button onclick="InsertHeading()" class="fa fa-header toolbar-button"></button>' +
@@ -291,9 +293,6 @@ replace: true
 }
 body {
 color: var(--text-color);
-background-color: var(--main-color);
-margin: 0;
-padding: 10px;
 }
 :link,
 :visited {
@@ -307,16 +306,11 @@ tab-size: 4;
 #nameInput {
 color: var(--text-color);
 background-color: var(--main-color);
-border: 1px solid #444;
-padding: 8px;
-width: 100%;
-box-sizing: border-box;
 }
 .petition {
 color: var(--text-color);
-background-color: #252525;
-border-left: 4px solid #58a6ff;
-border-radius: 0 12px 12px 0;
+background-color: var(--main-color);
+border-radius: 25px;
 padding: 15px;
 width: 100%;
 box-sizing: border-box;
@@ -337,7 +331,6 @@ resize: vertical;
 box-sizing: border-box;
 color: var(--text-color);
 background-color: var(--main-color);
-border: 1px solid #444;
 }
 button {
 background-color: var(--main-color);
@@ -405,22 +398,15 @@ table {
 border-collapse: collapse;
 }
 #createButton {
-background-color: #58a6ff;
-border: none;
+background-color: green;
 border-radius: 5px;
 float: right;
 width: 8em;
 height: 2em;
 cursor: pointer;
-color: white;
-font-weight: bold;
-}
-#createButton:hover {
-background-color: #4793e0;
 }
 #createButton:disabled {
 cursor: not-allowed;
-background-color: #444;
 }
 /*Tabs*/
 a,
@@ -435,7 +421,7 @@ color: var(--text-color);
 }
 .nav-tabs {
 overflow: hidden;
-background-color: #252525;
+background-color: var(--light-color);
 padding-left: 10px;
 margin-top: 0;
 margin-bottom: -1px;
@@ -477,15 +463,6 @@ display: flex;
 }
 .toolbar-button {
 color: var(--text-color);
-background-color: #252525;
-border: 1px solid #444;
-border-radius: 4px;
-padding: 5px;
-margin: 0 2px;
-cursor: pointer;
-}
-.toolbar-button:hover {
-background-color: #58a6ff;
 }
 .hide {
 display: none;
@@ -532,19 +509,10 @@ visibility: visible;
 opacity: 1;
 }
 .like_button {
-background-color: #252525;
-border: 1px solid #444;
-border-radius: 4px;
-padding: 5px 10px;
-cursor: pointer;
-color: white;
-}
-.like_button:hover {
-border-color: #58a6ff;
+background-color: black;
 }
 .like_button:disabled {
 background-color: rgb(62, 62, 62);
-cursor: not-allowed;
 }
 .like_button:not(.btn_active) {
 color: darkgrey;
@@ -556,8 +524,7 @@ background-color: rgb(69, 85, 56);
 background-color: rgb(85, 56, 56);
 }
 .btn_active {
-background-color: #58a6ff;
-color: white;
+color: var(--text-color);
 }
 .clickable {
 cursor: pointer;
@@ -566,30 +533,35 @@ cursor: pointer;
 float: right;
 }
 .comment {
-border-left: 4px solid #58a6ff;
-border-radius: 0 8px 8px 0;
-background-color: #252525;
-padding: 10px;
+border: gray;
+border-radius: 5px;
+border-width: 5px;
+background-color: var(--main-color);
+padding: 5px;
 margin-top: 5px;
 }
 </style>
 </head>
 <body>
 	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
+		<!--
+			If there is a bug where there aren't enough petitions to fill the screen, so we never request more - remove infinite-scroll-immediate-check
+			But this should never happen, since we are using a 800x600 window for petitions with 16 petitions per request.
+		-->
 		<div infinite-scroll='loadMore()' infinite-scroll-distance='1' infinite-scroll-immediate-check="false">
 			<div class="petition" ng-repeat="petition in Petitions | orderBy:'-creation_time'">
-				<h2 style="margin: 0 0 10px 0; font-size: 1.3em;">
-					<a class="clickable" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
-				</h2>
+				<a class="clickable" ng-click='petitionClicked(petition)'>{{petition.name}}</a>
 				<span style="float: right;">Автор: <a class="clickable" ng-click='authorClicked(petition)'>{{petition.author_name}}</a></span>
 				<br>
-				<span style="font-size: 0.9em; color: gray;">Добавлено: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
 				<br>
-				<span style="font-size: 0.9em; color: gray;">Открыто до: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
+				<span>Добавлено: {{petition.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
+				<br>
+				<span>Открыто до: {{petition.expire_time*1000 | date:'d.M.yy H:mm'}}</span>
 				<div id="vote_menu">
 					<button ng-disabled="petition.expired" ng-click="likeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 1, btn_won: petition.expired && petition.likes > petition.dislikes}"><i class="fa fa-thumbs-up"></i> {{petition.likes}}</button>
 					<button ng-disabled="petition.expired" ng-click="dislikeClicked(petition)" class="like_button" ng-class="{btn_active: petition.our_vote_status == 2, btn_lost: petition.expired && petition.dislikes >= petition.likes}"><i class="fa fa-thumbs-down"></i> {{petition.dislikes}}</button>
 				</div>
+				<br>
 			</div>
 		</div>
 	</div>
@@ -599,6 +571,8 @@ margin-top: 5px;
 	var mod;mod=angular.module("infinite-scroll",[]),mod.directive("infiniteScroll",["$rootScope","$window","$timeout",function(i,n,e){return{link:function(t,l,o){var r,c,f,a;return n=angular.element(n),f=0,null!=o.infiniteScrollDistance&&t.$watch(o.infiniteScrollDistance,function(i){return f=parseInt(i,10)}),a=!0,r=!1,null!=o.infiniteScrollDisabled&&t.$watch(o.infiniteScrollDisabled,function(i){return a=!i,a&&r?(r=!1,c()):void 0}),c=function(){var e,c,u,d;return d=n.height()+n.scrollTop(),e=l.offset().top+l.height(),c=e-d,u=n.height()*f>=c,u&&a?i.$$phase?t.$eval(o.infiniteScroll):t.$apply(o.infiniteScroll):u?r=!0:void 0},n.on("scroll",c),t.$on("$destroy",function(){return n.off("scroll",c)}),e(function(){return o.infiniteScrollImmediateCheck?t.$eval(o.infiniteScrollImmediateCheck)?c():void 0:c()},0)}}}]);
 </script>
 <script>
+	// Sorry for using javascript.
+
 	const eVoteStatus = Object.freeze({
 		NOT_VOTED: 0,
 		LIKE: 1,
@@ -613,6 +587,7 @@ margin-top: 5px;
 
 			var petitionList = this;
 			$scope.Petitions = [];
+
 
 			$scope.loadMore = debounce(() => {
 				gmod.RequestMorePetitions()
@@ -632,6 +607,7 @@ margin-top: 5px;
 				gmod.VoteOnPetition(petition.index, true)
 			}
 		});
+	// Manually bootstrap angularjs because otherwise it will complain about document.location.origin
 	angular.element(document).ready(function () {
 		angular.bootstrap(document.body, ['petitionBrowser']);
 	});
@@ -698,5 +674,6 @@ margin-top: 5px;
 		UpdateDigest(gScope, 50);
 	};
 </script>
+
 </html>
 ]]

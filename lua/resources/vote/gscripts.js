@@ -242,6 +242,8 @@ angular.module('components', [])
 						'<li ng-repeat="pane in panes" ng-click="select(pane)" ng-class="{active:pane.selected}">' +
 							'<a href="">{{pane.title}}</a>' +
 						'</li>' +
+						// Yeah, I'd rather hardcode this here then learn this stupid js framework nonsense.
+						// Also I hardcoded the first pane to be the code editor, the edit buttons are hidden otherwise.
 						'<div class="toolbar" ng-class="{hide:!panes[0].selected}">' +
 							'<div class="tooltip-container">' +
 								'<button onclick="InsertHeading()" class="fa fa-header toolbar-button"></button>' +
