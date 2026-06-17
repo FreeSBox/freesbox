@@ -26,7 +26,7 @@ resource.AddWorkshop("3448521354") -- Glide // Combine Gunship
 resource.AddWorkshop("3687687491") -- Glide // Oppressor Mk2
 resource.AddWorkshop("3001397905") -- Media Player (Updated Edition)
 resource.AddWorkshop("104691717") -- PAC3
-resource.AddWorkshop("104548572") -- Playable Piano
+resource.AddWorkshop("2656563609") -- Musical Keyboard
 resource.AddWorkshop("2538387266") -- ActMod
 resource.AddWorkshop("2615656036") -- Base Anim-AM4
 resource.AddWorkshop("3567487307") -- [ActMod] More Emotes
@@ -34,4 +34,5 @@ resource.AddWorkshop("173482196") -- SProps Workshop Edition
 resource.AddWorkshop("2821862386") -- Simple Weapons: Base
 resource.AddWorkshop("2821865508") -- Simple Weapons: CS:S
 resource.AddWorkshop("2775687029") -- [ ULTRA GUNS ] ГАНТЕЛЯ 2-4 КИЛЛОГРАММА!!!!!! swep
+resource.AddWorkshop("3620516732") -- Glide // Styled's Experiments
 --#endregion
