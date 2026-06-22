@@ -77,6 +77,9 @@ hook.Add("CanProperty", TAG, checkCanSpawn)
 hook.Add("PlayerNoClip", TAG, checkCanSpawn)
 
 hook.Add("StartCommand", "init_ghostban", function (ply, ucmd)
+	hook.Remove("StartCommand", "init_ghostban")
+	if ULib == nil then return end
+
 	-- Hook this because ULX doesn't provide a better way to stop someone from running commands.
 	FSB.HOOKS.ucl_query = FSB.HOOKS.ucl_query or ULib.ucl.query
 	local og_ucl_query = FSB.HOOKS.ucl_query
@@ -85,7 +88,6 @@ hook.Add("StartCommand", "init_ghostban", function (ply, ucmd)
 
 		return og_ucl_query(ply, access, hide)
 	end
-	hook.Remove("StartCommand", "init_ghostban")
 end)
 
 if SERVER then
