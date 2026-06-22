@@ -2,6 +2,7 @@ local skybox_zones =
 {
 	["gm_bigcity"] = {Vector(3072, -3072, 4416), Vector(-3072, 3072, 5632)},
 	["gm_bigcity_improved"] = {Vector(3072, -3072, 4416), Vector(-3072, 3072, 5632)},
+	["gm_bigcity_improved_rp"] = {Vector(3072, -3072, 4416), Vector(-3072, 3072, 5632)},
 	["gm_bigcity_winter"] = {Vector(3072, -3072, 4416), Vector(-3072, 3072, 5632)},
 	["gm_york_remaster"] = {Vector(15690, 15690, -9240), Vector(-15690, -15690, -7008)},
 	["gm_mobenix_v3_final"] = {Vector(-10218, -2890, 12042), Vector(-15272, 458, 11062)},
