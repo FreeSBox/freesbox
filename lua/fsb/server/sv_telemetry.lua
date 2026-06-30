@@ -44,6 +44,8 @@ function FSB.TelemetryLagDetected(frame_dump)
 	local metric = {}
 
 	metric["average_mspt"] = FSB.GetAverageMSPT()
+	metric["last_mspt"] = GetFrameDelta()
+	metric["phys_delta"] = physenv.GetLastSimulationTime()*1000
 	metric["ent_count"] = ents.GetCount()
 	metric["ply_count"] = player.GetCount()
 	metric["last_frames"] = frame_dump

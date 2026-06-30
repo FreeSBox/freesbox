@@ -21,7 +21,8 @@ end
 
 ---@diagnostic disable: inject-field
 local CLEANUP_THRESHOLD = 800 -- milliseconds
-local PENETRATION_STOPPER_THRESHOLD = 60 -- milliseconds
+local PENETRATION_STOPPER_THRESHOLD = 50 -- milliseconds
+local PENETRATION_LIMIT = 8 -- how many penetrating props a player is allowed to have
 local SECONDS_BEFORE_CLEANUP = 60
 local MAX_ENTITIES_PER_TICK = 15 -- How many entities can a player spawn in 1 tick.
 local AUTOBAN_INFRACTIONS = 3 -- How many times does a player need to trigger the anti-lag to get auto banned
@@ -46,10 +47,14 @@ end
 
 local last_frames = {}
 
--- Fill the structure with ideal data initially.
-for i = 1, NUM_FRAMES do
-	last_frames[i] = engine.TickInterval()*1000
+local function resetLastFrames()
+	for i = 1, NUM_FRAMES do
+		last_frames[i] = engine.TickInterval()*1000
+	end
 end
+
+-- Fill the structure with ideal data initially.
+resetLastFrames()
 
 local function pushMSPT(framerate)
 	for i = 1, NUM_FRAMES-1 do
@@ -70,48 +75,24 @@ function FSB.GetAverageMSPT()
 	return getAverageMSPT()
 end
 
-local function handleFindPropPenetration()
-	local num_penetrations_per_player = {}
-	local num_penetrations = 0
-	for _, ent in ipairs(ents.GetAll()) do
-		if IsValid(ent) then
-			local phys_object = ent:GetPhysicsObject()
-			if IsValid(phys_object) and phys_object:IsPenetrating() and phys_object:IsMotionEnabled() then
-				phys_object:EnableMotion(false)
-				num_penetrations = num_penetrations + 1
-				local owner = ent:CPPIGetOwner()
-				if owner then
-					num_penetrations_per_player[owner] = (num_penetrations_per_player[owner] or 0) + 1
-				end
-			end
-		end
-	end
-	if num_penetrations > 10 then
-		FSB.SendLocalizedMessage("lag.freeze_penetrating")
+local function stopAllChips()
+	local chips = FSB.FindChips()
 
-		-- GPL3 code
-		-- https://github.com/PAC3-Server/notagain/blob/3d1d0d0814dde53f2ce46a345b7c8db7d211f2e8/lua/notagain/essential/autorun/server/freeze_penetrating.lua
-		local temp = {}
-		for k,v in pairs(num_penetrations_per_player) do table.insert(temp, {ply = k, count = v}) end
-		table.sort(temp, function(a, b) return a.count > b.count end)
-		if temp[1] then
-			temp[1].ply.likely_crasher = (temp[1].ply.likely_crasher or 0) + 1
-			FSB.SendLocalizedMessage("lag.print_penetrating", temp[1].ply:Nick(), temp[1].count)
-			print(temp[1].ply:Nick(), "has", temp[1].count, "penetrating props!")
-
-			if temp[1].ply.likely_crasher > AUTOBAN_INFRACTIONS then
-				FSB.GhostBan(temp[1].ply, os.time()+AUTOBAN_TIME, "lag autoban")
-				FSB.SendLocalizedMessage("lag.autobanned", temp[1].ply:Nick(), AUTOBAN_TIME)
-				NADMOD.CleanPlayer(Player(0), temp[1].ply)
-				FSB.TelemetryLikelyCrasher(temp[1].ply, temp[1].count)
-				MsgN("Anticrash automatically banned " .. temp[1].ply:Nick() .. " for " .. AUTOBAN_TIME .. " seconds")
-			end
+	for _, chip in ipairs(chips) do
+		local class = chip:GetClass()
+		if class == "gmod_wire_expression2" then
+			chip:Error("Stopping chip due to server lag", "stopped due to server lag")
+		elseif class == "gmod_wire_fpga" then
+			chip:ThrowExecutionError("Stopping chip due to server lag", "stopped due to server lag")
+		elseif class == "starfall_processor" then
+			chip:Error({message="stopped due to server lag", traceback=""})
 		end
 	end
 end
 
 local function handleCleanUp()
 	physenv.SetPhysicsPaused(true)
+	stopAllChips()
 	FSB.SendLocalizedMessage("lag.cleanup", SECONDS_BEFORE_CLEANUP)
 	Msg("Cleanup forced, dump of the last " .. tostring(NUM_FRAMES) .. " frames:\n")
 	for i = 1, NUM_FRAMES do
@@ -120,18 +101,26 @@ local function handleCleanUp()
 	FSB.CleanUpMap(SECONDS_BEFORE_CLEANUP)
 end
 
+
+local lag_detected = false
 hook.Add("Think", "lag_detect", function()
 	local sys_time = SysTime()
 	pushMSPT(GetFrameDelta())
 	local not_from_hybernation = player.GetCount() > 0 -- GetCount doesn't count loading players.
 	local should_run_cleanup_logic = ( sv_hibernate_think:GetBool() or not_from_hybernation ) and last_ticktime ~= 0 and not FSB.IsCleanUpInProgress() and game.MaxPlayers() ~= 1
 	if should_run_cleanup_logic then
-		if physenv.GetLastSimulationTime()*1000 > PENETRATION_STOPPER_THRESHOLD then
-			handleFindPropPenetration()
-		end
-		if physenv.GetLastSimulationTime()*1000 > PENETRATION_STOPPER_THRESHOLD and getAverageMSPT() > CLEANUP_THRESHOLD then
-			handleCleanUp()
+		if getAverageMSPT() > CLEANUP_THRESHOLD then
 			FSB.TelemetryLagDetected(last_frames)
+			-- This whole lag_detected nonsence is done so that we need more then one frame of lag to cause a cleanup
+			-- there is no point in cleaning up if the lag is already gone
+			resetLastFrames()
+			lag_detected = true
+			timer.Create("remove_lag_detected_flag", 0.5, 1, function ()
+				lag_detected = false
+			end)
+		end
+		if lag_detected and getAverageMSPT() > CLEANUP_THRESHOLD then
+			handleCleanUp()
 		end
 	end
 	last_ticktime = sys_time
@@ -191,6 +180,71 @@ timer.Create("reset_spawn_blocked", 1, 0, function ()
 			FSB.SendLocalizedMessage("lag.too_many_props", v:Nick())
 			Msg(string.format("%s spawned more them %i entities in one tick\n", v:Nick(), MAX_ENTITIES_PER_TICK))
 			v.spawns_blocked = false
+		end
+	end
+end)
+
+-- This won't save us, as we need at least one prop to unfreeze
+-- before phys:IsPenetrating starts working
+-- but it may prevent someone from unfreezing a house or something
+local ratelimit_table = {}
+hook.Add("CanPlayerUnfreeze", "prevent_crash_dupe", function (player, entity, phys)
+	if entity.CFW_GetContraption == nil then return end
+	if not FSB.RatelimitCheck(ratelimit_table, player, 0.5) then
+		return false
+	end
+	local contraption = entity:CFW_GetContraption()
+	if contraption == nil then return end
+	local num_penetrating = phys:IsPenetrating() and 1 or 0
+	for ent in pairs(contraption.ents) do
+		local phys_object = ent:GetPhysicsObject()
+		if IsValid(phys_object) and phys_object:IsPenetrating() then
+			num_penetrating = num_penetrating + 1
+		end
+	end
+	local allow = num_penetrating < PENETRATION_LIMIT
+	if not allow then
+		FSB.RatelimitSet(ratelimit_table, player)
+	end
+	return allow
+end)
+
+physenv.SetLagThreshold(PENETRATION_STOPPER_THRESHOLD)
+hook.Add("HolyLib:OnPhysicsLag", "holy_lag_detect", function (delta, phys1, phys2, recalcPhys, callerFunc)
+	return physenv.IVP_SkipSimulation
+end)
+hook.Add("HolyLib:PostPhysicsLag", "holy_lag_prevent", function(delta)
+	local num_penetrations_per_player = {}
+	local num_penetrations = 0
+	for _, ent in ents.Iterator() do
+		if IsValid(ent) then
+			local phys_object = ent:GetPhysicsObject()
+			if IsValid(phys_object) and phys_object:IsPenetrating() and phys_object:IsMotionEnabled() then
+				ent:SetCollisionGroup(COLLISION_GROUP_WORLD)
+				num_penetrations = num_penetrations + 1
+				local owner = ent:CPPIGetOwner()
+				if owner then
+					num_penetrations_per_player[owner] = (num_penetrations_per_player[owner] or 0) + 1
+					Msg(string.format("Nocolliding penetrating prop: %s owned by: %s\n", ent:GetModel(), owner:Nick()))
+				end
+			end
+		end
+	end
+	for ply, penetrations in pairs(num_penetrations_per_player) do
+		ply:SendLocalizedHint("lag.you_have_penetrating_props", NOTIFY_GENERIC)
+		Msg(string.format("%s has %i penetrating props\n", tostring(ply), penetrations))
+		if penetrations > PENETRATION_LIMIT then
+			ply.likely_crasher = (ply.likely_crasher or 0) + 1
+			Msg(string.format("%s likely_crasher status increased to %i\n", tostring(ply), ply.likely_crasher))
+			FSB.SendLocalizedMessage("lag.print_penetrating", ply:Nick(), penetrations)
+
+			if ply.likely_crasher >= AUTOBAN_INFRACTIONS then
+				FSB.GhostBan(ply, os.time()+AUTOBAN_TIME, "lag autoban")
+				FSB.SendLocalizedMessage("lag.autobanned", ply:Nick(), AUTOBAN_TIME)
+				NADMOD.CleanPlayer(Player(0), ply)
+				FSB.TelemetryLikelyCrasher(ply, penetrations)
+				MsgN("Anticrash automatically banned " .. ply:Nick() .. " for " .. AUTOBAN_TIME .. " seconds")
+			end
 		end
 	end
 end)

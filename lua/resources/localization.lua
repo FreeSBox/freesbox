@@ -29,7 +29,9 @@ return {
 		["petition.set_index"] = "Set petition index",
 		["petition.open_hint"] = "Press E to open this petition",
 
-		["lag.freeze_penetrating"] = "Lag detected, freezing penetrating props.",
+		["lag.nonphysics_lag"] = "Big non physics lag detected, stopping E2/SF chips and praying it helps.",
+		["lag.you_have_penetrating_props"] = "Server nocollided some of your props to avoid lag.",
+		["lag.freeze_penetrating"] = "Lag detected, removing collision for penetrating props.",
 		["lag.cleanup"] = "Big lag detected! Clean up in %i seconds.",
 		["lag.print_penetrating"] = "%s owns %i penetrating props!",
 		["lag.too_many_props"] = "%s spawned a shitload of props in 1 tick, what the fuck is he doing?",
@@ -120,7 +122,9 @@ return {
 		["petition.set_index"] = "Устанавить index петиции",
 		["petition.open_hint"] = "Нажмите E чтобы открыть",
 
-		["lag.freeze_penetrating"] = "Обнаружен лаг, фризим проникающие пропы.",
+		["lag.nonphysics_lag"] = "Обнаружен большой не физический лаг, останавливаем E2/SF и молимся что это поможет.",
+		["lag.you_have_penetrating_props"] = "У части ваших пропов были отключены столкновения для избежания лагов.",
+		["lag.freeze_penetrating"] = "Обнаружен лаг, отключаем столкновения проникающим пропам.",
 		["lag.cleanup"] = "Обнаружен большой лаг! Очистка карты через %i секунд.",
 		["lag.print_penetrating"] = "%s владеет %i проникающими пропами!",
 		["lag.too_many_props"] = "%s заспавнил дохуя пропов за 1 тик, чё за хуйню он творит?",
