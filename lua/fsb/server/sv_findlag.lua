@@ -26,7 +26,7 @@ concommand.Add("findlag", function (ply, cmd, args, arg_str)
 
 	local lag_scores = {}
 
-	for _, entity in ipairs(ents.GetAll()) do
+	for _, entity in ents.Iterator() do
 		local ent_score = 0
 		local owner = entity:CPPIGetOwner()
 		if not IsValid( owner ) then
@@ -148,21 +148,23 @@ local chip_classes =
 	["starfall_processor"] = true,
 }
 
+function FSB.FindChips()
+	local chips = {}
+	for _, entity in ents.Iterator() do
+		if chip_classes[entity:GetClass()] then
+			chips[#chips+1] = entity
+		end
+	end
+	return chips
+end
+
 concommand.Add("findchips", function (ply, cmd, args, arg_str)
 	if not FSB.Ratelimit(ratelimit_table, ply, RATELIMIT) then
 		ply:SendLocalizedMessage("ratelimit", RATELIMIT)
 		return
 	end
 
-	local chips = {}
-
-	for _, entity in ipairs(ents.GetAll()) do
-		if chip_classes[entity:GetClass()] then
-			chips[#chips+1] = entity
-		end
-	end
-
-	for _, chip in ipairs(chips) do
+	for _, chip in ipairs(FSB.FindChips()) do
 		cmd_out(ply, getChipDataForPrint(chip))
 	end
 end)
