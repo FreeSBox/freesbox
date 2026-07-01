@@ -197,10 +197,12 @@ hook.Add("CanPlayerUnfreeze", "prevent_crash_dupe", function (player, entity, ph
 	if contraption == nil then return end
 	local num_penetrating = phys:IsPenetrating() and 1 or 0
 	for ent in pairs(contraption.ents) do
+		if not IsValid(ent) then goto CONTINUE end
 		local phys_object = ent:GetPhysicsObject()
 		if IsValid(phys_object) and phys_object:IsPenetrating() then
 			num_penetrating = num_penetrating + 1
 		end
+		::CONTINUE::
 	end
 	local allow = num_penetrating < PENETRATION_LIMIT
 	if not allow then
