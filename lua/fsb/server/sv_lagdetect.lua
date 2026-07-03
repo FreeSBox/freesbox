@@ -20,7 +20,8 @@ else
 end
 
 ---@diagnostic disable: inject-field
-local CLEANUP_THRESHOLD = 800 -- milliseconds
+local EXTINGUISH_THRESHOLD = 100 -- MSPT for the server to extinguish all the fires
+local CLEANUP_THRESHOLD = 1200 -- milliseconds
 local PENETRATION_STOPPER_THRESHOLD = 50 -- milliseconds
 local PENETRATION_LIMIT = 8 -- how many penetrating props a player is allowed to have
 local SECONDS_BEFORE_CLEANUP = 60
@@ -94,32 +95,78 @@ local function handleCleanUp()
 	physenv.SetPhysicsPaused(true)
 	stopAllChips()
 	FSB.SendLocalizedMessage("lag.cleanup", SECONDS_BEFORE_CLEANUP)
-	Msg("Cleanup forced, dump of the last " .. tostring(NUM_FRAMES) .. " frames:\n")
-	for i = 1, NUM_FRAMES do
-		MsgN(last_frames[i])
-	end
 	FSB.CleanUpMap(SECONDS_BEFORE_CLEANUP)
 end
 
-
 local lag_detected = false
-hook.Add("Think", "lag_detect", function()
+local function setLagDetected()
+	-- This whole lag_detected nonsence is done so that we need more then one frame of lag to cause a cleanup
+	-- there is no point in cleaning up if the lag is already gone
+	resetLastFrames()
+	lag_detected = true
+	timer.Create("remove_lag_detected_flag", 0.5, 1, function ()
+		lag_detected = false
+	end)
+end
+
+local no_cleanup = false
+---@param time number for how long should we prevent cleanup for, in seconds
+local function preventCleanUp(time)
+	no_cleanup = true
+	resetLastFrames()
+	print("blocking cleanup")
+	timer.Create("remove_no_cleanup_flag", time, 1, function ()
+		no_cleanup = false
+		print("cleanup allowed again")
+	end)
+end
+
+-- Many fires can lag the game so we store them here and remove them when the server lags.
+local fire_ents = {}
+hook.Add("OnEntityCreated", "store_fires", function (ent)
+	if ent:GetClass() ~= "entityflame" then return end
+	fire_ents[ent:EntIndex()] = ent
+end)
+hook.Add("EntityRemoved", "remove_fire_from_list", function (ent, fullUpdate)
+	if ent:GetClass() ~= "entityflame" then return end
+	fire_ents[ent:EntIndex()] = nil
+end)
+
+hook.Add("Tick", "lag_detect", function()
 	local sys_time = SysTime()
 	pushMSPT(GetFrameDelta())
 	local not_from_hybernation = player.GetCount() > 0 -- GetCount doesn't count loading players.
 	local should_run_cleanup_logic = ( sv_hibernate_think:GetBool() or not_from_hybernation ) and last_ticktime ~= 0 and not FSB.IsCleanUpInProgress() and game.MaxPlayers() ~= 1
 	if should_run_cleanup_logic then
-		if getAverageMSPT() > CLEANUP_THRESHOLD then
-			FSB.TelemetryLagDetected(last_frames)
-			-- This whole lag_detected nonsence is done so that we need more then one frame of lag to cause a cleanup
-			-- there is no point in cleaning up if the lag is already gone
-			resetLastFrames()
-			lag_detected = true
-			timer.Create("remove_lag_detected_flag", 0.5, 1, function ()
-				lag_detected = false
-			end)
+		local mspt = getAverageMSPT()
+		if mspt > EXTINGUISH_THRESHOLD then
+			local counter = 0
+			for fire_id, fire in pairs(fire_ents) do
+				counter = counter + 1
+				fire:Remove()
+			end
+			if counter >= 4 then
+				Msg(string.format("Extinguished %i fires due to lag\n", counter))
+			end
+			if counter >= 20 then -- no need to cleanup, we should have fixed the lag already
+				preventCleanUp(1)
+				return
+			end
 		end
-		if lag_detected and getAverageMSPT() > CLEANUP_THRESHOLD then
+		if not lag_detected and mspt > CLEANUP_THRESHOLD then
+			FSB.TelemetryLagDetected(last_frames)
+			Msg("Cleanup may be needed, dump of the last " .. tostring(NUM_FRAMES) .. " frames:\n")
+			for i = 1, NUM_FRAMES do
+				MsgN(last_frames[i])
+			end
+			setLagDetected()
+			return
+		end
+		if not no_cleanup and lag_detected and mspt > CLEANUP_THRESHOLD then
+			Msg("Cleanup needed, dump of the last " .. tostring(NUM_FRAMES) .. " frames:\n")
+			for i = 1, NUM_FRAMES do
+				MsgN(last_frames[i])
+			end
 			handleCleanUp()
 		end
 	end
@@ -199,7 +246,7 @@ hook.Add("CanPlayerUnfreeze", "prevent_crash_dupe", function (player, entity, ph
 	for ent in pairs(contraption.ents) do
 		if not IsValid(ent) then goto CONTINUE end
 		local phys_object = ent:GetPhysicsObject()
-		if IsValid(phys_object) and phys_object:IsPenetrating() then
+		if IsValid(phys_object) and phys_object:IsPenetrating() and ent:GetCollisionGroup() ~= COLLISION_GROUP_WORLD then
 			num_penetrating = num_penetrating + 1
 		end
 		::CONTINUE::
@@ -221,7 +268,7 @@ hook.Add("HolyLib:PostPhysicsLag", "holy_lag_prevent", function(delta)
 	for _, ent in ents.Iterator() do
 		if IsValid(ent) then
 			local phys_object = ent:GetPhysicsObject()
-			if IsValid(phys_object) and phys_object:IsPenetrating() and phys_object:IsMotionEnabled() then
+			if IsValid(phys_object) and phys_object:IsPenetrating() and ent:GetCollisionGroup() ~= COLLISION_GROUP_WORLD and phys_object:IsMotionEnabled() then
 				ent:SetCollisionGroup(COLLISION_GROUP_WORLD)
 				num_penetrations = num_penetrations + 1
 				local owner = ent:CPPIGetOwner()
