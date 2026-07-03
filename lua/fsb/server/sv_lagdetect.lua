@@ -132,7 +132,7 @@ hook.Add("EntityRemoved", "remove_fire_from_list", function (ent, fullUpdate)
 	fire_ents[ent:EntIndex()] = nil
 end)
 
-hook.Add("Tick", "lag_detect", function()
+hook.Add("Think", "lag_detect", function()
 	local sys_time = SysTime()
 	pushMSPT(GetFrameDelta())
 	local not_from_hybernation = player.GetCount() > 0 -- GetCount doesn't count loading players.
