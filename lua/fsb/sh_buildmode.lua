@@ -15,6 +15,7 @@ local BUILD_WEAPONS =
 	["weapon_lookathands"] = true,
 	["none"] = true,
 	["weapon_petition"] = true,
+	["glide_repair"] = true, -- Petition #1070
 }
 
 local BUILD_VEHICLES =
