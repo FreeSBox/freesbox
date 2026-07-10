@@ -20,7 +20,11 @@ end
 
 concommand.Add("findlag", function (ply, cmd, args, arg_str)
 	if not FSB.Ratelimit(ratelimit_table, ply, RATELIMIT) then
-		ply:SendLocalizedMessage("ratelimit", RATELIMIT)
+		if IsValid(ply) then
+			ply:SendLocalizedMessage("ratelimit", RATELIMIT)
+		else
+			MsgN("Findlag ratelimit hit")
+		end
 		return
 	end
 
