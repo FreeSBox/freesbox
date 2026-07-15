@@ -160,3 +160,26 @@ hook.Add("StarfallCanCompile", "log_sf_spawn", function (code, mainfile, ply, ch
 end)
 
 --#endregion
+
+--#region LuaRun Logging
+local STAGE_PREPROCESS = 1
+local STAGE_POST = 3
+hook.Add("LuaDevProcess", "log_luadev", function (stage, script, info, extra)
+	if stage ~= STAGE_PREPROCESS then return end
+
+	assert(isstring(script), "log_luadev: script is not a string")
+
+	local ply = nil
+	if extra and IsValid(extra.ply) then
+		ply = extra.ply
+	end
+
+	local metric = {}
+	metric["player_name"]    = ply ~= nil and extra.ply:GetName() or "Unknown"
+	metric["player_steamid"] = ply ~= nil and extra.ply:SteamID64() or "Unknown"
+	metric["script"] = script
+
+	FSB.TelemetryWrite("lua_run", metric)
+end)
+
+--#endregion
