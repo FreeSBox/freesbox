@@ -217,9 +217,9 @@ else
 			local date = os.date("%d/%m/%Y %X", math.floor(lp:GetNWFloat("GhostUnBanTime", 0)))
 			local description = lp:GetGhostBanDescription()
 			if description == "" then
-				chat.AddText(Color(255,0,0), string.format(FSB.Translate("advert.ghostbanned"), date))
+				chat.AddText(Color(255,0,0), FSB.Translate("advert.ghostbanned", date))
 			else
-				chat.AddText(Color(255,0,0), string.format(FSB.Translate("advert.ghostbanned_reason"), date, description))
+				chat.AddText(Color(255,0,0), FSB.Translate("advert.ghostbanned_reason", date, description))
 			end
 		end)
 		hook.Remove("CreateMove", "init_ghostban_timer")

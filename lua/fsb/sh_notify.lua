@@ -51,7 +51,7 @@ else
 		assert(isnumber(type))
 		assert(isnumber(length))
 
-		notification.AddLegacy(string.format(FSB.Translate(text), ...), type , length)
+		notification.AddLegacy(FSB.Translate(text, ...), type , length)
 		if type == NOTIFY_ERROR then
 			surface.PlaySound( "buttons/button10.wav" )
 		elseif type == NOTIFY_UNDO or type == NOTIFY_CLEANUP then
