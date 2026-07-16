@@ -2,6 +2,7 @@
 local TIMEOUT_TIME = 0.5
 local MAX_MESSAGE_LENGH = 512-64 -- Reserve 64 bytes for other data.
 local CHAT_RELAY_ADDRESS = "http://92.38.92.194/chat/"
+local SERVER_INFO_ADDRESS = "http://92.38.92.194/server_info/generic.json"
 
 local function chatConnectionSuccess()
 	chat.AddText(FSB.Translate("http_chat.connected"))
@@ -31,6 +32,17 @@ local function parseChatJSON(message)
 end
 
 local crash_chat_panel
+
+local function destroyCrashChat()
+	if crash_chat_panel then
+		crash_chat_panel:Remove()
+		crash_chat_panel = nil
+	end
+	timer.Remove("pull_crash_messages")
+	hook.Remove("ECShouldSendMessage", "crash_chat_send")
+	post_crash_chat_active = false
+end
+
 local function initCrashChat()
 	timer.Create("pull_crash_messages", 0.5, 0, function ()
 		HTTP{
@@ -46,7 +58,8 @@ local function initCrashChat()
 				end
 			end,
 			failed=function(error)
-				print("Reading failed", error)
+				destroyCrashChat()
+				print("Crash chat failed", error)
 			end
 		}
 	end)
@@ -67,25 +80,35 @@ local function initCrashChat()
 	end)
 end
 
-local function destroyCrashChat()
-	if crash_chat_panel then
-		crash_chat_panel:Remove()
-		crash_chat_panel = nil
-	end
-	timer.Remove("pull_crash_messages")
-	hook.Remove("ECShouldSendMessage", "crash_chat_send")
-	post_crash_chat_active = false
+local function doCheckIsServerUp()
+	timer.Create("check_if_server_is_up", 2, 0, function ()
+		HTTP{
+			method="GET",
+			url=SERVER_INFO_ADDRESS,
+			success=function (code, body, headers)
+				if code == 200 then
+					timer.Remove("check_if_server_is_up")
+					chat.AddText(Color(60, 255, 0), "Server has started back up, you can rejoin now.")
+				end
+			end
+		}
+	end)
+end
+
+local function destroyIsServerUp()
+	timer.Remove("check_if_server_is_up")
 end
 
 hook.Add("FSBTimingOut", "fsb_timeout_actions", function (is_timing_out)
-	print("FSBTimingOut", is_timing_out)
 	if is_timing_out then
 		FSB.EnableFreecam()
 		initCrashChat()
+		doCheckIsServerUp()
 		chat.AddText(Color(255,0,0), FSB.Translate("lag.timing_out"))
 	else
 		FSB.DisableFreecam()
 		destroyCrashChat()
+		destroyIsServerUp()
 	end
 end)
 

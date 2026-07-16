@@ -36,6 +36,7 @@ return {
 		["lag.print_penetrating"] = "%s owns %i penetrating props!",
 		["lag.too_many_props"] = "%s spawned a shitload of props in 1 tick, what the fuck is he doing?",
 		["lag.timing_out"] = "Lost connection to server!",
+		["lag.server_restarted"] = "Server has started up. You can rejoin now.",
 		["lag.autobanned"] = "%s is a potential crasher and has been ghostbanned for %i seconds!",
 
 		["http_chat.connected"] = "Connected to relay chat server, you can chat if you have easychat enabled.",
@@ -132,6 +133,7 @@ return {
 		["lag.print_penetrating"] = "%s владеет %i проникающими пропами!",
 		["lag.too_many_props"] = "%s заспавнил дохуя пропов за 1 тик, чё за хуйню он творит?",
 		["lag.timing_out"] = "Потеряно соединение с сервером!",
+		["lag.server_restarted"] = "Сервер запустился. Можете перезаходить.",
 		["lag.autobanned"] = "%s потенциальный крашер, и был забанен на %i секунд!",
 
 		["http_chat.connected"] = "Подключен чат реле, вы можете писать в чат если у вас включен EasyChat.",
