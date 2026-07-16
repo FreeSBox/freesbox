@@ -42,7 +42,7 @@ local scoreboard =
 	player_button_right_info = {
 		function (ply, right_pad, w, h) -- ping
 			surface.SetTextColor(255,255,255)
-			local ping = string.format(T"scoreboard.ping", ply:Ping())
+			local ping = T("scoreboard.ping", ply:Ping())
 			local ping_x, ping_y = surface.GetTextSize(ping)
 			surface.SetTextPos(w-right_pad-ping_x, PLAYER_PADDING)
 			surface.DrawText(ping)
@@ -50,7 +50,7 @@ local scoreboard =
 		end,
 		function (ply, right_pad, w, h) -- playtime
 			surface.SetTextColor(255,255,255)
-			local hours = string.format(T"scoreboard.playtime", ply:GetUTimeTotalTime()/60/60)
+			local hours = T("scoreboard.playtime", ply:GetUTimeTotalTime()/60/60)
 			local hours_x, hours_y = surface.GetTextSize(hours)
 			surface.SetTextPos(w-right_pad-hours_x, PLAYER_PADDING)
 			surface.DrawText(hours)
@@ -201,7 +201,7 @@ function scoreboard:ReloadPlayerList()
 
 			if scoreboard.extended_infos[userid] then
 				surface.SetTextColor(255,255,255)
-				local group = string.format(T"scoreboard.group", self.ply:GetUserGroup())
+				local group = T("scoreboard.group", self.ply:GetUserGroup())
 				local group_x, group_y = surface.GetTextSize(group)
 				surface.SetTextPos(PLAYER_PADDING, PLAYER_PADDING*2+AVATAR_SIZE)
 				surface.DrawText(group)
@@ -209,7 +209,7 @@ function scoreboard:ReloadPlayerList()
 				surface.SetTextColor(255,255,255)
 				local num_ents = scoreboard.ent_counts[self.ply:SteamID()]
 				num_ents = num_ents or 0
-				local num_entities = string.format(T"scoreboard.ent_count", num_ents)
+				local num_entities = T("scoreboard.ent_count", num_ents)
 				local num_entities_x, num_entities_y = surface.GetTextSize(num_entities)
 				surface.SetTextPos(PLAYER_PADDING, group_y+PLAYER_PADDING*2+AVATAR_SIZE)
 				surface.DrawText(num_entities)
@@ -218,14 +218,14 @@ function scoreboard:ReloadPlayerList()
 
 				surface.SetTextColor(255,255,255)
 				local frags = self.ply:Frags()
-				local frags_text = string.format(T"scoreboard.kill_count", frags)
+				local frags_text = T("scoreboard.kill_count", frags)
 				local frags_text_x, frags_text_y = surface.GetTextSize(frags_text)
 				surface.SetTextPos(PLAYER_PADDING+second_collumn_x, PLAYER_PADDING*2+AVATAR_SIZE)
 				surface.DrawText(frags_text)
 
 				surface.SetTextColor(255,255,255)
 				local deaths = self.ply:Deaths()
-				local deaths_text = string.format(T"scoreboard.death_count", deaths)
+				local deaths_text = T("scoreboard.death_count", deaths)
 				local deaths_text_x, deaths_text_y = surface.GetTextSize(deaths_text)
 				surface.SetTextPos(PLAYER_PADDING+second_collumn_x, frags_text_y+PLAYER_PADDING*2+AVATAR_SIZE)
 				surface.DrawText(deaths_text)
@@ -306,7 +306,7 @@ function scoreboard:ReloadPlayerList()
 
 			surface.SetTextColor(255,255,255)
 			local join_time_table = string.FormattedTime(CurTime()-self.ply.JoinTime)
-			local join_text = string.format(T"scoreboard.joining", join_time_table.m, join_time_table.s)
+			local join_text = T("scoreboard.joining", join_time_table.m, join_time_table.s)
 			local join_text_x, join_text_y = surface.GetTextSize(join_text)
 			surface.SetTextPos(w-PLAYER_PADDING-join_text_x, PLAYER_PADDING)
 			surface.DrawText(join_text)
@@ -381,7 +381,7 @@ function scoreboard:Open()
 
 		surface.SetTextColor(255,255,255)
 		surface.SetFont("Nickname")
-		local player_count = string.format(T"scoreboard.player_count", #scoreboard.players, game.MaxPlayers())
+		local player_count = T("scoreboard.player_count", #scoreboard.players, game.MaxPlayers())
 		local player_count_x, player_count_y = surface.GetTextSize(player_count)
 		surface.SetTextPos(w-PLAYER_PADDING-player_count_x, h/2-player_count_y/2)
 		surface.DrawText(player_count)

@@ -12,14 +12,21 @@ local english_data = localization_data["en"]
 
 ---FreeSBox's internal translation function.
 ---@param label string
+---@param ... any format string
 ---@return string localized_string
-function FSB.Translate(label)
+function FSB.Translate(label, ...)
 	local lang = localization_data[gmod_language:GetString()]
+	local res
 	if lang then
-		return lang[label] or label
+		res = lang[label] or label
+	else
+		res = english_data[label] or label
 	end
 
-	return english_data[label] or label
+	if ... ~= nil then
+		res = string.format(res, ...)
+	end
+	return res
 end
 
 if SERVER then
@@ -67,9 +74,9 @@ else
 		end
 
 		if has_args then
-			chat.AddText(string.format(FSB.Translate(string), unpack(args)))
+			chat.AddText(FSB.Translate(string, unpack(args)))
 		else
-			chat.AddText(string.format(FSB.Translate(string)))
+			chat.AddText(FSB.Translate(string))
 		end
 	end)
 end
