@@ -38,6 +38,11 @@ return {
 		["lag.timing_out"] = "Lost connection to server!",
 		["lag.autobanned"] = "%s is a potential crasher and has been ghostbanned for %i seconds!",
 
+		["ws_chat.connected"] = "Connected to relay chat server, you can chat if you have easychat enabled.",
+		["ws_chat.disconnected"] = "Disconneced from relay chat server.",
+		["ws_chat.error"] = "Websocket connection error.",
+		["ws_chat.too_long"] = "Your message was too long: %i/%i",
+
 		["cant_use_yet"] = "You have to play %i more hours on this server until you can use this feature.",
 		["gcc_backdor_in_linux"] = "%s has used Redhat GCC exploit on the server!",
 		["owner_joined"] = "Warning! The OWNER has joined the game!",
@@ -130,6 +135,11 @@ return {
 		["lag.too_many_props"] = "%s заспавнил дохуя пропов за 1 тик, чё за хуйню он творит?",
 		["lag.timing_out"] = "Потеряно соединение с сервером!",
 		["lag.autobanned"] = "%s потенциальный крашер, и был забанен на %i секунд!",
+
+		["ws_chat.connected"] = "Подключен чат реле, вы можете писать в чат если у вас включен EasyChat.",
+		["ws_chat.disconnected"] = "Отключен чат реле.",
+		["ws_chat.error"] = "Ошибка подключения к Websocket.",
+		["ws_chat.too_long"] = "Ваше сообщение слишком длинное: %i/%i",
 
 		["cant_use_yet"] = "Вам нужно наиграть ещё %i часов на сервере прежде чем вы сможете использовать эту функцию.",
 		["gcc_backdor_in_linux"] = "%s использовал Redhat GCC эксплойт на сервере!",
