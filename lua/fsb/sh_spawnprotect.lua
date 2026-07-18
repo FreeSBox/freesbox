@@ -32,6 +32,11 @@ local spawnzones =
 		max = Vector(432, -7856, -8340),
 		shoud_draw = true
 	},
+	["gm_excess_construct_13"] = {
+		min = Vector(1792, 3328, 0),
+		max = Vector(1344, 2624, 208),
+		shoud_draw = true
+	},
 }
 
 local fsb_draw_spawnzone = CreateClientConVar("fsb_draw_spawnzone", "1", true, false)
