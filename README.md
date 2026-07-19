@@ -40,15 +40,17 @@ Included in this addon are:
 
 #### Hooks
 
-| Hook                                             | Realm  | Description                                                                                                                       |
-|--------------------------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------------|
-| `FSBEnterPVP(player)`                            | Server | Called in `Player:PutIntoPVP()`, return false to prevent PVP                                                                      |
-| `FSBReadyForBuild(player)`                       | Server | Called in `Player:MarkAsReadyForBuild()`, return false to prevent switching to build                                              |
-| `NetIncoming(net_index, name, len, ply)`         | Shared | Called before `net.Incoming` callback gets called. Returning any value other then nil will prevent the callback from being called |
-| `FSBPlayerLeft(userid, networkid, name, reason)` | Client | Called when a player has left                                                                                                     |
-| `FSBPlayerJoined(userid, networkid, name)`       | Client | Called when a player has joined                                                                                                   |
-| `FSBUCLQuery(ply, access, hide)`                 | Server | Called when ULib.ucl.query is called, return false to not allow the cmd.                                                          |
-| `FSBTimingOut(is_timing_out)`                    | Client | Called when you start timing out or stop timing out.                                                                             |
+| Hook                                                             | Realm  | Description                                                                                                                                              |
+|------------------------------------------------------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `FSBEnterPVP(player)`                                            | Server | Called in `Player:PutIntoPVP()`, return false to prevent PVP.                                                                                            |
+| `FSBReadyForBuild(player)`                                       | Server | Called in `Player:MarkAsReadyForBuild()`, return false to prevent switching to build.                                                                    |
+| `NetIncoming(net_index, name, len, ply)`                         | Shared | Called before `net.Incoming` callback gets called. Returning any value other then nil will prevent the callback from being called.                       |
+| `FSBPlayerLeft(userid, networkid, name, reason)`                 | Client | Called when a player has left.                                                                                                                           |
+| `FSBPlayerJoined(userid, networkid, name)`                       | Client | Called when a player has joined.                                                                                                                         |
+| `FSBUCLQuery(ply, access, hide)`                                 | Server | Called when ULib.ucl.query is called, return false to not allow the cmd.                                                                                 |
+| `FSBTimingOut(is_timing_out)`                                    | Client | Called when you start timing out or stop timing out.                                                                                                     |
+| `FSBPlayerChangeName(player, old_name, new_name, persistent)`    | Server | Called when a player changes their name through FSB's custom name feature. The `persistent` argument means that the new name will save after re-logging. |
+| `FSBPlayerChangeNameTag(player, old_name, new_name, persistent)` | Server | Called when a player changes their name tag. The `persistent` argument means that the new tag will save after re-logging.                                |
 
 #### Updating html.lua files
 To update the html.lua files you need to run `build_scripts/html_to_lua.lua` in the addons root directory.
