@@ -3,10 +3,32 @@ local ENT_META = FindMetaTable("Entity")
 ---@class Player
 local PLY_META = FindMetaTable("Player")
 
-return function(instance)
-local player_methods, player_meta = instance.Types.Player.Methods, instance.Types.Player
 local Ply_GetGhostBanDescription, Ply_GetGhostBannedBySteamID64, Ply_IsGhostBanned, Ply_InPVPMode, Ply_GetOriginalName, Ply_PVPModeEndTime, Ply_GetNameTag = PLY_META.GetGhostBanDescription, PLY_META.GetGhostBannedBySteamID64, PLY_META.IsGhostBanned, PLY_META.InPVPMode, PLY_META.GetOriginalName, PLY_META.PVPModeEndTime, PLY_META.GetNameTag
 local Ent_IsValid = ENT_META.IsValid
+local add = SF.hookAdd
+
+--- Called when a player changes their name through FSB's custom name feature.
+-- @name FSBPlayerChangeNameTag
+-- @class hook
+-- @server
+-- @param Player ply Player that changed their name.
+-- @param string old_name Old name.
+-- @param string new_name New name.
+-- @param boolean persistent Will this new name be saved after re-logging.
+add("FSBPlayerChangeName")
+
+--- Called when a player changes their tag.
+-- @name FSBPlayerChangeNameTag
+-- @class hook
+-- @server
+-- @param Player ply Player that changed their tag.
+-- @param string old_tag Old tag.
+-- @param string new_tag New tag.
+-- @param boolean persistent Will this new tag be saved after re-logging.
+add("FSBPlayerChangeNameTag")
+
+return function(instance)
+local player_methods, player_meta = instance.Types.Player.Methods, instance.Types.Player
 
 local function getply(self)
 	local ent = player_meta.sf2sensitive[self]

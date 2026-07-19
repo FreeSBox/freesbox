@@ -28,30 +28,36 @@ PLAYER.GetName = PLAYER.Name
 PLAYER.Nick = PLAYER.Name
 
 ---@param name string
-function PLAYER:SetPlayerName(name)
+---@param should_save boolean? Defaults to true
+function PLAYER:SetPlayerName(name, should_save)
 	if self:IsGhostBanned() then return end
+	should_save = should_save ~= false
 
 	name = name:Trim()
 	if #name > MAX_NAME_LENGTH then return end
 	if SERVER then
-		self:SetPData("nickname", name)
+		hook.Run("FSBPlayerChangeName", self:GetName(), name, should_save)
 		self:SetNWString("nickname", name)
+		if should_save then
+			self:SetPData("nickname", name)
+		end
 	else
 		net.Start("change_nickname")
-			net.WriteBool(true) -- should_save
+			net.WriteBool(should_save)
 			net.WriteString(name)
 		net.SendToServer()
 	end
 end
 
+---@deprecated
 ---@param name string
 function PLAYER:SetPlayerNameNoSave(name)
 	if self:IsGhostBanned() then return end
 
 	name = name:Trim()
 	if #name > MAX_NAME_LENGTH then return end
-
 	if SERVER then
+		hook.Run("FSBPlayerChangeName", self:GetName(), name, false)
 		self:SetNWString("nickname", name)
 	else
 		net.Start("change_nickname")
@@ -63,22 +69,31 @@ end
 
 ------ Nametags ------
 
-function PLAYER:SetNameTag(name_tag)
+---@param name_tag string
+---@param should_save boolean? Defaults to true
+function PLAYER:SetNameTag(name_tag, should_save)
 	if self:IsGhostBanned() then return end
+	should_save = should_save ~= false
 
 	name_tag = name_tag:Trim()
 	if #name_tag > MAX_TAG_LENGTH then return end
 
 	if SERVER then
-		self:SetPData("nametag", name_tag)
+		hook.Run("FSBPlayerChangeNameTag", self:GetNameTag(), name_tag, should_save)
 		self:SetNWString("nametag", name_tag)
+		if should_save then
+			self:SetPData("nametag", name_tag)
+		end
 	else
 		net.Start("change_nametag")
-			net.WriteBool(true) -- should_save
+			net.WriteBool(should_save)
 			net.WriteString(name_tag)
 		net.SendToServer()
 	end
 end
+
+---@deprecated
+---@param name_tag string
 function PLAYER:SetNameTagNoSave(name_tag)
 	if self:IsGhostBanned() then return end
 
@@ -86,6 +101,7 @@ function PLAYER:SetNameTagNoSave(name_tag)
 	if #name_tag > MAX_TAG_LENGTH then return end
 
 	if SERVER then
+		hook.Run("FSBPlayerChangeNameTag", self:GetNameTag(), name_tag, false)
 		self:SetNWString("nametag", name_tag)
 	else
 		net.Start("change_nametag")
@@ -94,6 +110,7 @@ function PLAYER:SetNameTagNoSave(name_tag)
 		net.SendToServer()
 	end
 end
+
 if CLIENT then
 	-- Wrapper function for uyutniy compatibility
 	function setcustomtitle(nametag) LocalPlayer():SetNameTag(nametag) end

@@ -47,8 +47,8 @@ Included in this addon are:
 | `NetIncoming(net_index, name, len, ply)`         | Shared | Called before `net.Incoming` callback gets called. Returning any value other then nil will prevent the callback from being called |
 | `FSBPlayerLeft(userid, networkid, name, reason)` | Client | Called when a player has left                                                                                                     |
 | `FSBPlayerJoined(userid, networkid, name)`       | Client | Called when a player has joined                                                                                                   |
-| `FSBUCLQuery(ply, access, hide)`                 | Shared | Called when ULib.ucl.query is called, return false to not allow the cmd.                                                          |
-| `FSBTimingOut(is_timing_out)`                    | Client | Called when you start timing out and stop timing out.                                                                             |
+| `FSBUCLQuery(ply, access, hide)`                 | Server | Called when ULib.ucl.query is called, return false to not allow the cmd.                                                          |
+| `FSBTimingOut(is_timing_out)`                    | Client | Called when you start timing out or stop timing out.                                                                             |
 
 #### Updating html.lua files
 To update the html.lua files you need to run `build_scripts/html_to_lua.lua` in the addons root directory.

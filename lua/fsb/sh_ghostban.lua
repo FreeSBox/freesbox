@@ -25,11 +25,11 @@ local PLAYER = FindMetaTable("Player")
 
 if SERVER then
 	function PLAYER:SetGhostBanned(is_banned, unban_time, description, banned_by_steamid)
-		self:SetPlayerNameNoSave("")
+		self:SetPlayerName("", false)
 		self:SetNWString("GhostBanDesc", description)
 		if is_banned then
 			description = description and "\n" .. description or ""
-			self:SetNameTagNoSave("<color=255,0,0>[BANNED]<stop>" .. description)
+			self:SetNameTag("<color=255,0,0>[BANNED]<stop>" .. description, false)
 			if self:IsNoClipping() then
 				self:SetMoveType(MOVETYPE_WALK)
 			end
