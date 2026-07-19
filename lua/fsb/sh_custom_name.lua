@@ -79,7 +79,7 @@ function PLAYER:SetNameTag(name_tag, should_save)
 	if #name_tag > MAX_TAG_LENGTH then return end
 
 	if SERVER then
-		hook.Run("FSBPlayerChangeNameTag", self:GetNameTag(), name_tag, should_save)
+		hook.Run("FSBPlayerChangeNameTag", self, self:GetNameTag(), name_tag, should_save)
 		self:SetNWString("nametag", name_tag)
 		if should_save then
 			self:SetPData("nametag", name_tag)
@@ -101,7 +101,7 @@ function PLAYER:SetNameTagNoSave(name_tag)
 	if #name_tag > MAX_TAG_LENGTH then return end
 
 	if SERVER then
-		hook.Run("FSBPlayerChangeNameTag", self:GetNameTag(), name_tag, false)
+		hook.Run("FSBPlayerChangeNameTag", self, self:GetNameTag(), name_tag, false)
 		self:SetNWString("nametag", name_tag)
 	else
 		net.Start("change_nametag")
