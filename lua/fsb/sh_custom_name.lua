@@ -36,7 +36,7 @@ function PLAYER:SetPlayerName(name, should_save)
 	name = name:Trim()
 	if #name > MAX_NAME_LENGTH then return end
 	if SERVER then
-		hook.Run("FSBPlayerChangeName", self:GetName(), name, should_save)
+		hook.Run("FSBPlayerChangeName", self, self:GetName(), name, should_save)
 		self:SetNWString("nickname", name)
 		if should_save then
 			self:SetPData("nickname", name)
@@ -57,7 +57,7 @@ function PLAYER:SetPlayerNameNoSave(name)
 	name = name:Trim()
 	if #name > MAX_NAME_LENGTH then return end
 	if SERVER then
-		hook.Run("FSBPlayerChangeName", self:GetName(), name, false)
+		hook.Run("FSBPlayerChangeName", self, self:GetName(), name, false)
 		self:SetNWString("nickname", name)
 	else
 		net.Start("change_nickname")
