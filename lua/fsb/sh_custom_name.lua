@@ -134,29 +134,16 @@ if SERVER then
 
 	util.AddNetworkString("change_nametag")
 	net.Receive("change_nametag", function(len, ply)
-		if ply:IsGhostBanned() then return end
-
 		local should_save = net.ReadBool()
-		local name_tag = string.Trim(net.ReadString())
-		if #name_tag > MAX_TAG_LENGTH then return end
+		local name_tag = net.ReadString()
 
-		if should_save then
-			ply:SetPData("nametag", name_tag)
-		end
-		ply:SetNWString("nametag", name_tag)
+		ply:SetNameTag(name_tag, should_save)
 	end)
 
 	util.AddNetworkString("change_nickname")
 	net.Receive("change_nickname", function(len, ply)
-		if ply:IsGhostBanned() then return end
-
 		local should_save = net.ReadBool()
 		local new_name = string.Trim(net.ReadString())
-		if #new_name > MAX_NAME_LENGTH then return end
-
-		if should_save then
-			ply:SetPData("nickname", new_name)
-		end
-		ply:SetNWString("nickname", new_name)
+		ply:SetPlayerName(new_name, should_save)
 	end)
 end
