@@ -10,7 +10,7 @@ resource.AddWorkshop("3389795738") -- Glide // GTAV: Helicopters
 resource.AddWorkshop("3673232532") -- Glide // Extra Details
 resource.AddWorkshop("3656294025") -- Glide // Combine APC
 resource.AddWorkshop("3656920709") -- Glide // Combine Dropship
-resource.AddWorkshop("3620753374") -- Left 4 Dead // Glide
+resource.AddWorkshop("3462656339") -- The Division // Glide
 resource.AddWorkshop("246756300") -- 3D Stream Radio
 resource.AddWorkshop("2675972006") -- Custom Loadout
 resource.AddWorkshop("3318060741") -- rRadio
