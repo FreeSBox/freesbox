@@ -42,7 +42,7 @@ net.Receive(MONEY_NET_MSG, function (len, ply)
 
 		local tmp_transaction_id = net.ReadUInt(32)
 		local dest = net.ReadUInt64()
-		local amount = net.ReadFloat()
+		local amount = net.ReadUInt(32)*0.1
 		local send_notifications = net.ReadBool()
 		local success, transaction_id = FSB.TranferMoney(ply, dest, amount, true, send_notifications)
 

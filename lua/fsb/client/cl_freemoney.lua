@@ -98,7 +98,7 @@ function FSB.SendMoney(target, amount, send_notifications)
 		net.WriteUInt(eMoneyMsg.SendMoney, 8)
 		net.WriteUInt(temp_transaction_id, 32) -- temp transaction id
 		net.WriteUInt64(steamid)
-		net.WriteFloat(amount)
+		net.WriteUInt(amount*10, 32)
 		net.WriteBool(send_notifications or true)
 	net.SendToServer()
 
@@ -120,7 +120,7 @@ net.Receive(MONEY_NET_MSG, function (len, ply)
 	elseif type == eMoneyMsg.RecieveTransaction then
 		local source = net.ReadUInt64()
 		local transaction_id = net.ReadUInt(32)
-		local amount = net.ReadFloat()
+		local amount = net.ReadUInt(32)*0.1
 
 		hook.Run("FSBTransactionReceive", source, transaction_id, amount)
 	end
