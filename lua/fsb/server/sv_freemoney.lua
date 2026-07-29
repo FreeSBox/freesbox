@@ -1,4 +1,4 @@
-util.AddNetworkString("fsb_money_msg")
+util.AddNetworkString(MONEY_NET_MSG)
 
 sql.Query[[CREATE TABLE IF NOT EXISTS fsb_transactions (
 	id INTEGER PRIMARY KEY,
@@ -8,6 +8,50 @@ sql.Query[[CREATE TABLE IF NOT EXISTS fsb_transactions (
 	destination BIGINT,
 	comment TEXT
 )]]
+
+--#region networking
+local function SendMoneyAck(ply, tmp_transaction_id, success, transaction_id)
+	net.Start(MONEY_NET_MSG)
+		net.WriteUInt(eMoneyMsg.SendMoneyAck, 8)
+		net.WriteUInt(tmp_transaction_id, 32)
+		net.WriteBool(success)
+		if success then
+			---@diagnostic disable-next-line: param-type-mismatch
+			net.WriteUInt(transaction_id, 32)
+		end
+	net.Send(ply)
+end
+
+local function RecieveTransaction(ply, transaction_id, amount, source)
+	net.Start(MONEY_NET_MSG)
+		net.WriteUInt(eMoneyMsg.RecieveTransaction, 8)
+		net.WriteUInt64(source)
+		net.WriteUInt(transaction_id, 32)
+		net.WriteFloat(amount)
+	net.Send(ply)
+end
+
+local transaction_ratelimit = {}
+net.Receive(MONEY_NET_MSG, function (len, ply)
+	local type = net.ReadUInt(8)
+	if type == eMoneyMsg.SendMoney then
+		if not FSB.Ratelimit(transaction_ratelimit, ply, MONEY_RATELIMIT) then
+			ply:SendLocalizedHint("ratelimit", NOTIFY_ERROR, 3, MONEY_RATELIMIT)
+			return
+		end
+
+		local tmp_transaction_id = net.ReadUInt(32)
+		local dest = net.ReadUInt64()
+		local amount = net.ReadFloat()
+		local send_notifications = net.ReadBool()
+		local success, transaction_id = FSB.TranferMoney(ply, dest, amount, true, send_notifications)
+
+		SendMoneyAck(ply, tmp_transaction_id, success, transaction_id)
+	end
+end)
+
+--#endregion networking
+
 
 ---@class Player
 local PLAYER = FindMetaTable("Player")
@@ -49,6 +93,7 @@ end
 ---@param persist boolean
 ---@param send_notifications? boolean False by deafult
 ---@return boolean success
+---@return integer? transaction_id Transaction id, if persist is enabled
 function FSB.TranferMoney(source, dest, amount, persist, send_notifications)
 	assert(amount >= MONEY_MIN_TRANSFER, "Too little or negative money")
 	local source, source_ply = getSteamIDAndPlayer(source)
@@ -59,6 +104,7 @@ function FSB.TranferMoney(source, dest, amount, persist, send_notifications)
 	end
 
 	local balance
+	local transaction_id
 	-- We are using SERVER_MONEYPRINTER, skip balance checks
 	if source == nil or source == tostring(MONEY_SERVER_MONEYPRINTER) then goto SUCCESS end
 
@@ -70,17 +116,22 @@ function FSB.TranferMoney(source, dest, amount, persist, send_notifications)
 	::SUCCESS::
 
 	if persist then
-		sql.QueryTyped(
-			"INSERT INTO fsb_transactions(amount, time, source, destination) VALUES (?, ?, ?, ?)",
+		local res = sql.Query(string.format([[
+				INSERT INTO fsb_transactions(amount, time, source, destination) VALUES (%f, %u, %s, %s);
+				SELECT last_insert_rowid()
+			]],
 			amount,
 			os.time(),
-			source or MONEY_SERVER_MONEYPRINTER,
-			dest or MONEY_SERVER_MONEYPRINTER
-		)
+			tostring(source or MONEY_SERVER_MONEYPRINTER),
+			tostring(dest or MONEY_SERVER_MONEYPRINTER)
+		))
+		assert(res, "SQL query had no results in 'FSB.TranferMoney'")
+		transaction_id = res[1]["last_insert_rowid()"]
 	end
 
 	if IsValid(dest_ply) then
 		dest_ply:SetBalance(dest_ply:GetBalance() + amount)
+		RecieveTransaction(dest_ply, transaction_id, amount, source)
 	end
 	if IsValid(source_ply) then
 		source_ply:SetBalance(source_ply:GetBalance() - amount)
@@ -91,7 +142,7 @@ function FSB.TranferMoney(source, dest, amount, persist, send_notifications)
 	end
 
 
-	return true
+	return true, transaction_id
 end
 
 -- Loads balance information from the database for all players
@@ -157,22 +208,5 @@ timer.Create("give_out_free_money", 60, 0, function ()
 		if ply:IsConnected() and ply:IsActive() and ply:IsFullyAuthenticated() then
 			ply:AddMoney(1)
 		end
-	end
-end)
-
-local transaction_ratelimit = {}
-
-net.Receive("fsb_money_msg", function (len, ply)
-	local type = net.ReadUInt(8)
-	if type == eMoneyMsg.SendMoney then
-		if not FSB.Ratelimit(transaction_ratelimit, ply, MONEY_RATELIMIT) then
-			ply:SendLocalizedHint("ratelimit", NOTIFY_ERROR, 3, MONEY_RATELIMIT)
-			return
-		end
-
-		local dest = net.ReadUInt64()
-		local amount = net.ReadFloat()
-		local send_notifications = net.ReadBool()
-		FSB.TranferMoney(ply, dest, amount, true, send_notifications)
 	end
 end)

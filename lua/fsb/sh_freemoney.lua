@@ -18,6 +18,7 @@ MONEY_SERVER_MONEYPRINTER = 24
 MONEY_RATELIMIT = 2
 MONEY_MIN_TRANSFER = 0.1
 
+MONEY_NET_MSG = "fsb_money_msg"
 
 ---@param ply Player|string Player or string object
 ---@return string SteamID
@@ -39,4 +40,8 @@ end
 eMoneyMsg = {
 	-- client->server
 	SendMoney = 1,
+
+	-- server->client
+	SendMoneyAck = 51,
+	RecieveTransaction = 52,
 }
