@@ -27,7 +27,7 @@ local function RecieveTransaction(ply, transaction_id, amount, source)
 		net.WriteUInt(eMoneyMsg.RecieveTransaction, 8)
 		net.WriteUInt64(source)
 		net.WriteUInt(transaction_id, 32)
-		net.WriteFloat(amount)
+		net.WriteUInt(amount*10, 32)
 	net.Send(ply)
 end
 
