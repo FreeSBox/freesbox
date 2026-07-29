@@ -1,4 +1,4 @@
---sql.Query("DROP TABLE fsb_transactions")
+util.AddNetworkString("fsb_money_msg")
 
 sql.Query[[CREATE TABLE IF NOT EXISTS fsb_transactions (
 	id INTEGER PRIMARY KEY,
@@ -12,32 +12,13 @@ sql.Query[[CREATE TABLE IF NOT EXISTS fsb_transactions (
 ---@class Player
 local PLAYER = FindMetaTable("Player")
 
--- Account ID for the infinite money printer account
--- This is where the server gives money from
-local SERVER_MONEYPRINTER = 24
-
----@param ply Player|string Player or string object
----@return string SteamID
----@return boolean|Player Player or false if player was not found
-local function getSteamIDandPlayer(ply)
-	if isstring(ply) then
-		---@diagnostic disable-next-line: param-type-mismatch
-		local ply_on_srv = player.GetBySteamID64(ply)
-		---@diagnostic disable-next-line: return-type-mismatch
-		return ply, ply_on_srv
-	elseif IsValid(ply) then
-		---@diagnostic disable-next-line: param-type-mismatch, return-type-mismatch
-		return ply:SteamID64(), ply
-	end
-
-	return tostring(SERVER_MONEYPRINTER), false
-end
+local getSteamIDAndPlayer = FSB.GetSteamIDAndPlayer
 
 ---@param ply string|Player SteamID64 or player class
 ---@param use_cache boolean Should we check online players, this will avoid DB access if the player is online
 ---@return number balance
 function FSB.GetPlayerBalance(ply, use_cache)
-	local steamid64, ply = getSteamIDandPlayer(ply)
+	local steamid64, ply = getSteamIDAndPlayer(ply)
 
 	if use_cache then
 		if IsValid(ply) then
@@ -66,11 +47,12 @@ end
 ---@param dest Player|string?
 ---@param amount number
 ---@param persist boolean
+---@param send_notifications? boolean False by deafult
 ---@return boolean success
-function FSB.TranferMoney(source, dest, amount, persist)
-	assert(amount >= 0.01, "Too little or negative money")
-	local source, source_ply = getSteamIDandPlayer(source)
-	local dest, dest_ply = getSteamIDandPlayer(dest)
+function FSB.TranferMoney(source, dest, amount, persist, send_notifications)
+	assert(amount >= MONEY_MIN_TRANSFER, "Too little or negative money")
+	local source, source_ply = getSteamIDAndPlayer(source)
+	local dest, dest_ply = getSteamIDAndPlayer(dest)
 
 	if source == dest then
 		return false
@@ -78,7 +60,7 @@ function FSB.TranferMoney(source, dest, amount, persist)
 
 	local balance
 	-- We are using SERVER_MONEYPRINTER, skip balance checks
-	if source == nil or source == tostring(SERVER_MONEYPRINTER) then goto SUCCESS end
+	if source == nil or source == tostring(MONEY_SERVER_MONEYPRINTER) then goto SUCCESS end
 
 	balance = FSB.GetPlayerBalance(source, true)
 	if balance < amount then
@@ -92,8 +74,8 @@ function FSB.TranferMoney(source, dest, amount, persist)
 			"INSERT INTO fsb_transactions(amount, time, source, destination) VALUES (?, ?, ?, ?)",
 			amount,
 			os.time(),
-			source or SERVER_MONEYPRINTER,
-			dest or SERVER_MONEYPRINTER
+			source or MONEY_SERVER_MONEYPRINTER,
+			dest or MONEY_SERVER_MONEYPRINTER
 		)
 	end
 
@@ -103,7 +85,7 @@ function FSB.TranferMoney(source, dest, amount, persist)
 	if IsValid(source_ply) then
 		source_ply:SetBalance(source_ply:GetBalance() - amount)
 	end
-	if IsValid(dest_ply) and IsValid(source_ply) then
+	if IsValid(dest_ply) and IsValid(source_ply) and send_notifications then
 		dest_ply:SendLocalizedHint("money.transfer", NOTIFY_GENERIC, 3, source_ply:GetName(), amount, dest_ply:GetName())
 		source_ply:SendLocalizedHint("money.transfer", NOTIFY_GENERIC, 3, source_ply:GetName(), amount, dest_ply:GetName())
 	end
@@ -175,5 +157,22 @@ timer.Create("give_out_free_money", 60, 0, function ()
 		if ply:IsConnected() and ply:IsActive() and ply:IsFullyAuthenticated() then
 			ply:AddMoney(1)
 		end
+	end
+end)
+
+local transaction_ratelimit = {}
+
+net.Receive("fsb_money_msg", function (len, ply)
+	local type = net.ReadUInt(8)
+	if type == eMoneyMsg.SendMoney then
+		if not FSB.Ratelimit(transaction_ratelimit, ply, MONEY_RATELIMIT) then
+			ply:SendLocalizedHint("ratelimit", NOTIFY_ERROR, 3, MONEY_RATELIMIT)
+			return
+		end
+
+		local dest = net.ReadUInt64()
+		local amount = net.ReadFloat()
+		local send_notifications = net.ReadBool()
+		FSB.TranferMoney(ply, dest, amount, true, send_notifications)
 	end
 end)

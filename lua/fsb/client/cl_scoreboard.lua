@@ -233,9 +233,14 @@ function scoreboard:ReloadPlayerList()
 		end
 		function player_btn:DoRightClick()
 			scoreboard.ctx_menu = DermaMenu()
-			scoreboard.ctx_menu:AddOption(string.format(T"scoreboard.balance", self.ply:GetBalance()), function ()
+			scoreboard.ctx_menu:AddOption(T("scoreboard.balance", self.ply:GetBalance()), function ()
 				SetClipboardText(tostring(self.ply:GetBalance()))
-			end):SetIcon("icon16/coins.png")
+			end):SetIcon("icon16/money.png")
+			if self.ply ~= LocalPlayer() then
+				scoreboard.ctx_menu:AddOption(T"scoreboard.send_money", function ()
+					FSB.OpenMoneySendDialog(self.ply)
+				end):SetIcon("icon16/money_add.png")
+			end
 			scoreboard.ctx_menu:AddOption(T"scoreboard.copy_real_name", function ()
 				SetClipboardText(self.ply:GetOriginalName())
 			end):SetIcon("icon16/report_user.png")

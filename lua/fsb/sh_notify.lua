@@ -18,9 +18,9 @@ if SERVER then
 		type = type or NOTIFY_GENERIC
 		length = length or 5
 
-		assert(isstring(text))
-		assert(isnumber(type))
-		assert(isnumber(length))
+		assert(isstring(text), "'text' must be a string")
+		assert(isnumber(type), "'type' must be a number")
+		assert(isnumber(length), "'length' must be a number")
 
 		local args = table.Pack(...)
 
