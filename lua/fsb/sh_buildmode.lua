@@ -54,6 +54,14 @@ local BUILD_VEHICLES =
 	["glide_gtav_swiftdeluxe"] = true,
 	["glide_gtav_thruster"] = true,
 
+	--Styled's Experiments - Petition #1292
+	["glide_experiments_blazer_aqua"] = true,
+	["glide_experiments_caddy"] = true, 
+	["glide_experiments_deluxo"] = true,
+	["glide_experiments_hot_rod_super"] = true,
+	["glide_experiments_nicoles_car"] = true,
+	["glide_experiments_tubile"] = true,
+	
 	--GTA IV vehicles
 	["albany_manana"] = true,
 	["declasse_granger_retro_fdlc"] = true,
