@@ -192,7 +192,7 @@ if SERVER then
 		if not ply:IsGhostBanned() then return end
 
 		if whitelisted_nets[name] then
-			if FSB.Ratelimit(net_ratelimit, ply, 1) then
+			if not FSB.Ratelimit(net_ratelimit, ply, 1) then
 				return
 			end
 		end

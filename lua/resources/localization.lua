@@ -96,6 +96,13 @@ return {
 		["scoreboard.kill_count"] = "Kills: %i",
 		["scoreboard.death_count"] = "Deaths: %i",
 		["scoreboard.joining"] = "Joining: %02i:%02i",
+		["scoreboard.balance"] = "Balance: %.1f$",
+		["scoreboard.send_money"] = "Give money!",
+
+		["money.transfer"] = "%s transferred %.1f$ to %s",
+		["money.transfer_window"] = "Tranfer money!",
+		["money.button_send"] = "Give",
+		["money.your_balance"] = "Your balance: %.1f$",
 	},
 	["ru"] =
 	{
@@ -193,5 +200,12 @@ return {
 		["scoreboard.kill_count"] = "Убийств: %i",
 		["scoreboard.death_count"] = "Смертей: %i",
 		["scoreboard.joining"] = "Заходит: %02i:%02i",
+		["scoreboard.balance"] = "Баланс: %.1f$",
+		["scoreboard.send_money"] = "Отдать деньги!",
+
+		["money.transfer"] = "%s перевёл %.1f$ %s",
+		["money.transfer_window"] = "Перевод денег!",
+		["money.button_send"] = "Отдать",
+		["money.your_balance"] = "Ваш баланс: %.1f$",
 	}
 }
