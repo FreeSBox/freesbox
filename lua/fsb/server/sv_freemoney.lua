@@ -203,7 +203,7 @@ hook.Add("PlayerInitialSpawn", "init_money", function (player, transition)
 	player:RecalculatePlayerBalance()
 end)
 
-timer.Create("give_out_free_money", 60, 0, function ()
+timer.Create("give_out_free_money", 60*60, 0, function ()
 	for _, ply in ipairs(player.GetAll()) do
 		if ply:IsConnected() and ply:IsActive() and ply:IsFullyAuthenticated() then
 			ply:AddMoney(1)
