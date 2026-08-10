@@ -38,7 +38,7 @@ local spawnzones =
 		shoud_draw = true
 	},
 	["gm_flatgrass_abs_v3c"] = {
-		min = Vector(4413, 8332, -3645),
+		min = Vector(4413, 8318, -3645),
 		max = Vector(350, 6055, -4100),
 		shoud_draw = false,
 	}
