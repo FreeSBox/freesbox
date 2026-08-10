@@ -37,6 +37,11 @@ local spawnzones =
 		max = Vector(1344, 2624, 208),
 		shoud_draw = true
 	},
+	["gm_flatgrass_abs_v3c"] = {
+		min = Vector(4413, 8332, -3645),
+		max = Vector(350, 6055, -4100),
+		shoud_draw = false,
+	}
 }
 
 local fsb_draw_spawnzone = CreateClientConVar("fsb_draw_spawnzone", "1", true, false)
