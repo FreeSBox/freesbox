@@ -3,7 +3,7 @@ local ENT_META = FindMetaTable("Entity")
 ---@class Player
 local PLY_META = FindMetaTable("Player")
 
-local Ply_GetGhostBanDescription, Ply_GetGhostBannedBySteamID64, Ply_IsGhostBanned, Ply_InPVPMode, Ply_GetOriginalName, Ply_PVPModeEndTime, Ply_GetNameTag = PLY_META.GetGhostBanDescription, PLY_META.GetGhostBannedBySteamID64, PLY_META.IsGhostBanned, PLY_META.InPVPMode, PLY_META.GetOriginalName, PLY_META.PVPModeEndTime, PLY_META.GetNameTag
+local Ply_GetGhostBanDescription, Ply_GetGhostBannedBySteamID64, Ply_IsGhostBanned, Ply_InPVPMode, Ply_GetOriginalName, Ply_PVPModeEndTime, Ply_GetNameTag, Ply_GetPlaytime = PLY_META.GetGhostBanDescription, PLY_META.GetGhostBannedBySteamID64, PLY_META.IsGhostBanned, PLY_META.InPVPMode, PLY_META.GetOriginalName, PLY_META.PVPModeEndTime, PLY_META.GetNameTag, PLY_META.GetPlayTime
 local Ent_IsValid = ENT_META.IsValid
 local add = SF.hookAdd
 
@@ -97,5 +97,11 @@ end
 -- @return string The nametag of the player.
 function player_methods:getNameTag()
 	return Ply_GetNameTag(getply(self))
+end
+-- Returns the amount of hours the player has played on the server.
+-- @server
+-- @return number Playtime hours.
+function player_methods:getPlaytime()
+	return Ply_GetPlaytime(getply(self))
 end
 end
