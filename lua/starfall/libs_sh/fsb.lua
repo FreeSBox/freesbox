@@ -98,7 +98,8 @@ end
 function player_methods:getNameTag()
 	return Ply_GetNameTag(getply(self))
 end
---- Returns the total amount of time the player has played on the server.
+--- Returns the total amount of time the player has played on the server. 
+-- Convert this to hours with UNIT.GMOD_TIME.
 -- @server
 -- @return number Playtime.
 function player_methods:getTotalPlaytime()
