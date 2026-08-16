@@ -100,9 +100,21 @@ function player_methods:getNameTag()
 end
 --- Returns the total amount of time the player has played on the server. 
 -- Convert this to hours with UNIT.GMOD_TIME.
--- @server
--- @return number Playtime.
+-- @shared
+-- @return number Total playtime.
 function player_methods:getTotalPlaytime()
 	return getply(self):GetUTimeTotalTime()
+end
+--- Returns the time played on the server this session. Similar to Player:getTimeConnnected().
+-- @shared
+-- @return number Session playtime.
+function player_methods:getSessionPlaytime()
+	return getply(self):GetUTimeSessionTime()
+end
+--- Return playtime that doesn't count the current session.
+-- @shared
+-- @return number Before-session playtime.
+function player_methods:getBeforeSessionPlaytime()
+	return getply(self):GetUTime()
 end
 end
