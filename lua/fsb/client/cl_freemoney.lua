@@ -31,6 +31,7 @@ function FSB.OpenMoneySendDialog(ply)
 			submit_btn:SetColor(FAIL_COLOR)
 		end
 		timer.Simple(MONEY_RATELIMIT, function ()
+			if not panel:IsValid() then return end
 			balance:SetText(FSB.Translate("money.your_balance", LocalPlayer():GetBalance()))
 			if submit_btn:IsValid() then
 				submit_btn:SetEnabled(true)
