@@ -12,6 +12,7 @@ resource.AddWorkshop("3656294025") -- Glide // Combine APC
 resource.AddWorkshop("3656920709") -- Glide // Combine Dropship
 resource.AddWorkshop("3620753374") -- Left 4 Dead // Glide 
 resource.AddWorkshop("246756300") -- 3D Stream Radio
+resource.AddWorkshop("1678408548") -- VRMod
 resource.AddWorkshop("2675972006") -- Custom Loadout
 resource.AddWorkshop("3318060741") -- rRadio
 resource.AddWorkshop("104575630") -- Ragdoll Mover
