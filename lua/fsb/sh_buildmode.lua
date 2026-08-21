@@ -14,6 +14,7 @@ local BUILD_WEAPONS =
 	["weapon_hands"] = true,
 	["weapon_lookathands"] = true,
 	["none"] = true,
+	["weapon_vrmod_empty"] = true,
 	["weapon_petition"] = true,
 	["glide_repair"] = true, -- Petition #1070
 }
