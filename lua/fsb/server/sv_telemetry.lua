@@ -53,6 +53,23 @@ function FSB.TelemetryLagDetected(frame_dump)
 	FSB.TelemetryWrite("lag_detected", metric)
 end
 
+function FSB.GetAveragePing()
+	local players = player.GetHumans()
+	local ping_sum = 0
+	for _, ply in ipairs(players) do
+		ping_sum = ping_sum + ply:Ping()
+	end
+	return ping_sum/#players
+end
+
+function FSB.GetNumNetStrings()
+	local num_net_strings = 1
+	while util.NetworkIDToString(num_net_strings) do
+		num_net_strings = num_net_strings + 1
+	end
+	return num_net_strings
+end
+
 function FSB.TelemetryGeneric()
 	local metric = {}
 
@@ -61,49 +78,10 @@ function FSB.TelemetryGeneric()
 
 	local players = player.GetHumans()
 	metric["ply_count"] = #players
-
-	local ping_sum = 0
-	for _, ply in ipairs(players) do
-		ping_sum = ping_sum + ply:Ping()
-	end
-	metric["ping_average"] = ping_sum/#players
-
-	local num_net_strings = 1
-	while util.NetworkIDToString(num_net_strings) do
-		num_net_strings = num_net_strings + 1
-	end
-	metric["net_strings"] = num_net_strings
+	metric["ping_average"] = FSB.GetAveragePing()
+	metric["net_strings"] = FSB.GetNumNetStrings()
 
 	FSB.TelemetryWrite("generic", metric)
-
-	if not fsb_telemetry_zabbix_enable:GetBool() then return end
-
-	HTTP{
-		url=fsb_telemetry_zabbix_address:GetString(),
-		method="POST",
-		type = "application/json-rpc",
-		headers= {
-			["Authorization"] = "Bearer "..fsb_telemetry_zabbix_token:GetString(),
-		},
-		success = function (code, body, headers)
-			print("Zabbix request succeeded", code, #body, body)
-		end,
-		failed = function (error)
-			MsgN("Zabbix server request failed! " .. error)
-		end,
-		body = util.TableToJSON({
-			jsonrpc="2.0",
-			method="history.push",
-			params={
-				FSB.MakeZabbixParam("gmod.average_mspt", metric["average_mspt"]),
-				FSB.MakeZabbixParam("gmod.ent_count", metric["ent_count"]),
-				FSB.MakeZabbixParam("gmod.ply_count", metric["ply_count"]),
-				FSB.MakeZabbixParam("gmod.ping_average", metric["ping_average"]),
-				FSB.MakeZabbixParam("gmod.net_strings", metric["net_strings"]),
-			},
-			id=1
-		})
-	}
 end
 timer.Create("telemetry_generic", 60*5, 0, FSB.TelemetryGeneric)
 

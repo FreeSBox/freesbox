@@ -16,6 +16,7 @@ HTTP_SRV:Get("/generic.json", function (request)
 		num_connecting = player.GetCountConnecting(),
 		map_uptime = CurTime(),
 		mspt = FSB.GetAverageMSPT(),
+		net_strings = FSB.GetNumNetStrings(),
 	}
 
 	local players = {}
