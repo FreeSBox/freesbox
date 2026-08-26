@@ -1,4 +1,10 @@
 
+-- Holylib dependency
+if httpserver == nil or _HOLYLIB ~= true then
+	MsgN("Holylib not found or httpserver is disabled.")
+	return
+end
+
 if FSB.HTTP_SRV then
 	FSB.HTTP_SRV:Stop()
 end
