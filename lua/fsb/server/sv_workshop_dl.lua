@@ -8,8 +8,6 @@ resource.AddWorkshop("2802133674") -- Petition swep content
 resource.AddWorkshop("3389728250") -- Glide
 resource.AddWorkshop("3389795738") -- Glide // GTAV: Helicopters
 resource.AddWorkshop("3673232532") -- Glide // Extra Details
-resource.AddWorkshop("3656294025") -- Glide // Combine APC
-resource.AddWorkshop("3656920709") -- Glide // Combine Dropship
 resource.AddWorkshop("3620753374") -- Left 4 Dead // Glide 
 resource.AddWorkshop("246756300") -- 3D Stream Radio
 resource.AddWorkshop("2675972006") -- Custom Loadout
@@ -20,9 +18,6 @@ resource.AddWorkshop("2840295308") -- Primitive
 resource.AddWorkshop("2458909924") -- Prop2Mesh
 resource.AddWorkshop("287012681") -- Track Assembly Tool
 resource.AddWorkshop("2639959090") -- Manable Emplacements
-resource.AddWorkshop("3457996478") -- Glide // Conscript APC
-resource.AddWorkshop("3436601554") -- Glide // Hunter-Chopper
-resource.AddWorkshop("3448521354") -- Glide // Combine Gunship
 resource.AddWorkshop("3687687491") -- Glide // Oppressor Mk2
 resource.AddWorkshop("3001397905") -- Media Player (Updated Edition)
 resource.AddWorkshop("104691717") -- PAC3
@@ -33,4 +28,7 @@ resource.AddWorkshop("2821865508") -- Simple Weapons: CS:S
 resource.AddWorkshop("2775687029") -- [ ULTRA GUNS ] ГАНТЕЛЯ 2-4 КИЛЛОГРАММА!!!!!! swep
 resource.AddWorkshop("3620516732") -- Glide // Styled's Experiments
 resource.AddWorkshop("2175553724") -- Wiremod Extras
+resource.AddWorkshop("3442302711") -- [G]VRMod: Ultimate
+resource.AddWorkshop("1517464837") -- ttt_cigarette
+resource.AddWorkshop("2853616849") -- Heineken Beer SWEP
 --#endregion
