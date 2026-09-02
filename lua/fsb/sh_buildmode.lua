@@ -15,6 +15,9 @@ local BUILD_WEAPONS =
 	["weapon_lookathands"] = true,
 	["none"] = true,
 	["weapon_vrmod_empty"] = true,
+	["heineken"] = true,
+	["weapon_cigarro"] = true,
+	["weapon_cigarrobase"] = true,
 	["weapon_petition"] = true,
 	["glide_repair"] = true, -- Petition #1070
 }
