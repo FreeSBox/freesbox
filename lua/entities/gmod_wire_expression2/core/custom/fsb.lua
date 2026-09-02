@@ -62,3 +62,17 @@ e2function number entity:getTotalPlaytime()
 
 	return this:GetUTimeTotalTime()
 end
+
+e2function number entity:getSessionPlaytime()
+	if not IsValid(this) then return self:throw("Invalid entity!", "") end
+	if not this:IsPlayer() then return self:throw("Expected a Player but got an Entity!", "") end
+
+	return this:getSessionPlaytime()
+end
+
+e2function number entity:getBeforeSessionPlaytime()
+	if not IsValid(this) then return self:throw("Invalid entity!", "") end
+	if not this:IsPlayer() then return self:throw("Expected a Player but got an Entity!", "") end
+
+	return this:getBeforeSessionPlaytime()
+end
