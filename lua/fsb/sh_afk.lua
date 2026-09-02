@@ -1,4 +1,5 @@
 local ACTIVITY_TIMEOUT = 120 -- If the player doesn't press any key for this number of seconds - consider them AFK
+local MAX_AFK_TIME = 60*60*1 -- For how many seconds a player can be AFK before being kicked.
 
 if SERVER then
 	util.AddNetworkString("set_has_focus")
@@ -19,6 +20,18 @@ if SERVER then
 			if button == KEY_LALT then return end
 		end
 		ply:SetNWFloat("last_activity_time", CurTime())
+	end)
+
+	timer.Create("KickAFKPlayers", 10, 0, function ()
+		for _, ply in player.Iterator() do
+			local last_active = ply:GetLastActiveTime()
+			if last_active == 0 then goto CONTINUE end
+			if CurTime() - last_active > MAX_AFK_TIME then
+				ply:Kick("AFK for too long")
+			end
+
+			::CONTINUE::
+		end
 	end)
 else
 	local function sendHasFocus(focused)
