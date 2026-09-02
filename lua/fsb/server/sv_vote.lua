@@ -12,8 +12,10 @@ util.AddNetworkString("petition_transmit")
 -- `server -> client`. Confirm that the petition added with `petition_transmit` was accepted on the server.
 util.AddNetworkString("petition_accepted")
 
--- `server -> client`. Tells the client that it should delete this petition from the cache.
-util.AddNetworkString("petition_removed")
+-- `bidirectional`. 
+-- When sent server -> client: Tells the client that it should delete this petition from the cache.
+-- When sent client -> server: Asks the server to remove the petition
+util.AddNetworkString("petition_remove")
 
 -- `client -> server`. The client wants to know the children of this petition.
 util.AddNetworkString("petition_children_request")
@@ -115,7 +117,7 @@ local function addVoteInfoToPetitions(petitions, steamid64)
 		petition_ids[#petition_ids+1] = petition.index
 	end
 
-	local placeholders = string.rep("?,", num_petitions-1) .. "?"
+	local placeholders = string.rep("?,", #petition_ids-1) .. "?"
 	local query = string.format("SELECT vote_status, author_steamid, petition_id FROM fsb_votes WHERE petition_id IN (%s)", placeholders)
 	local results = sql.QueryTyped(query, unpack(petition_ids))
 	assert(results ~= false, "The SQL Query is broken in 'addVoteInfoToPetitions'")
@@ -725,7 +727,7 @@ function FSB.RemovePetition(id)
 	sql.QueryTyped("DELETE FROM fsb_petitions WHERE id = ?", id)
 	sql.QueryTyped("DELETE FROM fsb_votes WHERE petition_id = ?", id)
 
-	net.Start("petition_removed")
+	net.Start("petition_remove")
 	net.WriteUInt(id, PETITION_ID_BITS)
 	net.Broadcast()
 end
@@ -961,4 +963,29 @@ net.Receive("petition_vote_on", function(len, ply)
 	sendVoteResponce(petition_id, nil)
 end)
 
+net.Receive("petition_remove", function(len, ply)
+	if not ply:IsFullyAuthenticated() then
+		-- We cannot verify this players' identity.
+		ply:SendLocalizedMessage("vote.not_fully_authed_v")
+		return
+	end
+	if ply:IsGhostBanned() then
+		ply:SendLocalizedMessage("vote.ghostbanned")
+		return
+	end
+
+	local petition_id = net.ReadUInt(PETITION_ID_BITS)
+	local results = sql.QueryTyped("SELECT author_steamid FROM fsb_petitions WHERE id = ? and parent IS NOT NULL", petition_id)
+	assert(results ~= false, "The SQL Query is broken in 'petition_remove'")
+	if #results ~= 1 then
+		ply:SendLocalizedMessage("no_permission")
+		return
+	end
+
+	if not FSB.CanDeleteComments(ply) and results[1].author_steamid ~= ply:SteamID64() then
+		ply:SendLocalizedMessage("no_permission")
+		return
+	end
+	FSB.RemovePetition(petition_id)
+end)
 --#endregion

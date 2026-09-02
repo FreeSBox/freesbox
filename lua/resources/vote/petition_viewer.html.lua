@@ -551,6 +551,10 @@ transform: translateX(-50%);
 visibility: visible;
 opacity: 1;
 }
+.trash_button {
+background-color: black;
+color: red;
+}
 .like_button {
 background-color: black;
 }
@@ -624,6 +628,7 @@ padding: 5px;
 				<a class="clickable" ng-click='authorClicked(comment)'>{{comment.author_name}}</a>
 				<span>{{comment.creation_time*1000 | date:'d.M.yy H:mm'}}</span>
 				<div id="vote_menu">
+					<button ng-click="deleteClicked(comment)" ng-class="{hide: canDeleteComments == false && comment.author_steamid !== localSteamid}" class="fa-regular fa-trash-can trash_button"></button>
 					<button ng-click="likeClicked(comment)" class="like_button" ng-class="{btn_active: comment.our_vote_status == 1}"><i class="fa fa-thumbs-up"></i> {{comment.likes}}</button>
 					<button ng-click="dislikeClicked(comment)" class="like_button" ng-class="{btn_active: comment.our_vote_status == 2}"><i class="fa fa-thumbs-down"></i> {{comment.dislikes}}</button>
 				</div>
@@ -668,6 +673,23 @@ padding: 5px;
 		.controller('petitionViewerController', function ($scope) {
 			gScope = $scope;
 
+			if (IsGMod())
+			{
+				gmod.CanDeleteComments(function(can_delete)
+				{
+					$scope.canDeleteComments = can_delete;
+				});
+				gmod.GetLocalSteamID(function(steamid)
+				{
+					$scope.localSteamid = steamid;
+				});
+			}
+			else
+			{
+				$scope.canDeleteComments = true;
+				$scope.localSteamid = "";
+			}
+
 			$scope.Petition = {};
 			$scope.Comments = [];
 			$scope.Notifications = [];
@@ -678,6 +700,10 @@ padding: 5px;
 
 			$scope.authorClicked = function (petition) {
 				gmod.OpenURL("https://steamcommunity.com/profiles/" + petition.author_steamid)
+			}
+
+			$scope.deleteClicked = function (petition) {
+				gmod.DeletePetition(petition.index)
 			}
 
 			$scope.likeClicked = function (petition) {
@@ -754,12 +780,12 @@ padding: 5px;
 		var description_text = $("#descriptionInput").val();
 		if (isWhitespaceString(description_text))
 		{
-			gScope.Notifications.push({text: "Описание не может быть пустым"});
+			gScope.Notifications.push({text: "Комментарий не может быть пустым"});
 			UpdateDigest(gScope, 50);
 			return;
 		}
 
-		if (getWordCount(description_text) < 4)
+		if (getWordCount(description_text) < 2)
 		{
 			gScope.Notifications.push({text: "Слишком скучный комментарий"});
 			UpdateDigest(gScope, 50);
@@ -815,6 +841,24 @@ padding: 5px;
 
 	const debounceFixTags = debounce(fixAncherTags, 200)
 
+	function removePetition(index)
+	{
+		if (index === gScope.Petition.index)
+		{
+			gScope.Notifications.push({text: "Эта петиция была удалена"});
+			UpdateDigest(gScope, 50);
+		}
+
+		for (var i = 0; i < gScope.Comments.length; i++) {
+			if (gScope.Comments[i].index === index)
+			{
+				gScope.Comments.splice(i, 1);
+				UpdateDigest(gScope, 50);
+				return;
+			}
+		}
+	}
+
 	function addOrUpdateComment(index, description, author_name, author_steamid, likes, dislikes, our_vote_status, creation_time)
 	{
 		var new_comment = {
@@ -834,8 +878,7 @@ padding: 5px;
 		}
 
 		var comments = gScope.Comments;
-		var comments_length = comments.length;
-		for (var i = 0; i < comments_length; i++) {
+		for (var i = 0; i < comments.length; i++) {
 			if (comments[i].index === index)
 			{
 				comments[i] = new_comment;

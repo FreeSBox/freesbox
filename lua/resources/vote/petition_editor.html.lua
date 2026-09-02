@@ -550,6 +550,10 @@ transform: translateX(-50%);
 visibility: visible;
 opacity: 1;
 }
+.trash_button {
+background-color: black;
+color: red;
+}
 .like_button {
 background-color: black;
 }

