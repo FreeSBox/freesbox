@@ -3,7 +3,7 @@ local ENT_META = FindMetaTable("Entity")
 ---@class Player
 local PLY_META = FindMetaTable("Player")
 
-local Ply_GetGhostBanDescription, Ply_GetGhostBannedBySteamID64, Ply_IsGhostBanned, Ply_InPVPMode, Ply_GetOriginalName, Ply_PVPModeEndTime, Ply_GetNameTag = PLY_META.GetGhostBanDescription, PLY_META.GetGhostBannedBySteamID64, PLY_META.IsGhostBanned, PLY_META.InPVPMode, PLY_META.GetOriginalName, PLY_META.PVPModeEndTime, PLY_META.GetNameTag
+local Ply_GetGhostBanDescription, Ply_GetGhostBannedBySteamID64, Ply_IsGhostBanned, Ply_InPVPMode, Ply_GetOriginalName, Ply_PVPModeEndTime, Ply_GetNameTag, Ply_GetUTimeTotalTime, Ply_GetUTimeSessionTime, Ply_GetUTime = PLY_META.GetGhostBanDescription, PLY_META.GetGhostBannedBySteamID64, PLY_META.IsGhostBanned, PLY_META.InPVPMode, PLY_META.GetOriginalName, PLY_META.PVPModeEndTime, PLY_META.GetNameTag, PLY_META.GetUTimeTotalTime, PLY_META.GetUTimeSessionTime, PLY_META.GetUTime
 local Ent_IsValid = ENT_META.IsValid
 local add = SF.hookAdd
 
@@ -29,7 +29,7 @@ add("FSBPlayerChangeNameTag")
 
 return function(instance)
 local player_methods, player_meta = instance.Types.Player.Methods, instance.Types.Player
-
+-- Internal validity check just for SF. Returns ent if it's valid, errors the chip if it's not. Use this instead of just directly using self.
 local function getply(self)
 	local ent = player_meta.sf2sensitive[self]
 	if Ent_IsValid(ent) then
@@ -97,5 +97,24 @@ end
 -- @return string The nametag of the player.
 function player_methods:getNameTag()
 	return Ply_GetNameTag(getply(self))
+end
+--- Returns the total amount of time the player has played on the server.
+-- Convert this to hours with UNIT.GMOD_TIME.
+-- @shared
+-- @return number Total playtime.
+function player_methods:getTotalPlaytime()
+	return Ply_GetUTimeTotalTime(getply(self))
+end
+--- Returns the time played on the server this session. Similar to Player:getTimeConnnected().
+-- @shared
+-- @return number Session playtime.
+function player_methods:getSessionPlaytime()
+	return Ply_GetUTimeSessionTime(getply(self))
+end
+--- Returns playtime that doesn't count the current session.
+-- @shared
+-- @return number Before-session playtime.
+function player_methods:getBeforeSessionPlaytime()
+	return Ply_GetUTime(getply(self))
 end
 end

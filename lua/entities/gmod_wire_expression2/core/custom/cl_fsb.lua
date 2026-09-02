@@ -6,3 +6,6 @@ E2Helper.Descriptions["ghostBanDescription(e:)"] = "Returns the reason of the gh
 E2Helper.Descriptions["pvpModeEndTime(e:)"] = "Gets the time when the player will leave PVP mode.\nDo entity:pvpModeEndTime()-curtime() to get time until we switch to build mode.\nThis will return 0xFFAAAC if we won't switch to build yet."
 E2Helper.Descriptions["originalName(e:)"] = "Returns the original name of the player"
 E2Helper.Descriptions["nameTag(e:)"] = "Returns the nametag of the player"
+E2Helper.Descriptions["getTotalPlaytime(e:)"] = "Returns the total amount of time the player has played on the server"
+E2Helper.Descriptions["getSessionPlaytime(e:)"] = "Returns the time played on the server this session. Similar to Player:getTimeConnnected()"
+E2Helper.Descriptions["getBeforeSessionPlaytime(e:)"] = "Returns playtime that doesn't count the current session"
