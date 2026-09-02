@@ -32,6 +32,7 @@ local scoreboard =
 	---@type table<Player, ConnectingPlayer>
 	connecting_players = {},
 	players = {},
+	player_buttons = {},
 	---@type table<integer, ScoreboardPlayerName>
 	player_names = {},
 	extended_infos = {},
@@ -151,9 +152,10 @@ function scoreboard:ReloadPlayers()
 end
 
 function scoreboard:ReloadPlayerList()
-	for _, old_button in ipairs(self.scroll:GetCanvas():GetChildren()) do
+	for _, old_button in ipairs(scoreboard.player_buttons) do
 		old_button:Remove()
 	end
+	scoreboard.player_buttons = {}
 	for _, player in ipairs(self.players) do
 		local player_btn = self.scroll:Add("DButton")
 		player_btn:SetName("player_btn")
@@ -289,6 +291,7 @@ function scoreboard:ReloadPlayerList()
 		avatar:SetSize(AVATAR_SIZE,AVATAR_SIZE)
 		avatar:SetPos(PLAYER_PADDING,PLAYER_PADDING)
 		avatar:SetPlayer(player, AVATAR_SIZE)
+		scoreboard.player_buttons[#scoreboard.player_buttons+1] = player_btn
 	end
 
 	--TODO: Code duplication
@@ -347,7 +350,7 @@ end
 
 function scoreboard:Open()
 	if self.open then return end
-	if vgui.CursorVisible() then return end
+	--if vgui.CursorVisible() then return end
 
 	self:UpdateConnectingPlayers()
 
