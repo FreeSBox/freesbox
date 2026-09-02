@@ -79,6 +79,16 @@ local function addCommentToHTML(html, petition)
 	)
 end
 
+---@param html DHTML
+---@param petition_index integer
+local function removePetitionFromHTML(html, petition_index)
+	html:QueueJavascript(string.format(
+			"removePetition(%u)",
+			petition_index
+		)
+	)
+end
+
 local draft_name = ""
 local draft_desc = ""
 local function setDraftText(name, desc)
@@ -87,6 +97,27 @@ local function setDraftText(name, desc)
 end
 local function getDraftText()
 	return draft_name, draft_desc
+end
+
+local function getLocalSteamID()
+	return LocalPlayer():SteamID64()
+end
+local function canDeleteComments()
+	return FSB.CanDeleteComments(LocalPlayer())
+end
+local function deletePetition(index)
+	local petition = FSB.GetPetition(index)
+	if petition == nil then
+		return
+	end
+	if not canDeleteComments() and (petition.parent == nil or petition.author_steamid ~= LocalPlayer():SteamID64()) then
+		print("You can't remove this petition")
+		return
+	end
+
+	net.Start("petition_remove")
+	net.WriteUInt(index, PETITION_ID_BITS)
+	net.SendToServer()
 end
 
 local function createPetition(name, description)
@@ -176,7 +207,10 @@ local function requestMorePetitions()
 end
 
 local function requestMoreComments(petition_id)
-	assert(petitions_cache[petition_id], "Cannot request comments on petition that isn't in the cache")
+	if petitions_cache[petition_id] == nil then
+		-- Petition was probably removed while it was open
+		return
+	end
 	if petitions_cache[petition_id].children == nil then return end
 
 	local tmp_available = {}
@@ -317,6 +351,9 @@ local function openPetitionWindow()
 		html:AddFunction("gmod", "RequestMoreComments", requestMoreComments)
 		html:AddFunction("gmod", "SetDraftText", setDraftText)
 		html:AddFunction("gmod", "GetDraftText", getDraftText)
+		html:AddFunction("gmod", "GetLocalSteamID", getLocalSteamID)
+		html:AddFunction("gmod", "CanDeleteComments", canDeleteComments)
+		html:AddFunction("gmod", "DeletePetition", deletePetition)
 		html:AddFunction("gmod", "OpenURL", gui.OpenURL)
 		html:AddFunction("language", "Update", FSB.Translate)
 	end
@@ -392,11 +429,16 @@ net.Receive("petition_transmit", function(len, ply)
 	end
 end)
 
-net.Receive("petition_removed", function (len, ply)
+net.Receive("petition_remove", function(len, ply)
 	local index = net.ReadUInt(PETITION_ID_BITS)
 	petitions_requested[index] = nil
 	petitions_available[index] = nil
 	petitions_cache[index] = nil
+	if (VoteWindowState == eWindowMode.View or VoteWindowState == eWindowMode.Browse) and VoteWindow ~= nil then
+		local html = getHTMLFromWindow(VoteWindow)
+		---@diagnostic disable-next-line: param-type-mismatch
+		removePetitionFromHTML(html, index)
+	end
 	MsgN("Server removed petition: " .. index)
 end)
 

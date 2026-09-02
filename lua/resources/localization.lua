@@ -25,6 +25,7 @@ return {
 		["vote.description_too_long"] = "The description of your petition is longer then the maximum allowed length (%i/%i).",
 		["vote.ghostbanned"] = "You cannot use petitions while ghostbanned.",
 		["vote.new_petitions"] = "%s has created a petition (%s).",
+		["no_permission"] = "You don't have permission to use this feature.",
 
 		["petition.set_index"] = "Set petition index",
 		["petition.open_hint"] = "Press E to open this petition",
@@ -129,6 +130,7 @@ return {
 		["vote.description_too_long"] = "Описание вашей петиции больше максимально разрешённой длины (%i/%i).",
 		["vote.ghostbanned"] = "Вы не можете использовать систему петиций в призрачном бане.",
 		["vote.new_petitions"] = "%s создал петицию (%s).",
+		["no_permission"] = "У вас недостаточно прав для использования данной функции.",
 
 		["petition.set_index"] = "Устанавить index петиции",
 		["petition.open_hint"] = "Нажмите E чтобы открыть",

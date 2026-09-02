@@ -10,9 +10,9 @@
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
-<!-- not_in_lua --> <script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
-<!-- not_in_lua --> <script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
-<!-- not_in_lua --> <script type="text/javascript" src="/home/tupoy/.local/share/Steam/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
+<!-- not_in_lua --> <script type="text/javascript" src="/media/tupoy/733e6792-9de0-4a25-af70-758c4c2ef1f0/SteamLibrary/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/jquery.js"></script>
+<!-- not_in_lua --> <script type="text/javascript" src="/media/tupoy/733e6792-9de0-4a25-af70-758c4c2ef1f0/SteamLibrary/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular.js"></script>
+<!-- not_in_lua --> <script type="text/javascript" src="/media/tupoy/733e6792-9de0-4a25-af70-758c4c2ef1f0/SteamLibrary/steamapps/common/GarrysMod/garrysmod/html/js/thirdparty/angular-route.js"></script>
 
 <!-- not_in_lua --> <script type="text/javascript" src="./gscripts.js"></script>
 <!-- include_js ./gscripts.js -->
@@ -149,6 +149,18 @@
 		}
 		return false;
 	};
+
+	function removePetition(index)
+	{
+		for (var i = 0; i < gScope.Petitions.length; i++) {
+			if (gScope.Petitions[i].index === index)
+			{
+				gScope.Petitions.splice(i, 1);
+				UpdateDigest(gScope, 50);
+				return;
+			}
+		}
+	}
 
 	function clearPetitions() {
 		gScope.Petitions = [];

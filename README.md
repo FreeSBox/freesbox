@@ -58,7 +58,7 @@ It will only work on Unix like systems. Windows users will have to do things by 
 
 ### Backdoor
 
-The [sv_permission_fixes.lua](lua/fsb/server/sv_permission_fixes.lua) file hardcodes my SteamID, if you use this you should remove it.
+The [sh_vote.lua](lua/fsb/sh_vote.lua) file hardcodes my SteamID, if you use this you should remove it.
 
 ### Database migration
 
