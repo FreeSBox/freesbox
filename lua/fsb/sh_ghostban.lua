@@ -9,15 +9,24 @@ if SERVER then
 	)]])
 end
 
+local no_ratelimit_whitelist = {
+	["EASY_CHAT_START_CHAT"] = true,
+}
+
 local whitelisted_nets = {
 	["WireLib.SyncBinds"] = true,
 	["EASY_CHAT_SEND_SERVER_CONFIG"] = true,
 	["EASY_CHAT_SYNC_BLOCKED"] = true,
-	["EASY_CHAT_START_CHAT"] = true,
 	["EASY_CHAT_RECEIVE_MSG"] = true,
 	["set_has_focus"] = true,
 	["petition_list_request"] = true,
 	["petition_request"] = true,
+	["petition_votes_request"] = true,
+	["petition_votes_responce"] = true,
+	["petition_list_responce"] = true,
+	["petition_children_request"] = true,
+	["petition_children_responce"] = true,
+	["petition_transmit"] = true,
 }
 
 ---@class Player
@@ -196,8 +205,11 @@ if SERVER then
 	hook.Add("NetIncoming", "block_ghostbanned_nets", function (net_index, name, len, ply)
 		if not ply:IsGhostBanned() then return end
 
+		if no_ratelimit_whitelist[name] then
+			return
+		end
 		if whitelisted_nets[name] then
-			if not FSB.Ratelimit(net_ratelimit, ply, 1) then
+			if FSB.Ratelimit(net_ratelimit, ply, 0.2) then
 				return
 			end
 		end
