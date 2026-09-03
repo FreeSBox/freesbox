@@ -107,6 +107,11 @@ if SERVER then
 		end
 	end)
 
+	hook.Add("PlayerSpray", TAG, function (sprayer)
+		if sprayer:IsGhostBanned() then
+			return true
+		end
+	end)
 
 	---@param ply Player|string Player or steamid or steamid64.
 	---@param unban_time number
