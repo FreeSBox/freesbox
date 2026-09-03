@@ -350,7 +350,7 @@ end
 
 function scoreboard:Open()
 	if self.open then return end
-	--if vgui.CursorVisible() then return end
+	if vgui.CursorVisible() then return end
 
 	self:UpdateConnectingPlayers()
 
