@@ -31,4 +31,5 @@ resource.AddWorkshop("2175553724") -- Wiremod Extras
 resource.AddWorkshop("3442302711") -- [G]VRMod: Ultimate
 resource.AddWorkshop("1517464837") -- ttt_cigarette
 resource.AddWorkshop("2853616849") -- Heineken Beer SWEP
+resource.AddWorkshop("2962299500") -- Synergy Elite Buggy [Vehicle]
 --#endregion
