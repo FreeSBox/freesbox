@@ -90,7 +90,13 @@ local function stopAllChips()
 		end
 	end
 end
-
+local function safeNick(ply)
+	if IsValid(ply) then
+		return ply:Nick()
+	else
+		return "Disconnected/World"
+	end
+end
 local function handleCleanUp()
 	physenv.SetPhysicsPaused(true)
 	stopAllChips()
@@ -224,8 +230,8 @@ end)
 timer.Create("reset_spawn_blocked", 1, 0, function ()
 	for _, v in ipairs(player.GetHumans()) do
 		if v.spawns_blocked then
-			FSB.SendLocalizedMessage("lag.too_many_props", v:Nick())
-			Msg(string.format("%s spawned more them %i entities in one tick\n", v:Nick(), MAX_ENTITIES_PER_TICK))
+			FSB.SendLocalizedMessage("lag.too_many_props", safeNick(v))
+			Msg(string.format("%s spawned more them %i entities in one tick\n", safeNick(v), MAX_ENTITIES_PER_TICK))
 			v.spawns_blocked = false
 		end
 	end
@@ -274,25 +280,25 @@ hook.Add("HolyLib:PostPhysicsLag", "holy_lag_prevent", function(delta)
 				local owner = ent:CPPIGetOwner()
 				if owner then
 					num_penetrations_per_player[owner] = (num_penetrations_per_player[owner] or 0) + 1
-					Msg(string.format("Nocolliding penetrating prop: %s owned by: %s\n", ent:GetModel(), owner:Nick()))
+					Msg(string.format("Nocolliding penetrating prop: %s owned by: %s\n", ent:GetModel(), safeNick(owner)))
 				end
 			end
 		end
 	end
 	for ply, penetrations in pairs(num_penetrations_per_player) do
 		ply:SendLocalizedHint("lag.you_have_penetrating_props", NOTIFY_GENERIC)
-		Msg(string.format("%s has %i penetrating props\n", tostring(ply), penetrations))
+		Msg(string.format("%s has %i penetrating props\n", safeNick(ply), penetrations))
 		if penetrations > PENETRATION_LIMIT then
 			ply.likely_crasher = (ply.likely_crasher or 0) + 1
-			Msg(string.format("%s likely_crasher status increased to %i\n", tostring(ply), ply.likely_crasher))
-			FSB.SendLocalizedMessage("lag.print_penetrating", ply:Nick(), penetrations)
+			Msg(string.format("%s likely_crasher status increased to %i\n", safeNick(ply), ply.likely_crasher))
+			FSB.SendLocalizedMessage("lag.print_penetrating", safeNick(ply), penetrations)
 
 			if ply.likely_crasher >= AUTOBAN_INFRACTIONS then
 				FSB.GhostBan(ply, os.time()+AUTOBAN_TIME, "lag autoban")
-				FSB.SendLocalizedMessage("lag.autobanned", ply:Nick(), AUTOBAN_TIME)
+				FSB.SendLocalizedMessage("lag.autobanned", safeNick(ply), AUTOBAN_TIME)
 				NADMOD.CleanPlayer(Player(0), ply)
 				FSB.TelemetryLikelyCrasher(ply, penetrations)
-				MsgN("Anticrash automatically banned " .. ply:Nick() .. " for " .. AUTOBAN_TIME .. " seconds")
+				MsgN("Anticrash automatically banned " .. safeNick(ply) .. " for " .. AUTOBAN_TIME .. " seconds")
 			end
 		end
 	end
