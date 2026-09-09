@@ -230,8 +230,8 @@ end)
 timer.Create("reset_spawn_blocked", 1, 0, function ()
 	for _, v in ipairs(player.GetHumans()) do
 		if v.spawns_blocked then
-			FSB.SendLocalizedMessage("lag.too_many_props", safeNick(v))
-			Msg(string.format("%s spawned more them %i entities in one tick\n", safeNick(v), MAX_ENTITIES_PER_TICK))
+			FSB.SendLocalizedMessage("lag.too_many_props", v:Nick())
+			Msg(string.format("%s spawned more them %i entities in one tick\n", v:Nick(), MAX_ENTITIES_PER_TICK))
 			v.spawns_blocked = false
 		end
 	end
@@ -286,6 +286,7 @@ hook.Add("HolyLib:PostPhysicsLag", "holy_lag_prevent", function(delta)
 		end
 	end
 	for ply, penetrations in pairs(num_penetrations_per_player) do
+		if not IsValid(ply) then goto PENETRATINGPROPS_IGNORE end
 		ply:SendLocalizedHint("lag.you_have_penetrating_props", NOTIFY_GENERIC)
 		Msg(string.format("%s has %i penetrating props\n", safeNick(ply), penetrations))
 		if penetrations > PENETRATION_LIMIT then
@@ -301,5 +302,6 @@ hook.Add("HolyLib:PostPhysicsLag", "holy_lag_prevent", function(delta)
 				MsgN("Anticrash automatically banned " .. safeNick(ply) .. " for " .. AUTOBAN_TIME .. " seconds")
 			end
 		end
+		::PENETRATINGPROPS_IGNORE::
 	end
 end)
