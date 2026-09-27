@@ -57,6 +57,7 @@ if SERVER then
 		["gmod_hands"] = true,
 		["predicted_viewmodel"] = true,
 		["physgun_beam"] = true,
+		["hl2mp_ragdoll"] = true,
 	}
 	local disallowed_classes = {
 		["monster_snark"] = true,
