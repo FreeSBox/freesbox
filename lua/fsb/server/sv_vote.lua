@@ -17,6 +17,9 @@ util.AddNetworkString("petition_accepted")
 -- When sent client -> server: Asks the server to remove the petition
 util.AddNetworkString("petition_remove")
 
+-- `bidirectional` Find petitions.
+util.AddNetworkString("petition_find")
+
 -- `client -> server`. The client wants to know the children of this petition.
 util.AddNetworkString("petition_children_request")
 
@@ -987,5 +990,22 @@ net.Receive("petition_remove", function(len, ply)
 		return
 	end
 	FSB.RemovePetition(petition_id)
+end)
+
+net.Receive("petition_find", function(len, ply)
+	local query = net.ReadString()
+
+	local results = sql.QueryTyped("SELECT id FROM fsb_petitions WHERE (description LIKE ? OR name LIKE ?) and parent IS NULL", query, query)
+	assert(results ~= false, "The SQL Query is broken in 'petition_find' handler")
+
+	net.Start("petition_find")
+		---@diagnostic disable-next-line: param-type-mismatch
+		local num_results = #results
+		net.WriteUInt(num_results, PETITION_ID_BITS)
+		for i = 1, num_results do
+			net.WriteUInt(results[i].id, PETITION_ID_BITS)
+		end
+	net.Send(ply)
+
 end)
 --#endregion

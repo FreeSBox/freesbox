@@ -89,6 +89,11 @@ local function removePetitionFromHTML(html, petition_index)
 	)
 end
 
+---@param html DHTML
+local function clearPetitionsInHTML(html)
+	html:QueueJavascript("clearPetitions()")
+end
+
 local draft_name = ""
 local draft_desc = ""
 local function setDraftText(name, desc)
@@ -117,6 +122,13 @@ local function deletePetition(index)
 
 	net.Start("petition_remove")
 	net.WriteUInt(index, PETITION_ID_BITS)
+	net.SendToServer()
+end
+
+local function searchPetitions(text)
+	print(text)
+	net.Start("petition_find")
+	net.WriteString(text)
 	net.SendToServer()
 end
 
@@ -354,6 +366,7 @@ local function openPetitionWindow()
 		html:AddFunction("gmod", "GetLocalSteamID", getLocalSteamID)
 		html:AddFunction("gmod", "CanDeleteComments", canDeleteComments)
 		html:AddFunction("gmod", "DeletePetition", deletePetition)
+		html:AddFunction("gmod", "SearchPetitions", searchPetitions)
 		html:AddFunction("gmod", "OpenURL", gui.OpenURL)
 		html:AddFunction("language", "Update", FSB.Translate)
 	end
@@ -509,6 +522,35 @@ net.Receive("petition_accepted", function(len, ply)
 	end
 
 	requestPetitions{petition_id}
+end)
+
+net.Receive("petition_find", function(len, ply)
+	local num_results = net.ReadUInt(PETITION_ID_BITS)
+	petitions_available = {}
+	local need_to_request = {}
+	for i = 1, num_results do
+		local petition_id = net.ReadUInt(PETITION_ID_BITS)
+		petitions_available[petition_id] = true
+		print(petition_id)
+		if petitions_cache[petition_id] == nil and #need_to_request < PETITION_MAX_PETITIONS_PER_REQUEST then
+			need_to_request[#need_to_request+1] = petition_id
+		end
+	end
+
+	requestPetitions(need_to_request)
+
+	timer.Simple(0.5, function ()
+		if VoteWindowState == eWindowMode.Browse and VoteWindow ~= nil then
+			local html = getHTMLFromWindow(VoteWindow)
+			clearPetitionsInHTML(html)
+			for index, _ in pairs(petitions_available) do
+				print(petitions_cache[index])
+				if petitions_cache[index] then
+					addPetitionToHTML(html, petitions_cache[index])
+				end
+			end
+		end
+	end)
 end)
 
 --#endregion Networking

@@ -578,6 +578,7 @@ padding: 5px;
 </head>
 <body>
 	<div id="petition_list" ng-controller="petitionBrowserController as petitionList">
+		<input id="nameInput" type="text" placeholder="Поиск" ng-model="SearchText">
 		<!--
 			If there is a bug where there aren't enough petitions to fill the screen, so we never request more - remove infinite-scroll-immediate-check
 			But this should never happen, since we are using a 800x600 window for petitions with 16 petitions per request.
@@ -625,6 +626,7 @@ padding: 5px;
 			var petitionList = this;
 			$scope.Petitions = [];
 
+			$scope.SearchText = "";
 
 			$scope.loadMore = debounce(() => {
 				gmod.RequestMorePetitions()
@@ -644,9 +646,36 @@ padding: 5px;
 				gmod.VoteOnPetition(petition.index, true)
 			}
 		});
+	
+
+	var debouncedSearch = debounce(() => {
+		if (IsGMod())
+		{
+			gmod.SearchPetitions(gScope.SearchText);
+		}
+		else
+		{
+			console.log(gScope.SearchText);
+		}
+	}, 300);
+	
+	// While we can use forms and angular to detect enter events
+	// but this will not work for GMod on linux for some reason
+	// so we do this shit instead
+	function searchKeyDown(event)
+	{
+		if (event.keyCode === 13)
+		{
+			debouncedSearch();
+		}
+	}
+
 	// Manually bootstrap angularjs because otherwise it will complain about document.location.origin
 	angular.element(document).ready(function () {
 		angular.bootstrap(document.body, ['petitionBrowser']);
+
+		var textarea = $("#nameInput");
+		textarea.keydown(searchKeyDown);
 	});
 
 	function addPetition(index, name, author_name, author_steamid, likes, dislikes, our_vote_status, creation_time, expire_time) {
@@ -705,6 +734,12 @@ padding: 5px;
 		}
 		return false;
 	};
+
+	function clearPetitions()
+	{
+		gScope.Petitions = [];
+		UpdateDigest(gScope, 50);
+	}
 
 	function removePetition(index)
 	{
