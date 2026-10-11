@@ -18,7 +18,7 @@ end)
 hook.Add("NetIncoming", "net_ratelimit", function(index, strName, len, ply)
 	if ply.net_msgs_this_second == nil or ply.net_msgs_drop then return false end
 	if ply.net_msgs_this_second > max_net_msgs_per_second then
-		print("[net] " .. ply:Name() .. " is sending more than " .. max_net_msgs_per_second .. " net messages a second; last net: " .. strName)
+		FSB.PushLogWithConsole("Netmessage ratelimit, lastnet: %s | limit: %i | ply: %s | plysteam: %s", strName, max_net_msgs_per_second, ply:Name(), ply:SteamID())
 		ply.net_msgs_drop = true
 		return true
 	end

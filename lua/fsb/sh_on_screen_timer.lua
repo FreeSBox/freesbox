@@ -14,12 +14,16 @@ if SERVER then
 			net.WriteFloat(end_time)
 			net.WriteString(translation_label)
 		net.Broadcast()
+
+		FSB.PushLog("Started a timer broadcast, start: %i | end: %i | label: %s", start_time, end_time, translation_label)
 	end
 
 	function FSB.StopTimer()
 		net.Start("on_screen_timer")
 			net.WriteBool(true) --stoptimer.
 		net.Broadcast()
+
+		FSB.PushLog("Stopped the timer")
 	end
 
 else

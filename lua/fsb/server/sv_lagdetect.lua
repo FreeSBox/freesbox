@@ -77,6 +77,7 @@ function FSB.GetAverageMSPT()
 end
 
 local function stopAllChips()
+	FSB.PushLog("Stopping all chips")
 	local chips = FSB.FindChips()
 
 	for _, chip in ipairs(chips) do
@@ -97,7 +98,15 @@ local function safeNick(ply)
 		return "Disconnected/World"
 	end
 end
+local function safeSteamID(ply)
+	if IsValid(ply) then
+		return ply:SteamID()
+	else
+		return "UNK"
+	end
+end
 local function handleCleanUp()
+	FSB.PushLog("Starting lag cleanup")
 	physenv.SetPhysicsPaused(true)
 	stopAllChips()
 	FSB.SendLocalizedMessage("lag.cleanup", SECONDS_BEFORE_CLEANUP)
@@ -138,6 +147,14 @@ hook.Add("EntityRemoved", "remove_fire_from_list", function (ent, fullUpdate)
 	fire_ents[ent:EntIndex()] = nil
 end)
 
+local function logCleanupFrames()
+	local msg = "dump of the last " .. tostring(NUM_FRAMES) .. " frames:\n"
+	for i = 1, NUM_FRAMES do
+		msg = msg .. tostring(last_frames[i]) .. "\n"
+	end
+	FSB.PushLogWithConsole(msg)
+end
+
 hook.Add("Think", "lag_detect", function()
 	local sys_time = SysTime()
 	pushMSPT(GetFrameDelta())
@@ -152,7 +169,7 @@ hook.Add("Think", "lag_detect", function()
 				fire:Remove()
 			end
 			if counter >= 4 then
-				Msg(string.format("Extinguished %i fires due to lag\n", counter))
+				FSB.PushLogWithConsole("Extinguishing fire due to lag, count: %i", counter)
 			end
 			if counter >= 20 then -- no need to cleanup, we should have fixed the lag already
 				preventCleanUp(1)
@@ -161,18 +178,14 @@ hook.Add("Think", "lag_detect", function()
 		end
 		if not lag_detected and mspt > CLEANUP_THRESHOLD then
 			FSB.TelemetryLagDetected(last_frames)
-			Msg("Cleanup may be needed, dump of the last " .. tostring(NUM_FRAMES) .. " frames:\n")
-			for i = 1, NUM_FRAMES do
-				MsgN(last_frames[i])
-			end
+			Msg("Cleanup may be needed, ")
+			logCleanupFrames()
 			setLagDetected()
 			return
 		end
 		if not no_cleanup and lag_detected and mspt > CLEANUP_THRESHOLD then
-			Msg("Cleanup needed, dump of the last " .. tostring(NUM_FRAMES) .. " frames:\n")
-			for i = 1, NUM_FRAMES do
-				MsgN(last_frames[i])
-			end
+			Msg("Cleanup needed, ")
+			logCleanupFrames()
 			handleCleanUp()
 		end
 	end
@@ -192,6 +205,7 @@ local model_blacklist =
 
 local function handle_blacklist(ply, model, skin)
 	if model_blacklist[model] then
+		FSB.PushLog("Blocking backlisted prop: model %s | ply: %s | plysteam: %s", model, ply:Name(), ply:SteamID())
 		return false
 	end
 end
@@ -231,7 +245,8 @@ timer.Create("reset_spawn_blocked", 1, 0, function ()
 	for _, v in ipairs(player.GetHumans()) do
 		if v.spawns_blocked then
 			FSB.SendLocalizedMessage("lag.too_many_props", v:Nick())
-			Msg(string.format("%s spawned more them %i entities in one tick\n", v:Nick(), MAX_ENTITIES_PER_TICK))
+			local msg = string.format("More then %i ents were spawned in one tick: ply %s | plysteam: %s", MAX_ENTITIES_PER_TICK, v:Nick(), v:SteamID())
+			FSB.PushLogWithConsole(msg)
 			v.spawns_blocked = false
 		end
 	end
@@ -264,8 +279,12 @@ hook.Add("CanPlayerUnfreeze", "prevent_crash_dupe", function (player, entity, ph
 	return allow
 end)
 
+-- HolyLib exclusive code below
+if physenv.SetLagThreshold == nil then return end
+
 physenv.SetLagThreshold(PENETRATION_STOPPER_THRESHOLD)
 hook.Add("HolyLib:OnPhysicsLag", "holy_lag_detect", function (delta, phys1, phys2, recalcPhys, callerFunc)
+	FSB.PushLog("Physics lag detected")
 	return physenv.IVP_SkipSimulation
 end)
 hook.Add("HolyLib:PostPhysicsLag", "holy_lag_prevent", function(delta)
@@ -280,7 +299,7 @@ hook.Add("HolyLib:PostPhysicsLag", "holy_lag_prevent", function(delta)
 				local owner = ent:CPPIGetOwner()
 				if owner then
 					num_penetrations_per_player[owner] = (num_penetrations_per_player[owner] or 0) + 1
-					Msg(string.format("Nocolliding penetrating prop: %s owned by: %s\n", ent:GetModel(), safeNick(owner)))
+					FSB.PushLogWithConsole("Nocolliding penetrating prop: %s | ply: %s | plysteam: %s", ent:GetModel(), safeNick(owner), safeSteamID(owner))
 				end
 			end
 		end
@@ -288,10 +307,10 @@ hook.Add("HolyLib:PostPhysicsLag", "holy_lag_prevent", function(delta)
 	for ply, penetrations in pairs(num_penetrations_per_player) do
 		if not IsValid(ply) then goto PENETRATINGPROPS_IGNORE end
 		ply:SendLocalizedHint("lag.you_have_penetrating_props", NOTIFY_GENERIC)
-		Msg(string.format("%s has %i penetrating props\n", safeNick(ply), penetrations))
+		FSB.PushLogWithConsole("penetrating props, count: %i | ply: %s | plysteam: %s", penetrations, safeNick(ply), safeSteamID(ply))
 		if penetrations > PENETRATION_LIMIT then
 			ply.likely_crasher = (ply.likely_crasher or 0) + 1
-			Msg(string.format("%s likely_crasher status increased to %i\n", safeNick(ply), ply.likely_crasher))
+			FSB.PushLogWithConsole("likely_crasher status increased, status: %i | ply %s | plysteam %s", ply.likely_crasher, safeNick(ply), safeSteamID(ply))
 			FSB.SendLocalizedMessage("lag.print_penetrating", safeNick(ply), penetrations)
 
 			if ply.likely_crasher >= AUTOBAN_INFRACTIONS then
@@ -299,7 +318,7 @@ hook.Add("HolyLib:PostPhysicsLag", "holy_lag_prevent", function(delta)
 				FSB.SendLocalizedMessage("lag.autobanned", safeNick(ply), AUTOBAN_TIME)
 				NADMOD.CleanPlayer(Player(0), ply)
 				FSB.TelemetryLikelyCrasher(ply, penetrations)
-				MsgN("Anticrash automatically banned " .. safeNick(ply) .. " for " .. AUTOBAN_TIME .. " seconds")
+				FSB.PushLogWithConsole("Anticrash autoban, time: %i | ply %s | plysteam %s", AUTOBAN_TIME, safeNick(ply), safeSteamID(ply))
 			end
 		end
 		::PENETRATINGPROPS_IGNORE::

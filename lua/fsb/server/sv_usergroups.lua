@@ -27,10 +27,14 @@ function FSB.SetGroupBySteamID(steamid, usergroup)
 		steamid = util.SteamIDTo64(steamid)
 	end
 
+	local old_group = "UNK"
 	local ply = player.GetBySteamID64(steamid)
 	if ply ~= false then
-		ply:SetUserGroup(usergroup);
+		old_group = ply:GetUserGroup()
+		ply:SetUserGroup(usergroup)
 	end
+
+	FSB.PushLogWithConsole("Usergroup changed, old_group %s | new_group: %s | plysteam64 %s", old_group, usergroup, steamid)
 
 	sql.QueryTyped("INSERT OR REPLACE INTO fsb_groups(steamid, usergroup) VALUES(?, ?)", steamid, usergroup);
 end

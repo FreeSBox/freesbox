@@ -2,6 +2,7 @@
 local cleanup_in_progress = false
 
 function FSB.CleanUpMap(time_until_cleanup)
+	FSB.PushLog("Cleanup initialized, will cleanup in %f seconds", time_until_cleanup)
 	local cur_time = CurTime()
 	FSB.BroadcastTimer(cur_time, cur_time+time_until_cleanup, "timer.cleanup")
 	cleanup_in_progress = true
@@ -16,6 +17,7 @@ end
 function FSB.CancelCleanUp()
 	if not timer.Exists("fsb_cleanup_timer") then return end
 	timer.Stop("fsb_cleanup_timer")
+	FSB.PushLog("Cleanup cancelled")
 
 	FSB.StopTimer()
 	physenv.SetPhysicsPaused(false)
