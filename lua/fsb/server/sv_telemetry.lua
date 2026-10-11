@@ -28,6 +28,9 @@ MAX_VERBOSE_LOG_FILESIZE = 5*1024*1024
 local current_file = "log1.txt"
 
 local function selectLogFile()
+	if not file.IsDir("fsb_short_logs", "DATA") then
+		file.CreateDir("fsb_short_logs")
+	end
 	if not file.Exists("fsb_short_logs/log2.txt", "DATA") then
 		current_file = "log1.txt"
 		return
