@@ -13,6 +13,7 @@ local skybox_zones =
 	["gm_excess_construct_13"] = {Vector(14784, 13824, 832), Vector(8768, 7744, 416)},
 	["gm_genesis"] = {Vector(15232, -15232, 15360), Vector(-15232, 15232, 13312)},
 	["gm_flatgrass_abs_v3c"] = {Vector(9215,-9198,-13760), Vector(-9215,9215,-15807)},
+	["gm_novenka_improved"] = {Vector(-1024, -4729, -5184), Vector(-15359, -15359, -6271)},
 }
 local current_zone = skybox_zones[game.GetMap()]
 if current_zone == nil then
