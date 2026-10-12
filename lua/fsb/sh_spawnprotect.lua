@@ -38,7 +38,7 @@ local spawnzones =
 		shoud_draw = true
 	},
 	["gm_novenka_improved"] = {
-		min = Vector(2048, 7168, -192),
+		min = Vector(2048, 7168, -198),
 		max = Vector(1406, 7976, -383),
 		shoud_draw = true,
 	},
