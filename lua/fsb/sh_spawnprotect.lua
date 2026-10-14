@@ -38,8 +38,8 @@ local spawnzones =
 		shoud_draw = true
 	},
 	["gm_novenka_improved"] = {
-		min = Vector(2048, 7168, -198),
-		max = Vector(1406, 7976, -383),
+		min = Vector(2048, 7168, -185),
+		max = Vector(1406, 7976, -390),
 		shoud_draw = true,
 	},
 	["gm_flatgrass_abs_v3c"] = {
