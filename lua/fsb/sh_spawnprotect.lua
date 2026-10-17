@@ -44,7 +44,7 @@ local spawnzones =
 	},
 	["gm_vyten"] = {
 		min = Vector(-9707, -10448, 13187),
-		max = Vector(-11650, -8980, 12396),
+		max = Vector(-11650, -8980, 12300),
 		shoud_draw = true,
 	},
 	["gm_flatgrass_abs_v3c"] = {
