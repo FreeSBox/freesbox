@@ -48,7 +48,7 @@ local function ghostUnBanIDULXWrapper(calling_ply, steamid)
 
 	FSB.GhostUnBan(steamid)
 end
-local function voteGhostBanDone2( t, nick, steamid, time, ply, reason ) -- ULX fucking sucks.
+local function voteGhostBanDone2( t,target_ply, nick, steamid, time, ply, reason ) -- ULX fucking sucks.
 	local shouldBan = false
 
 	if t.results[ 1 ] and t.results[ 1 ] > 0 then
@@ -59,11 +59,11 @@ local function voteGhostBanDone2( t, nick, steamid, time, ply, reason ) -- ULX f
 	end
 
 	if shouldBan then
-		FSB.GhostBan(steamid, os.time()+time*60, reason, ply)
-		print("AAA!!!")
+		FSB.GhostBan(target_ply, os.time()+time*60, reason, ply)
+		print("Voteghostban approved: ",steamid, os.time()+time*60, reason, ply)
 	end
 end
-local function voteGhostBanDone( t, nick, steamid, time, ply, reason )
+local function voteGhostBanDone( t, target_ply, nick, steamid, time, ply, reason )
 	local results = t.results
 	local winner
 	local winnernum = 0
@@ -80,13 +80,17 @@ local function voteGhostBanDone( t, nick, steamid, time, ply, reason )
 	if winner ~= 1 or winnernum < minVotes or winnernum / t.voters < ratioNeeded then
 		str = "Vote results: User will not be ghostbanned. (" .. (results[ 1 ] or "0") .. "/" .. t.voters .. ")"
 	else
-		reason = ("[Vote] " .. (reason or "")):Trim()
+		reason = ("[voteghostban] " .. (reason or "unspecified")):Trim()
 		if ply:IsValid() then
 			str = "Vote results: User will now be ghostbanned, pending approval. (" .. winnernum .. "/" .. t.voters .. ")"
 			ulx.doVote( "Accept result and ghostban " .. nick .. "?", { "Yes", "No" }, voteGhostBanDone2, 30000, { ply }, true, nick, steamid, time, ply, reason )
 		else -- Vote from server console, roll with it
 			str = "Vote results: User will now be ghostbanned. (" .. winnernum .. "/" .. t.voters .. ")"
-			FSB.GhostBan(t, os.time()+time*60, reason, ply)
+			if IsValid(target_ply) then
+				FSB.GhostBan(target_ply, os.time()+time*60, reason, ply)
+			else
+				FSB.GhostBan(steamid,os.time+time*60,reason,ply)
+			end
 		end
 	end
 
@@ -110,7 +114,7 @@ function ulx.voteghostban( calling_ply, target_ply, minutes, reason )
 		msg = msg .. " (" .. reason .. ")"
 	end
 
-	ulx.doVote( msg, { "Yes", "No" }, voteGhostBanDone, _, _, _, target_ply:Nick(), target_ply:SteamID(), minutes, calling_ply, reason )
+	ulx.doVote( msg, { "Yes", "No" }, voteGhostBanDone, _, _, _, target_ply,target_ply:Nick(), target_ply:SteamID(), minutes, calling_ply, reason )
 	if reason and reason ~= "" then
 		ulx.fancyLogAdmin( calling_ply, "#A started a voteghostban of #i minute(s) against #T (#s)", minutes, target_ply, reason )
 	else
