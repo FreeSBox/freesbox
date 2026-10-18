@@ -58,7 +58,7 @@ local function voteGhostBanDone2( t,target_ply, nick, steamid, time, ply, reason
 		ulx.fancyLogAdmin( ply, "#A denied the voteban against #s", nick )
 	end
 
-	if IsValid(target_ply) then
+	if IsValid(target_ply) and shouldBan then
 		FSB.GhostBan(target_ply, os.time()+time*60, reason, ply)
 	else
 		FSB.GhostBan(steamid,os.time()+time*60,reason,ply)
