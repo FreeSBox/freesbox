@@ -58,9 +58,10 @@ local function voteGhostBanDone2( t,target_ply, nick, steamid, time, ply, reason
 		ulx.fancyLogAdmin( ply, "#A denied the voteban against #s", nick )
 	end
 
-	if shouldBan then
+	if IsValid(target_ply) then
 		FSB.GhostBan(target_ply, os.time()+time*60, reason, ply)
-		print("Voteghostban approved: ",steamid, os.time()+time*60, reason, ply)
+	else
+		FSB.GhostBan(steamid,os.time()+time*60,reason,ply)
 	end
 end
 local function voteGhostBanDone( t, target_ply, nick, steamid, time, ply, reason )
@@ -83,13 +84,13 @@ local function voteGhostBanDone( t, target_ply, nick, steamid, time, ply, reason
 		reason = ("[voteghostban] " .. (reason or "unspecified")):Trim()
 		if ply:IsValid() then
 			str = "Vote results: User will now be ghostbanned, pending approval. (" .. winnernum .. "/" .. t.voters .. ")"
-			ulx.doVote( "Accept result and ghostban " .. nick .. "?", { "Yes", "No" }, voteGhostBanDone2, 30000, { ply }, true, nick, steamid, time, ply, reason )
+			ulx.doVote( "Accept result and ghostban " .. nick .. "?", { "Yes", "No" }, voteGhostBanDone2, 30000, { ply }, true, target_ply, nick, steamid, time, ply, reason )
 		else -- Vote from server console, roll with it
 			str = "Vote results: User will now be ghostbanned. (" .. winnernum .. "/" .. t.voters .. ")"
 			if IsValid(target_ply) then
 				FSB.GhostBan(target_ply, os.time()+time*60, reason, ply)
 			else
-				FSB.GhostBan(steamid,os.time+time*60,reason,ply)
+				FSB.GhostBan(steamid,os.time()+time*60,reason,ply)
 			end
 		end
 	end
