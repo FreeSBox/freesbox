@@ -151,7 +151,7 @@ ghostunbanid:help( "Removes the ghost ban effect from player. Uses steamid in th
 
 local voteghostban = ulx.command("FSB","ulx voteghostban",ulx.voteghostban,"!voteghostban")
 voteghostban:addParam{ type=ULib.cmds.PlayerArg }
-voteghostban:addParam{ type=ULib.cmds.NumArg, min=0, default=1440, hint="minutes", ULib.cmds.allowTimeString, ULib.cmds.optional }
+voteghostban:addParam{ type=ULib.cmds.NumArg, min=1, hint="minutes", ULib.cmds.allowTimeString, ULib.cmds.optional }
 voteghostban:addParam{ type=ULib.cmds.StringArg, hint="reason", ULib.cmds.optional, ULib.cmds.takeRestOfLine, completes=ulx.common_kick_reasons }
 voteghostban:defaultAccess( ULib.ACCESS_ADMIN )
 voteghostban:help( "Starts a public ghostban vote against target." )
