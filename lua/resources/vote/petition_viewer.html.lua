@@ -7,7 +7,7 @@ return [[
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+<link rel="stylesheet" href="https://92.38.92.194/redist/fontawesome-free-6.7.2-web/css/all.min.css">
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/jquery.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular.js"></script>
 <script type="text/javascript" src="asset://garrysmod/html/js/thirdparty/angular-route.js"></script>
@@ -28,8 +28,8 @@ return [[
 		};
 	}
 </script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/dompurify@3.3.1/dist/purify.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
+<script type="text/javascript" src="https://92.38.92.194/redist/dompurify@3.3.1/purify.min.js"></script>
+<script type="text/javascript" src="https://92.38.92.194/redist/marked@15.0.12/marked.min.js"></script>
 
 <script>
 // Sorry for using javascript.
