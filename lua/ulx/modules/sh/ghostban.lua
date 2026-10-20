@@ -48,6 +48,80 @@ local function ghostUnBanIDULXWrapper(calling_ply, steamid)
 
 	FSB.GhostUnBan(steamid)
 end
+local function voteGhostBanDone2( t,target_ply, nick, steamid, time, ply, reason ) -- ULX fucking sucks.
+	local shouldBan = false
+
+	if t.results[ 1 ] and t.results[ 1 ] > 0 then
+		ulx.fancyLogAdmin( ply, "#A approved the voteban against #s (#s minutes) (#s))", nick, time, reason or "dota2" )
+		shouldBan = true
+	else
+		ulx.fancyLogAdmin( ply, "#A denied the voteban against #s", nick )
+	end
+
+	if IsValid(target_ply) and shouldBan then
+		FSB.GhostBan(target_ply, os.time()+time*60, reason, ply)
+	else
+		FSB.GhostBan(steamid,os.time()+time*60,reason,ply)
+	end
+end
+local function voteGhostBanDone( t, target_ply, nick, steamid, time, ply, reason )
+	local results = t.results
+	local winner
+	local winnernum = 0
+	for id, numvotes in pairs( results ) do
+		if numvotes > winnernum then
+			winner = id
+			winnernum = numvotes
+		end
+	end
+
+	local ratioNeeded = GetConVarNumber( "ulx_votebanSuccessratio" )
+	local minVotes = GetConVarNumber( "ulx_votebanMinvotes" )
+	local str
+	if winner ~= 1 or winnernum < minVotes or winnernum / t.voters < ratioNeeded then
+		str = "Vote results: User will not be ghostbanned. (" .. (results[ 1 ] or "0") .. "/" .. t.voters .. ")"
+	else
+		reason = ("[voteghostban] " .. (reason or "unspecified")):Trim()
+		if ply:IsValid() then
+			str = "Vote results: User will now be ghostbanned, pending approval. (" .. winnernum .. "/" .. t.voters .. ")"
+			ulx.doVote( "Accept result and ghostban " .. nick .. "?", { "Yes", "No" }, voteGhostBanDone2, 30000, { ply }, true, target_ply, nick, steamid, time, ply, reason )
+		else -- Vote from server console, roll with it
+			str = "Vote results: User will now be ghostbanned. (" .. winnernum .. "/" .. t.voters .. ")"
+			if IsValid(target_ply) then
+				FSB.GhostBan(target_ply, os.time()+time*60, reason, ply)
+			else
+				FSB.GhostBan(steamid,os.time()+time*60,reason,ply)
+			end
+		end
+	end
+
+	ULib.tsay( _, str )
+	ulx.logString( str )
+	Msg( str .. "\n" )
+end
+
+function ulx.voteghostban( calling_ply, target_ply, minutes, reason )
+	if target_ply:IsListenServerHost() or target_ply:IsBot() then
+		ULib.tsayError( calling_ply, "This player is immune to banning", true )
+		return
+	end
+	if ulx.voteInProgress then
+		ULib.tsayError( calling_ply, "There is already a vote in progress. Please wait for the current one to end.", true )
+		return
+	end
+
+	local msg = "Ghostban " .. target_ply:Nick() .. " for " .. minutes .. " minutes?"
+	if reason and reason ~= "" then
+		msg = msg .. " (" .. reason .. ")"
+	end
+
+	ulx.doVote( msg, { "Yes", "No" }, voteGhostBanDone, _, _, _, target_ply,target_ply:Nick(), target_ply:SteamID(), minutes, calling_ply, reason )
+	if reason and reason ~= "" then
+		ulx.fancyLogAdmin( calling_ply, "#A started a voteghostban of #i minute(s) against #T (#s)", minutes, target_ply, reason )
+	else
+		ulx.fancyLogAdmin( calling_ply, "#A started a voteghostban of #i minute(s) against #T", minutes, target_ply )
+	end
+end
 
 local ghostban = ulx.command("FSB", "ulx ghostban", ghostBanULXWrapper, "!ghostban")
 ghostban:addParam{ type=ULib.cmds.PlayerArg }
@@ -75,3 +149,9 @@ ghostunbanid:defaultAccess( ULib.ACCESS_ADMIN )
 ghostunbanid:help( "Removes the ghost ban effect from player. Uses steamid in the STEAM_0:0:0 format." )
 
 
+local voteghostban = ulx.command("FSB","ulx voteghostban",ulx.voteghostban,"!voteghostban")
+voteghostban:addParam{ type=ULib.cmds.PlayerArg }
+voteghostban:addParam{ type=ULib.cmds.NumArg, min=1, hint="minutes", ULib.cmds.allowTimeString, ULib.cmds.optional }
+voteghostban:addParam{ type=ULib.cmds.StringArg, hint="reason", ULib.cmds.optional, ULib.cmds.takeRestOfLine, completes=ulx.common_kick_reasons }
+voteghostban:defaultAccess( ULib.ACCESS_ADMIN )
+voteghostban:help( "Starts a public ghostban vote against target." )
