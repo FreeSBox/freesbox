@@ -27,7 +27,38 @@ add("FSBPlayerChangeName")
 -- @param boolean persistent Will this new tag be saved after re-logging.
 add("FSBPlayerChangeNameTag")
 
+--- FSB Library
+-- @name fsb
+-- @class library
+-- @libtbl fsb_library
+SF.RegisterLibrary("fsb")
+
+
 return function(instance)
+
+local fsb_library = instance.Libraries.fsb
+
+--- Returns an average of how many milliseconds it took too process the last few ticks.
+-- @shared
+-- @return boolean
+function fsb_library.getMSPT()
+	local mspt = 0
+	if CLIENT then
+		mspt = GetGlobalFloat("serverMSPT")
+	else
+		mspt = FSB.GetAverageMSPT()
+	end
+	return mspt
+end
+
+--- Returns the current server TPS calculated from MSPT.
+-- @shared
+-- @return boolean
+function fsb_library.getTPS()
+	local mspt = fsb_library.getMSPT()
+	return 1000/math.max(engine.TickInterval()*1000, mspt)
+end
+
 local player_methods, player_meta = instance.Types.Player.Methods, instance.Types.Player
 -- Internal validity check just for SF. Returns ent if it's valid, errors the chip if it's not. Use this instead of just directly using self.
 local function getply(self)

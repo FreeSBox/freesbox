@@ -2,6 +2,15 @@ E2Lib.RegisterExtension("fsb", true, "Functions from the FreeSBox server.")
 
 __e2setcost(2)
 
+e2function number getMSPT()
+	return FSB.GetAverageMSPT()
+end
+
+e2function number getTPS()
+	local mspt = FSB.GetAverageMSPT()
+	return 1000/math.max(engine.TickInterval()*1000, mspt)
+end
+
 e2function number entity:isBUILD()
 	if not IsValid(this) then return self:throw("Invalid entity!", "") end
 	if not this:IsPlayer() then return self:throw("Expected a Player but got an Entity!", "") end

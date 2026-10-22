@@ -1,3 +1,5 @@
+E2Helper.Descriptions["getMSPT()"] = "Returns an average of how many milliseconds it took too process the last few ticks"
+E2Helper.Descriptions["getTPS()"] = "Returns the current server TPS calculated from MSPT"
 E2Helper.Descriptions["isBUILD(e:)"] = "Returns if the player is in build mode"
 E2Helper.Descriptions["isPVP(e:)"] = "Returns if the player is in pvp mode"
 E2Helper.Descriptions["isGhostBanned(e:)"] = "Returns if the player is ghost banned"
