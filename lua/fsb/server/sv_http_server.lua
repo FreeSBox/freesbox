@@ -21,6 +21,7 @@ HTTP_SRV:Get("/generic.json", function (request)
 		num_entities = ents.GetCount(),
 		num_connecting = player.GetCountConnecting(),
 		map_uptime = CurTime(),
+		uptime = SysTime(),
 		mspt = FSB.GetAverageMSPT(),
 		net_strings = FSB.GetNumNetStrings(),
 	}
