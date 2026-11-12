@@ -3,10 +3,10 @@
 local cl_nametags_enable = CreateClientConVar("cl_nametags_enable", "1", true)
 local cl_nametags_localplayer = CreateClientConVar("cl_nametags_localplayer", "1", true)
 
-surface.CreateFont("NameTagFont", { font = "Roboto Bold", extended = true, size = 180, weight = 880, blursize = 0.5, additive = false })
-surface.CreateFont("NameTagShadowFont", { font = "Roboto Bold", extended = true, size = 180, weight = 880, blursize = 5 })
-surface.CreateFont("AFKFont", { font = "Roboto Bold", extended = true, size = 100, weight = 880, blursize = 0.5, additive = false })
-surface.CreateFont("AFKShadowFont", { font = "Roboto Bold", extended = true, size = 100, weight = 880, blursize = 5 })
+surface.CreateFont("NameTagFont", { font = "Roboto Bold", extended = true, size = 90, weight = 880, blursize = 0.5, additive = false })
+surface.CreateFont("NameTagShadowFont", { font = "Roboto Bold", extended = true, size = 90, weight = 880, blursize = 5 })
+surface.CreateFont("AFKFont", { font = "Roboto Bold", extended = true, size = 50, weight = 880, blursize = 0.5, additive = false })
+surface.CreateFont("AFKShadowFont", { font = "Roboto Bold", extended = true, size = 50, weight = 880, blursize = 5 })
 
 local nametag = {
 	Nick = "",
@@ -44,7 +44,7 @@ function nametag:Draw(ply)
 	self:ParseNick(ply)
 
 	self.Markup:SetPos(-self.Markup:GetWide() / 2, 0)
-	self.MarkupTag:SetPos(-self.MarkupTag:GetWide() / 2, 165)
+	self.MarkupTag:SetPos(-self.MarkupTag:GetWide() / 2, 82.5)
 
 	--render.PushFilterMag(TEXFILTER.ANISOTROPIC)
 	--render.PushFilterMin(TEXFILTER.ANISOTROPIC)
@@ -122,7 +122,7 @@ hook.Add("PreDrawTranslucentRenderables", "player_name_tags", function()
 			local ang = EyeAngles()
 			ang:RotateAroundAxis(ang:Right(), 90)
 			ang:RotateAroundAxis(ang:Up(), -90)
-			local scale = ply:GetModelScale() * 0.03
+			local scale = ply:GetModelScale() * 0.06
 			scale = scale < 0.01 and 0.01 or scale > 5 and 5 or scale
 			cam_Start3D2D(pos + Vector(0, 0, 18), ang, scale)
 				-- create a nametag object for each player
@@ -135,7 +135,7 @@ hook.Add("PreDrawTranslucentRenderables", "player_name_tags", function()
 				local cur_time = CurTime()
 				local timing_out = ply:IsTimingOut()
 				if timing_out then
-					draw_SimpleText("[ Timing Out ]", "AFKFont", 6, -100, Color(255,0,0), TEXT_ALIGN_CENTER)
+					draw_SimpleText("[ Timing Out ]", "AFKFont", 6, -50, Color(255,0,0), TEXT_ALIGN_CENTER)
 				end
 				local last_activity_time = ply:GetLastActiveTime()
 				if not timing_out and last_activity_time ~= 0 then
@@ -147,7 +147,7 @@ hook.Add("PreDrawTranslucentRenderables", "player_name_tags", function()
 					else
 						text = string.format("[ AFK: %02i:%02i:%02i ]", afk_time_table.h, afk_time_table.m, afk_time_table.s)
 					end
-					draw_SimpleText(text, "AFKFont", 6, -100, HSVToColor(cur_time*16, 1, 1), TEXT_ALIGN_CENTER)
+					draw_SimpleText(text, "AFKFont", 6, -50, HSVToColor(cur_time*16, 1, 1), TEXT_ALIGN_CENTER)
 				end
 			cam_End3D2D()
 		end
