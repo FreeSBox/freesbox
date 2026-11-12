@@ -114,7 +114,6 @@ end)
 
 --This must not be inside a hook or it will not apply
 RunConsoleCommand("cl_timeout", "600")
-RunConsoleCommand("props_break_max_pieces", "-1")
 
 local was_timing_out = false
 hook.Add("StartCommand", "init_crash_detect", function (ply, ucmd)
