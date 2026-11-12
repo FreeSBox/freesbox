@@ -45,6 +45,7 @@ HTTP_SRV:Get("/generic.json", function (request)
 			model = ply:GetModel(),
 			player_color = ply:GetPlayerColor(),
 			weapon_color = ply:GetWeaponColor(),
+			balance = ply:GetBalance(),
 		}
 	end
 	info.players = players

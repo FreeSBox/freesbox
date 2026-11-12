@@ -95,7 +95,9 @@ end
 ---@return boolean success
 ---@return integer? transaction_id Transaction id, if persist is enabled
 function FSB.TranferMoney(source, dest, amount, persist, send_notifications)
-	assert(amount >= MONEY_MIN_TRANSFER, "Too little or negative money")
+	if amount < MONEY_MIN_TRANSFER then
+		return false
+	end
 	local source, source_ply = getSteamIDAndPlayer(source)
 	local dest, dest_ply = getSteamIDAndPlayer(dest)
 

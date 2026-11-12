@@ -3,7 +3,7 @@ local ENT_META = FindMetaTable("Entity")
 ---@class Player
 local PLY_META = FindMetaTable("Player")
 
-local Ply_GetGhostBanDescription, Ply_GetGhostBannedBySteamID64, Ply_IsGhostBanned, Ply_InPVPMode, Ply_GetOriginalName, Ply_PVPModeEndTime, Ply_GetNameTag, Ply_GetUTimeTotalTime, Ply_GetUTimeSessionTime, Ply_GetUTime = PLY_META.GetGhostBanDescription, PLY_META.GetGhostBannedBySteamID64, PLY_META.IsGhostBanned, PLY_META.InPVPMode, PLY_META.GetOriginalName, PLY_META.PVPModeEndTime, PLY_META.GetNameTag, PLY_META.GetUTimeTotalTime, PLY_META.GetUTimeSessionTime, PLY_META.GetUTime
+local Ply_GetGhostBanDescription, Ply_GetGhostBannedBySteamID64, Ply_IsGhostBanned, Ply_InPVPMode, Ply_GetOriginalName, Ply_PVPModeEndTime, Ply_GetNameTag, Ply_GetUTimeTotalTime, Ply_GetUTimeSessionTime, Ply_GetUTime, Ply_GetBalance = PLY_META.GetGhostBanDescription, PLY_META.GetGhostBannedBySteamID64, PLY_META.IsGhostBanned, PLY_META.InPVPMode, PLY_META.GetOriginalName, PLY_META.PVPModeEndTime, PLY_META.GetNameTag, PLY_META.GetUTimeTotalTime, PLY_META.GetUTimeSessionTime, PLY_META.GetUTime, PLY_META.GetBalance
 local Ent_IsValid = ENT_META.IsValid
 local add = SF.hookAdd
 
@@ -26,6 +26,25 @@ add("FSBPlayerChangeName")
 -- @param string new_tag New tag.
 -- @param boolean persistent Will this new tag be saved after re-logging.
 add("FSBPlayerChangeNameTag")
+
+
+--- Called when our client receives a transaction.
+-- @name FSBTransactionAck
+-- @class hook
+-- @client
+-- @param string source The `source` argument contains the owner account, it is usually the player's steamid64 or the MONEY_SERVER_MONEYPRINTER account.
+-- @param number transaction_id
+-- @param number amount
+add("FSBTransactionReceive")
+
+--- Called after we sent a transaction using `FSB.SendMoney`.
+-- @name FSBTransactionAck
+-- @class hook
+-- @client
+-- @param number tmp_transaction_id The same as the return of `FSB.SendMoney` in lua.
+-- @param number transaction_id
+-- @param boolean success
+add("FSBTransactionAck")
 
 --- FSB Library
 -- @name fsb
@@ -147,5 +166,12 @@ end
 -- @return number Before-session playtime.
 function player_methods:getBeforeSessionPlaytime()
 	return Ply_GetUTime(getply(self))
+end
+
+--- Returns the ammount of money the player has
+-- @shared
+-- @return number
+function player_methods:getBalance()
+	return Ply_GetBalance(getply(self))
 end
 end

@@ -85,3 +85,10 @@ e2function number entity:getBeforeSessionPlaytime()
 
 	return this:GetUTime()
 end
+
+e2function number entity:getBalance()
+	if not IsValid(this) then return self:throw("Invalid entity!", "") end
+	if not this:IsPlayer() then return self:throw("Expected a Player but got an Entity!", "") end
+
+	return this:GetBalance()
+end
