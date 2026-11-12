@@ -32,6 +32,11 @@ print("FreeSBox initialized.")
 
 -- Load clientside extensions
 if CLIENT then
+	if not GetConVar("sv_allowcslua"):GetBool() then
+		Msg("sv_allowcslua is set to 0, can't load clientside scripts.\nYou should enable it\n")
+		return
+	end
+
 	local lua_files = file.Find("fsb/*.lua", "LuaMenu")
 	local lua_client_files = file.Find("fsb/client/*.lua", "LuaMenu")
 	local addon_files = file.Find("lua/fsb/*.lua", "THIRDPARTY")
@@ -51,5 +56,5 @@ if CLIENT then
 		include("fsb/client/" .. file)
 	end
 
-	print("Custom client side lua scripts loaded")
+	Msg("Custom client side lua scripts loaded\n")
 end
