@@ -516,39 +516,39 @@ end)
 
 --#region Public functions
 
----Checks if a petition with this index exists, it will return false if you don't have the petition list loaded
----@param index integer
+---Checks if a petition with this index exists, it will return false if you don't have the petition list loaded.
+---@param petition_id integer
 ---@return boolean
-function FSB.IsPetitionValid(index)
-	return petitions_available[index] and true or false
+function FSB.IsPetitionValid(petition_id)
+	return petitions_available[petition_id] and true or false
 end
 
 ---Gets a petition if it's cached, if the petition isn't cached it will request it and return nil.
 ---You can keep calling this until the petition is recieved.
----@param index integer petition index
+---@param petition_id integer petition index
 ---@return petition? | petition or nil if we are waiting for it to arrive to the client.
-function FSB.GetPetition(index)
+function FSB.GetPetition(petition_id)
 	if table.IsEmpty(petitions_available) then
 		net.Start("petition_list_request")
 		net.SendToServer()
 		return
 	end
-	if not petitions_available[index] then
-		return FSB.GetInvalidPetition(index)
+	if not petitions_available[petition_id] then
+		return FSB.GetInvalidPetition(petition_id)
 	end
 
-	local cached_petition = petitions_cache[index]
+	local cached_petition = petitions_cache[petition_id]
 	if cached_petition then
 		return cached_petition
 	end
 
-	requestPetitions{index}
+	requestPetitions{petition_id}
 end
 
 ---Returns the petition with the highest index.
 ---Doesn't have to be the latest petition, but I don't see a situation when it wouldn't be.
 ---@return integer petition_index
-function FSB.GetLastPetition()
+function FSB.GetLastPetitionIndex()
 	local largest_index = 0
 	for index, _ in pairs(petitions_available) do
 		if largest_index < index then

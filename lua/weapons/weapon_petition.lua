@@ -94,7 +94,7 @@ function SWEP:Reload()
 	local input = panel:Add("DNumberWang")
 	input:Dock(FILL)
 	input:SetMin(1)
-	input:SetMax(FSB.GetLastPetition())
+	input:SetMax(FSB.GetLastPetitionIndex())
 	input.OnEnter = updatePetition
 
 	local submit = panel:Add("DButton")

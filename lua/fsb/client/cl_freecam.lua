@@ -1,6 +1,6 @@
 --[[
 Based on code from BadAPI.
-The code in BadAPI is based off of code in YimMenu, which is licensed under GPL3.
+The code in BadAPI is based off of code in YimMenu, which is licensed under GPLv2.
 
 https://github.com/TupoyeMenu/BadAPI-Lua/blob/master/builtin/commands/freecam.lua
 ]]

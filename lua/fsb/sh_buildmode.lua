@@ -322,16 +322,16 @@ function PLAYER:HasPVPWeapons(excluded_class)
 	return false
 end
 
----@param veh Vehicle
----@return Vehicle vehicle Glide vehicle if this is a seat, otherwise the veh passed in.
-function FSB.GetGlideVehicleFromSeat(veh)
-	if veh:GetClass() == "prop_vehicle_prisoner_pod" and veh.GlideSeatIndex ~= nil then
-		local parent = veh:GetParent()
+---@param seat Vehicle
+---@return Vehicle vehicle Glide vehicle if this is a seat, otherwise seat is returned.
+function FSB.GetGlideVehicleFromSeat(seat)
+	if seat:GetClass() == "prop_vehicle_prisoner_pod" and seat.GlideSeatIndex ~= nil then
+		local parent = seat:GetParent()
 		---@diagnostic disable-next-line: return-type-mismatch
-		return IsValid(parent) and parent or veh
+		return IsValid(parent) and parent or seat
 	end
 
-	return veh
+	return seat
 end
 
 if SERVER then

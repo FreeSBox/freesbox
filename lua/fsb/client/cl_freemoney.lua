@@ -5,7 +5,7 @@ local DEFAULT_COLOR = Color(82, 82, 82)
 local FAIL_COLOR = Color(200, 20, 20)
 local SUCCESS_COLOR = Color(20, 200, 20)
 
-function FSB.OpenMoneySendDialog(ply)
+function FSB.OpenMoneySendDialog(target_ply, default_amount)
 	local window = FSB.CreateWindow(FSB.Translate("money.transfer_window"), 220, 120, true)
 
 	local panel = window:Add("DPanel")
@@ -18,14 +18,15 @@ function FSB.OpenMoneySendDialog(ply)
 	dest_selector:AddChoice("Manually by SteamID64")
 	for _, ply_i in player.Iterator() do
 		if ply_i == LocalPlayer() then continue end
-		dest_selector:AddChoice(ply_i:Name(), ply_i:SteamID64(), ply_i == ply)
+		dest_selector:AddChoice(ply_i:Name(), ply_i:SteamID64(), ply_i == target_ply)
 	end
 	local input = panel:Add("DNumberWang")
+	input:SetValue(default_amount or 1)
 	submit_btn = panel:Add("DButton")
 	local balance = panel:Add("DLabel")
 	local dest_entry = panel:Add("DTextEntry")
 	local sendMoney = function ()
-		last_transaction = FSB.SendMoney(ply, input:GetValue())
+		last_transaction = FSB.SendMoney(target_ply, input:GetValue())
 		submit_btn:SetEnabled(false)
 		if last_transaction == -1 then
 			submit_btn:SetColor(FAIL_COLOR)
@@ -47,7 +48,7 @@ function FSB.OpenMoneySendDialog(ply)
 		else
 			dest_entry:Hide()
 		end
-		ply = data
+		target_ply = data
 	end
 
 	input:Dock(FILL)
@@ -59,7 +60,7 @@ function FSB.OpenMoneySendDialog(ply)
 	dest_entry:SetPlaceholderText("SteamID64")
 	dest_entry:Hide()
 	local function updateSteamID()
-		ply = string.Trim(dest_entry:GetText())
+		target_ply = string.Trim(dest_entry:GetText())
 		print(dest_entry:GetText())
 	end
 	dest_entry.OnEnter = updateSteamID

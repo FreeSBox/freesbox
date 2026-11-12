@@ -131,7 +131,7 @@ end
 hook.Add("OnEntityCreated", "update_ent_counter", updateEntityCount)
 hook.Add("EntityRemoved", "update_ent_counter", updateEntityCount)
 
----How many network string are registered right now.
+---How many network strings are registered right now.
 ---@return integer
 function FSB.GetStringTableSize()
 	local i = 1
