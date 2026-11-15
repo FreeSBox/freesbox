@@ -231,7 +231,7 @@ else
 			local lp = LocalPlayer()
 			if not lp:IsGhostBanned() then return end
 
-			local date = os.date("%d/%m/%Y %X", math.floor(lp:GetNWFloat("GhostUnBanTime", 0)))
+			local date = os.date("%d/%m/%Y %H:%M:%S", math.floor(lp:GetNWFloat("GhostUnBanTime", 0)))
 			local description = lp:GetGhostBanDescription()
 			if description == "" then
 				chat.AddText(Color(255,0,0), FSB.Translate("advert.ghostbanned", date))

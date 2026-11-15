@@ -205,7 +205,7 @@ local model_blacklist =
 
 local function handle_blacklist(ply, model, skin)
 	if model_blacklist[model] then
-		FSB.PushLog("Blocking backlisted prop: model %s | ply: %s | plysteam: %s", model, ply:Name(), ply:SteamID())
+		FSB.PushLog("Blocking blacklisted prop: model %s | ply: %s | plysteam: %s", model, ply:Name(), ply:SteamID())
 		return false
 	end
 end

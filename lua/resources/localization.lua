@@ -82,6 +82,7 @@ return {
 		["pvp.no_noclip_time"] = "Switching to build mode, can't use noclip for %i seconds.",
 		["pvp.no_noclip"] = "In PVP, drop your weapons (+drop) or type build in the console to remove them and enable noclip.",
 
+		["timer.restart_chat"] = "The server will restart in %i minutes!",
 		["timer.shutdown"] = "The server will shut down in %.1f seconds!",
 		["timer.cleanup"] = "The map will be cleaned up in %.1f seconds!",
 
@@ -187,6 +188,7 @@ return {
 		["pvp.no_noclip_time"] = "Переходим в режим строительства, нельзя использовать noclip ещё %i секунд.",
 		["pvp.no_noclip"] = "В PVP, бросайте оружие (+drop) или напишите build в консоль чтобы включить noclip.",
 
+		["timer.restart_chat"] = "Сервер перезагрузится через %i минут!",
 		["timer.shutdown"] = "Сервер выключится через %.1f секунд!",
 		["timer.cleanup"] = "Карта будет очищена через %.1f секунд!",
 
