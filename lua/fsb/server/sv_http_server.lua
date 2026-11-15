@@ -14,6 +14,22 @@ FSB.HTTP_SRV = httpserver.Create()
 local HTTP_SRV = FSB.HTTP_SRV
 
 
+HTTP_SRV:Get("/bans.json", function (request)
+	local bans = sql.Query("SELECT steamid,time,unban,reason,name,admin,modified_admin,modified_time FROM ulib_bans")
+	assert(bans ~= false, "The SQL Query is broken in 'HTTP/bans.json'")
+
+	---@diagnostic disable-next-line: param-type-mismatch
+	request:SetContent(util.TableToJSON(bans))
+end)
+
+HTTP_SRV:Get("/ghostbans.json", function (request)
+	local bans = sql.Query("SELECT steamid,description,creation_time,expire_time,banned_by_steamid FROM fsb_ghostbans")
+	assert(bans ~= false, "The SQL Query is broken in 'HTTP/ghostbans.json'")
+
+	---@diagnostic disable-next-line: param-type-mismatch
+	request:SetContent(util.TableToJSON(bans))
+end)
+
 HTTP_SRV:Get("/generic.json", function (request)
 	local info = {
 		map = game.GetMap(),
