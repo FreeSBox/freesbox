@@ -40,6 +40,7 @@ local BUILD_VEHICLES =
 	["gtav_seashark"] = true,
 	["gtav_speedo"] = true,
 	["gtav_wolfsbane"] = true,
+	["glide_jetsanchez"] = true, -- Petition #1819
 
 	--GTAV Helicopters
 	["glide_gtav_blimp"] = true,
