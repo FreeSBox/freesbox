@@ -23,6 +23,7 @@ end
 local EXTINGUISH_THRESHOLD = 100 -- MSPT for the server to extinguish all the fires
 local CLEANUP_THRESHOLD = 1200 -- milliseconds
 local PENETRATION_STOPPER_THRESHOLD = 50 -- milliseconds
+local PENETRATION_THRESHOLD = 1 -- how many penetrating props until collisions start disabling
 local PENETRATION_LIMIT = 8 -- how many penetrating props a player is allowed to have
 local SECONDS_BEFORE_CLEANUP = 60
 local MAX_ENTITIES_PER_TICK = 15 -- How many entities can a player spawn in 1 tick.
@@ -305,7 +306,7 @@ hook.Add("HolyLib:PostPhysicsLag", "holy_lag_prevent", function(delta)
 		end
 	end
 	for ply, penetrations in pairs(num_penetrations_per_player) do
-		if not IsValid(ply) then goto PENETRATINGPROPS_IGNORE end
+		if not IsValid(ply) or penetrations < PENETRATION_THRESHOLD then goto PENETRATINGPROPS_IGNORE end
 		ply:SendLocalizedHint("lag.you_have_penetrating_props", NOTIFY_GENERIC)
 		FSB.PushLogWithConsole("penetrating props, count: %i | ply: %s | plysteam: %s", penetrations, safeNick(ply), safeSteamID(ply))
 		if penetrations > PENETRATION_LIMIT then
