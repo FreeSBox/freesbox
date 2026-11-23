@@ -68,6 +68,8 @@ if SERVER then
 		["predicted_viewmodel"] = true,
 		["physgun_beam"] = true,
 		["hl2mp_ragdoll"] = true,
+		["starfall_hologram"] = true, -- Petition #1835
+		["gmod_wire_hologram"] = true, --
 	}
 	local disallowed_classes = {
 		["monster_snark"] = true,
