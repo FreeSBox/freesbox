@@ -23,7 +23,8 @@ resource.AddWorkshop("3001397905") -- Media Player (Updated Edition)
 resource.AddWorkshop("104691717") -- PAC3
 resource.AddWorkshop("2656563609") -- Musical Keyboard
 resource.AddWorkshop("173482196") -- SProps Workshop Edition
-resource.AddWorkshop("3734712166") -- [TacRP] Tactical RP Weapons (OFFICIAL)
+resource.AddWorkshop("2821862386") -- Simple Weapons: Base
+resource.AddWorkshop("2821865508") -- Simple Weapons: CS:S
 resource.AddWorkshop("2775687029") -- [ ULTRA GUNS ] ГАНТЕЛЯ 2-4 КИЛЛОГРАММА!!!!!! swep
 resource.AddWorkshop("3620516732") -- Glide // Styled's Experiments
 resource.AddWorkshop("2175553724") -- Wiremod Extras
@@ -31,4 +32,7 @@ resource.AddWorkshop("3442302711") -- [G]VRMod: Ultimate
 resource.AddWorkshop("1517464837") -- ttt_cigarette
 resource.AddWorkshop("2853616849") -- Heineken Beer SWEP
 resource.AddWorkshop("2962299500") -- Synergy Elite Buggy [Vehicle]
+resource.AddWorkshop("3426851738") -- Zenius Shared Content
+resource.AddWorkshop("3433541296") -- Glide // BTR-82A | Russian Infantry Fighting Vehicle
+resource.AddWorkshop("3433541296") -- Glide // BTR-82A | Russian Infantry Fighting Vehicle
 --#endregion
