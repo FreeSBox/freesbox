@@ -34,5 +34,4 @@ resource.AddWorkshop("2853616849") -- Heineken Beer SWEP
 resource.AddWorkshop("2962299500") -- Synergy Elite Buggy [Vehicle]
 resource.AddWorkshop("3426851738") -- Zenius Shared Content
 resource.AddWorkshop("3433541296") -- Glide // BTR-82A | Russian Infantry Fighting Vehicle
-resource.AddWorkshop("3433541296") -- Glide // BTR-82A | Russian Infantry Fighting Vehicle
 --#endregion
