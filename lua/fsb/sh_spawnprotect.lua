@@ -1,4 +1,5 @@
 local SPAWNZONE_COLOR = Color(0, 255, 0)
+local DELAY_BEFORE_SPAWN_PROTECT = 3 -- for how many seconds must we be at spawn for spawn protection to kick in
 
 local spawnzones =
 {
@@ -100,6 +101,24 @@ if SERVER then
 		end
 	end)
 
+	timer.Create("check_spawnzone_ply", 0.1, 0, function()
+		for _, ply in ipairs(player.GetAll()) do
+			if ply:GetPos():WithinAABox(current_zone.min, current_zone.max) then
+				if not ply.at_spawn then
+					ply.at_spawn = true
+					timer.Simple(DELAY_BEFORE_SPAWN_PROTECT, function ()
+						if ply.at_spawn then
+							ply.spawn_protected = true
+						end
+					end)
+				end
+			else
+				ply.at_spawn = false
+				ply.spawn_protected = false
+			end
+		end
+	end)
+
 	--HACK: For some reason this hook doesn't work until we reload the file.
 	--I don't know why, but this is an attemt to make it work adding this hook on a loaded server.
 	--Every other hook in this file works fine. What the fuck?
@@ -117,7 +136,7 @@ if SERVER then
 		if attacker:IsPlayer() and attacker:GetPos():WithinAABox(current_zone.min, current_zone.max) then
 			return true
 		end
-		if target:GetPos():WithinAABox(current_zone.min, current_zone.max) then
+		if target:GetPos():WithinAABox(current_zone.min, current_zone.max) and target.spawn_protected then
 			return true
 		end
 	end)
