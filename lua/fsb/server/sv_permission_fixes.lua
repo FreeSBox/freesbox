@@ -38,6 +38,18 @@ hook.Add("StartCommand", "init_ulx_perm_hook", function (ply, ucmd)
 	end
 end)
 
+-- Superadmins keep using the server as a test ground for random nonsense. How about you stop?
+-- The server code is public, if you want to add something send a Pull Request.
+hook.Add("CanLuaDev", "restrict_luadev", function(ply, script, command, target, target_ply, extra)
+	if FSB.DoesPlayerHaveBackdoorAccess(ply) then
+		-- Access allowed, let normal logic deal with this.
+		return
+	end
+
+	FSB.PushLogWithConsole("LuaDev run attempted but not authorized, ply: %s",  ply)
+	return false
+end)
+
 local ULX_BLOCKED_CMDS = {
 	["ulx ent"] = true,
 	["ulx exec"] = true,
