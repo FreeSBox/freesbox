@@ -119,6 +119,10 @@ if SERVER then
 		end
 	end)
 
+	hook.Add("PlayerSpawn", "apply_spawn_protection", function (player, transition)
+		player.spawn_protected = true
+	end)
+
 	--HACK: For some reason this hook doesn't work until we reload the file.
 	--I don't know why, but this is an attemt to make it work adding this hook on a loaded server.
 	--Every other hook in this file works fine. What the fuck?
