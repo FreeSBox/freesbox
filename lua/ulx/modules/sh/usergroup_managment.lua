@@ -1,6 +1,6 @@
 local function setGroupBySteamIDULXWrapper(calling_ply, steamid, usergroup)
 	steamid = steamid:upper()
-	if not ULib.isValidSteamID(steamid) then
+	if not FSB.IsValidSteamID(steamid) then
 		ULib.tsayError(calling_ply, "Invalid steamid.")
 		return
 	end

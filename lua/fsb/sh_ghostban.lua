@@ -91,6 +91,17 @@ hook.Add("FSBUCLQuery", "block_ulx_in_ghostban", function (ply, access, hide)
 	end
 end)
 
+---Checks if a string is a SteamID or a SteamID64
+---@param steamid string
+---@return boolean
+function FSB.IsValidSteamID(steamid)
+	if not isstring(steamid) then return false end
+	if string.match(steamid, "STEAM_%d:%d:%d+") then return true end
+	if #string.Trim(steamid) == 17 and util.SteamIDFrom64(steamid) ~= "STEAM_0:0:0" then return true end
+
+	return false
+end
+
 if SERVER then
 	hook.Add("CanEditVariables", TAG, checkCanSpawn)
 	hook.Add("PlayerCanPickupWeapon", TAG, checkCanSpawn)

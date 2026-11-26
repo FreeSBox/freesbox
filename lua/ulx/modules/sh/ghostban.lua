@@ -19,7 +19,7 @@ end
 
 local function ghostBanIDULXWrapper(calling_ply, steamid, minutes, reason)
 	steamid = steamid:upper()
-	if not ULib.isValidSteamID(steamid) then
+	if not FSB.IsValidSteamID(steamid) then
 		ULib.tsayError(calling_ply, "Invalid steamid.")
 		return
 	end
@@ -39,7 +39,7 @@ end
 
 local function ghostUnBanIDULXWrapper(calling_ply, steamid)
 	steamid = steamid:upper()
-	if not ULib.isValidSteamID(steamid) then
+	if not FSB.IsValidSteamID(steamid) then
 		ULib.tsayError(calling_ply, "Invalid steamid.")
 		return
 	end
