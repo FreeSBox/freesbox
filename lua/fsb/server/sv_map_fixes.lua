@@ -11,10 +11,8 @@ local function cleanupBad()
         if badMap[ent:GetClass()] then
             Msg("The author of this map thought it would be a great idea to add "..tostring(ent).."\n")
             ent:Remove()
-            goto EXIT
         end
     end
-    ::EXIT::
     Msg("Removed map garbage.\n")
 end
 hook.Add("PostCleanupMap","RemoveStupidMapElementsOnCleanup",cleanupBad)
