@@ -1,6 +1,10 @@
 ---@diagnostic disable: inject-field
 
 concommand.Add("rules", function()
+	gui.OpenURL("https://freesbox.github.io/docs/rules/")
+end)
+
+concommand.Add("commandments", function()
 	local window_width = 800
 	local window_hight = 600
 	local window = FSB.CreateWindow(FSB.Translate("rules"), window_width, window_hight, true)

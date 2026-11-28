@@ -2,6 +2,7 @@
 
 local buttons =  {
 	{ Text=FSB.Translate("vote.petitions"), Func=function(menu) RunConsoleCommand("vote") menu:Close() end },
+	{ Text=FSB.Translate("commandments"), Func=function(menu) RunConsoleCommand("commandments") menu:Close() end },
 	{ Text=FSB.Translate("rules"), Func=function(menu) RunConsoleCommand("rules") menu:Close() end },
 	{ Text=FSB.Translate("pi_menu.ulx_menu"), Func=function(menu) RunConsoleCommand("ulx", "menu") menu:Close() end },
 	{ Text=FSB.Translate("pi_menu.wiki"), Func=function(menu) gui.OpenURL("https://freesbox.github.io/docs") menu:Close() end },
