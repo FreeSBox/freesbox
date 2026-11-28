@@ -62,3 +62,12 @@ hook.Add("FSBUCLQuery", "log_ulx_access", function (ply, access, hide)
 		return false
 	end
 end)
+
+hook.Add("ACF_PreDamageEntity", "block_acf_damage_to_build", function (ent, dmg_result, dmg_info)
+	local owner = ent:CPPIGetOwner()
+	-- Technically out of spec since CPPIGetOwner() is allowed to return CPPI_DEFER,
+	-- but who cares about the 0 prop protection addons that do that.
+	if owner and owner:IsValid() and not owner:InPVPMode() then
+		return false
+	end
+end)
