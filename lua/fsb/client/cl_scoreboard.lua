@@ -32,7 +32,6 @@ local scoreboard =
 	---@type table<Player, ConnectingPlayer>
 	connecting_players = {},
 	players = {},
-	player_buttons = {},
 	---@type table<integer, ScoreboardPlayerName>
 	player_names = {},
 	extended_infos = {},
@@ -152,11 +151,11 @@ function scoreboard:ReloadPlayers()
 end
 
 function scoreboard:ReloadPlayerList()
-	for _, old_button in ipairs(scoreboard.player_buttons) do
+	for _, old_button in ipairs(self.scroll:GetCanvas():GetChildren()) do
 		old_button:Remove()
 	end
-	scoreboard.player_buttons = {}
 	for _, player in ipairs(self.players) do
+		if not player:IsValid() then goto CONTINUE end
 		local player_btn = self.scroll:Add("DButton")
 		player_btn:SetName("player_btn")
 		player_btn:DockMargin(0,2,0,0)
@@ -291,7 +290,7 @@ function scoreboard:ReloadPlayerList()
 		avatar:SetSize(AVATAR_SIZE,AVATAR_SIZE)
 		avatar:SetPos(PLAYER_PADDING,PLAYER_PADDING)
 		avatar:SetPlayer(player, AVATAR_SIZE)
-		scoreboard.player_buttons[#scoreboard.player_buttons+1] = player_btn
+		::CONTINUE::
 	end
 
 	--TODO: Code duplication
@@ -330,6 +329,9 @@ function scoreboard:ReloadPlayerList()
 			scoreboard.ctx_menu:AddOption(T"scoreboard.copy_steamid", function ()
 				SetClipboardText(self.ply.SteamID)
 			end):SetIcon("icon16/tag_blue.png")
+			scoreboard.ctx_menu:AddOption(T"scoreboard.open_profile", function ()
+				gui.OpenURL("https://steamcommunity.com/profiles/"..util.SteamIDTo64(self.ply.SteamID))
+			end):SetIcon("icon16/application.png")
 
 			scoreboard.ctx_menu:Open()
 		end
@@ -460,7 +462,8 @@ hook.Add("FSBPlayerLeft", "remove_player", function (userid, networkid, name, re
 	scoreboard.extended_infos[userid] = nil
 
 	if not scoreboard:IsOpen() then return end
-
-	scoreboard:ReloadPlayers()
-	scoreboard:ReloadPlayerList()
+	timer.Simple(0, function ()
+		scoreboard:ReloadPlayers()
+		scoreboard:ReloadPlayerList()
+	end)
 end)
